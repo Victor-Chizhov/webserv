@@ -1,11 +1,8 @@
 #include "tcpServer.hpp"
-#include <ctime>
-#include <chrono>
 
 int main() {
-    tcpServer server = tcpServer(11111);
-
+    tcpServer server;
     server.runServer();
-
+    
     return 0;
 }
