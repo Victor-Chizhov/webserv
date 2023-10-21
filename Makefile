@@ -1,21 +1,16 @@
-#CLIENT = client
 SERVER = server
 
-#SRCS_C =	./client.cpp ./tcpClient.cpp
 SRCS_S =	./server.cpp ./tcpServer.cpp
 
-#OBJS_C = $(SRCS_C:.cpp=.o)
 OBJS_S = $(SRCS_S:.cpp=.o)
 CPP = c++
+CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 all: $(SERVER)
 
 
 %.o : %.cpp 
-	$(CPP) -c $< -o $@
-
-#$(CLIENT) : $(OBJS_C)
-#	$(CPP) $(OBJS_C) -o $(CLIENT)
+	$(CPP) $(CPPFLAGS) -c $< -o $@
 
 $(SERVER) : $(OBJS_S)
 	$(CPP) $(OBJS_S) -o $(SERVER)
