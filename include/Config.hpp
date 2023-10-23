@@ -16,8 +16,9 @@
 class Config {
     protected:
         std::string pathConfig;
-        std::vector<Server *> servers;
+        std::vector<Server> servers;
         char *configString;
+
 
         void copyDataInServers();
 

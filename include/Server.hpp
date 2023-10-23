@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include "Location.hpp"
 
 class Server {
     protected:
@@ -12,6 +13,7 @@ class Server {
         unsigned long clientMaxBodySize;
         std::string serverName;
         std::map<int, std::string> errorPages;
+        std::vector<Location> location;
 
 
 
