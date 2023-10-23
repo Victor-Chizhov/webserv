@@ -14,20 +14,14 @@
 #include <fstream>
 
 class Config {
-    protected:
+    private:
         std::string pathConfig;
         std::vector<Server> servers;
-        char *configString;
 
-
-        void copyDataInServers();
-
-        
 
     public:
         Config(std::string pathConfig);
         ~Config();
-        Config &operator=(const Config &other);
 
         void parseConfig();
 };

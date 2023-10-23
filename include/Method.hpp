@@ -10,6 +10,13 @@ class Method {
         int id;
         std::string name;
 
+    public:
+        Method();
+        ~Method();
+        int getId();
+        void setId(int id);
+        std::string getName();
+        void setName(std::string name);
 };
 
 #endif

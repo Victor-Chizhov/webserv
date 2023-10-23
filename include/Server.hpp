@@ -7,7 +7,7 @@
 #include "Location.hpp"
 
 class Server {
-    protected:
+    private:
         std::string hostName;
         int port;
         unsigned long clientMaxBodySize;
@@ -15,12 +15,24 @@ class Server {
         std::map<int, std::string> errorPages;
         std::vector<Location> location;
 
-
-
-
     public:
         Server();
         ~Server();
+
+        void setHostName(std::string hostName);
+        void setPort(int port);
+        void setClientMaxBodySize(unsigned long clientMaxBodySize);
+        void setServerName(std::string serverName);
+        void setErrorPages(std::map<int, std::string> errorPages);
+        void setLocation(std::vector<Location> location);
+
+        std::string getHostName() const;
+        int getPort() const;
+        unsigned long getClientMaxBodySize() const;
+        std::string getServerName() const;
+        std::map<int, std::string> getErrorPages() const;
+        std::vector<Location> getLocation() const;
+
 };
 
 
