@@ -3,7 +3,6 @@
 
 
 #include <iostream>
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <cstring>
@@ -11,15 +10,24 @@
 #include <unistd.h>
 #include <vector>
 #include <map>
+#include "Server.hpp"
+#include <fstream>
 
 class Config {
     protected:
-        std::string pathTillConfig;
+        std::string pathConfig;
+        std::vector<Server *> servers;
+        char *configString;
+
+        void copyDataInServers();
+
         
 
     public:
-        Config(std::string pathTillConfig);
+        Config(std::string pathConfig);
         ~Config();
+        Config &operator=(const Config &other);
+
         void parseConfig();
 };
 
