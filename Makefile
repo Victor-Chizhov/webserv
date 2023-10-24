@@ -21,16 +21,16 @@ OBJS = $(subst $(SRC), $(OBJ), $(SRCS:.cpp=.o))
 all: $(NAME)
 
 $(NAME): $(LIB_DIR) Makefile $(OBJS)
-	$(GCC) -o $(NAME) $(OBJS) -g $(CFLAGS) -lncurses
+	@$(GCC) -o $(NAME) $(OBJS) -g $(CFLAGS) -lncurses
 
 $(OBJ)/%.o: $(SRC)/%.cpp $(LIB_DIR)
-	mkdir -p $(OBJ) $(OBJ_DIR)
-	$(GCC) $(CFLAGS) $(LIBS) -c $< -o $@
+	@mkdir -p $(OBJ) $(OBJ_DIR)
+	@$(GCC) $(CFLAGS) $(LIBS) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ)
+	@$(RM) $(OBJ)
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re: fclean all
