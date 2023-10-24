@@ -8,6 +8,7 @@
 
 class Server {
     private:
+        std::vector<std::string> serverConfig;
         std::string hostName;
         int port;
         unsigned long clientMaxBodySize;

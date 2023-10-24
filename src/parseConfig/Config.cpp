@@ -2,49 +2,43 @@
 
 Config::Config(std::string pathConfig) {
     this->pathConfig = pathConfig;
+    this->configLines = std::vector<std::string>();
+    this->servers = std::vector<Server>();
 }
 
 Config::~Config() {
 }
 
-bool Config::checkComments(std::string line) {
-    if (line[0] == '#') {
-        return true;
+bool Config::removeComments(std::string &line) {
+    std::string::size_type pos = line.find('#');
+    if (pos != std::string::npos) {
+        line.erase(pos);
     }
-    return false;
+    return true;
 }
 
-bool Config::findServer(std::string line) {
-
-    if (line.find("server") != std::string::npos) {
-        std::cout << "server found" << std::endl;
-        return true;
-    }
-    return false;
-}
-
-bool Config::checkNewLine(std::string line) {
-    if (line.empty()) {
-        return true;
-    }
-    return false;
-}
-
-
-
-void Config::parseConfig() {
+void Config::saveConfigInConfigLine() {
     std::ifstream inputFile(this->pathConfig);
     if (!inputFile.is_open()) {
         throw std::out_of_range("Error: could not open file");
     }
     std::string line;
-    while (std::getline(inputFile, line)) {
-        if(checkComments(line)) { continue; }
-        else if(findServer(line)) { continue; }
-        else if(checkNewLine(line)) { continue; }
-        else {
-            std::cout << "line: " << line << " ERROR!" << std::endl;
-            throw std::out_of_range("Error: invalid config file");
-        }
+    while(getline(inputFile, line)) {
+        removeComments(line);
+        if (line.empty()) { continue; }
+        configLines.push_back(line);
     }
+    inputFile.close();
+}
+
+void Config::findServerConfigurations() {
+    for (std::vector<std::string>::iterator it = configLines.begin(); it != configLines.end(); it++) {
+        std::cout << *it << std::endl;
+    }
+}
+
+void Config::parseConfig() {
+    saveConfigInConfigLine();
+    findServerConfigurations();
+
 }
