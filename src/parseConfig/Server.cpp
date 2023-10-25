@@ -69,4 +69,8 @@ void Server::printServerConfig() const {
     }
 }
 
+void Server::addAttributesInServer() {
+
+}
+
 

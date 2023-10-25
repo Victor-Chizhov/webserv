@@ -1,12 +1,10 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <iostream>
-#include <vector>
-#include <map>
-#include "Location.hpp"
 
-class Server {
+#include "Parser.hpp"
+
+class Server : public Parser {
     private:
         std::vector<std::string> serverConfig;
         std::string hostName;
