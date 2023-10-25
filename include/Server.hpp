@@ -26,6 +26,8 @@ class Server {
         void setServerName(std::string serverName);
         void setErrorPages(std::map<int, std::string> errorPages);
         void setLocation(std::vector<Location> location);
+        void setServerConfig(std::string serverConfig);
+
 
         std::string getHostName() const;
         int getPort() const;
@@ -33,6 +35,10 @@ class Server {
         std::string getServerName() const;
         std::map<int, std::string> getErrorPages() const;
         std::vector<Location> getLocation() const;
+
+        void printServerConfig() const;
+        void addAttributesInServer();
+
 
 };
 

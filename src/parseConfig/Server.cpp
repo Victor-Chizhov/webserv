@@ -34,6 +34,7 @@ void Server::setLocation(std::vector<Location> location) {
     this->location = location;
 }
 
+
 std::string Server::getHostName() const {
     return this->hostName;
 }
@@ -56,6 +57,16 @@ std::map<int, std::string> Server::getErrorPages() const {
 
 std::vector<Location> Server::getLocation() const {
     return this->location;
+}
+
+void Server::setServerConfig(std::string serverConfig) {
+    this->serverConfig.push_back(serverConfig);
+}
+
+void Server::printServerConfig() const {
+    for (std::vector<std::string>::const_iterator it = this->serverConfig.begin(); it != this->serverConfig.end(); it++) {
+        std::cout << *it << std::endl;
+    }
 }
 
 

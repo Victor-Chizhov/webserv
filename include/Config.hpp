@@ -1,19 +1,11 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <cstring>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <vector>
-#include <map>
 #include "Server.hpp"
-#include <fstream>
+#include "Parser.hpp"
 
-class Config {
+
+class Config : public Parser {
     private:
         std::string pathConfig;
         std::vector<Server> servers;
@@ -22,6 +14,7 @@ class Config {
         bool removeComments(std::string &line);
         void findServerConfigurations();
         void saveConfigInConfigLine();
+        void copyServConfigInServVector(size_t &index);
 
     public:
         Config(std::string pathConfig);
