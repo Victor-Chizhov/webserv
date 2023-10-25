@@ -59,8 +59,16 @@ std::vector<Location> Server::getLocation() const {
     return this->location;
 }
 
+std::string Server::getIpAddress() const {
+    return this->ipAddress;
+}
+
 void Server::setServerConfig(std::string serverConfig) {
     this->serverConfig.push_back(serverConfig);
+}
+
+void Server::setIpAddress(std::string ipAddress) {
+    this->ipAddress = ipAddress;
 }
 
 void Server::printServerConfig() const {
@@ -69,8 +77,18 @@ void Server::printServerConfig() const {
     }
 }
 
-void Server::addAttributesInServer() {
+void Server::cutString() {
 
+}
+
+void Server::addAttributesInServer() {
+    for (size_t i = 0; i < serverConfig.size(); i++) {
+        if (serverConfig[i].find("listen") != std::string::npos) {
+            std::string ip = serverConfig[i].substr(serverConfig[i].find(" ") + 1);
+            this->setIpAddress(ipAddress.c_str());
+        }
+
+    }
 }
 
 

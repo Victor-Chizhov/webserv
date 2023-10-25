@@ -7,12 +7,15 @@
 class Server : public Parser {
     private:
         std::vector<std::string> serverConfig;
+        std::string ipAddress;
         std::string hostName;
         int port;
         unsigned long clientMaxBodySize;
         std::string serverName;
         std::map<int, std::string> errorPages;
         std::vector<Location> location;
+
+        void cutString();
 
     public:
         Server();
@@ -25,6 +28,7 @@ class Server : public Parser {
         void setErrorPages(std::map<int, std::string> errorPages);
         void setLocation(std::vector<Location> location);
         void setServerConfig(std::string serverConfig);
+        void setIpAddress(std::string ipAddress);
 
 
         std::string getHostName() const;
@@ -33,6 +37,7 @@ class Server : public Parser {
         std::string getServerName() const;
         std::map<int, std::string> getErrorPages() const;
         std::vector<Location> getLocation() const;
+        std::string getIpAddress() const;
 
         void printServerConfig() const;
         void addAttributesInServer();
