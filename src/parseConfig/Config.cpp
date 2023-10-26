@@ -36,5 +36,7 @@ void Config::parseConfig() {
     addConfigsInArray<Server>(servers, configLines, "server{");
     for (size_t i = 0; i < servers.size(); i++) {
         servers[i].addAttributesInServer();
+//        servers[i].printServerConfig();
     }
+
 }

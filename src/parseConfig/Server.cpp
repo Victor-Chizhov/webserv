@@ -77,18 +77,17 @@ void Server::printServerConfig() const {
     }
 }
 
-void Server::cutString() {
-
-}
-
 void Server::addAttributesInServer() {
     for (size_t i = 0; i < serverConfig.size(); i++) {
-        if (serverConfig[i].find("listen") != std::string::npos) {
-            std::string ip = serverConfig[i].substr(serverConfig[i].find(" ") + 1);
-            this->setIpAddress(ipAddress.c_str());
-        }
-
+        cutDataStr(serverConfig[i], "listen", ipAddress);
+        cutDataStr(serverConfig[i], "server_name", serverName);
+        cutDataStr(serverConfig[i], "host_name", hostName);
+        cutDataNum(serverConfig[i], "port", port);
+        cutDataNum(serverConfig[i], "client_max_body_size", clientMaxBodySize);
+        cutDataMap(serverConfig[i], "error_page", errorPages);
     }
+    std::cout << ipAddress << std::endl;
+    std::cout << serverName << std::endl;
 }
 
 

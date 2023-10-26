@@ -9,13 +9,11 @@ class Server : public Parser {
         std::vector<std::string> serverConfig;
         std::string ipAddress;
         std::string hostName;
-        int port;
+        unsigned long port;
         unsigned long clientMaxBodySize;
         std::string serverName;
         std::map<int, std::string> errorPages;
         std::vector<Location> location;
-
-        void cutString();
 
     public:
         Server();
