@@ -14,7 +14,18 @@ void Parser::cutDataStr(std::string &line, std::string finder, std::string &data
 
     size_t pos = line.find(finder);
     if (pos != std::string::npos) {
+        if (line.find_first_not_of(" \t") < 1) {
+            throw std::out_of_range("Error: invalid " + finder + " value in config file");
+        }
+        line.erase(line.find(';'), 1);
         data = line.substr(pos + finder.length());
+
+        /*
+         понять как проверить строку на наличие символов кроме пробелов
+         кинуть ошибку если в строке есть символы кроме пробелов
+         оптимизировать код
+        */
+
         line.erase();
     }
 }
@@ -26,7 +37,11 @@ void Parser::cutDataNum(std::string &line, std::string finder, unsigned long &da
     size_t pos = line.find(finder);
     if (pos != std::string::npos) {
         std::string strData = line.substr(pos + finder.length());
-        if (isValidNum<int>(strData, numValue)) {
+        if (strData.find_first_not_of(" \t") < 1) {
+            throw std::out_of_range("Error: invalid " + finder + " value in config file");
+        }
+        strData.erase(strData.find(';'), 1);
+        if (!isValidNum(strData, numValue)) {
             throw std::out_of_range("Error: invalid " + finder + " value in config file");
         }
         data = std::stoul(strData);
@@ -35,19 +50,21 @@ void Parser::cutDataNum(std::string &line, std::string finder, unsigned long &da
 }
 
 void Parser::cutDataMap(std::string &line, std::string finder, std::map<int, std::string> &data) {
+    (void)data;
     size_t pos = line.find(finder);
     if (pos != std::string::npos) {
-        std::string strData = line.substr(pos + finder.length());
-        std::string::size_type pos1 = strData.find(' ');
-        std::string::size_type pos2 = strData.find(';');
-        if (pos1 != std::string::npos && pos2 != std::string::npos) {
-            std::string strKey = strData.substr(0, pos1);
-            std::string strValue = strData.substr(pos1 + 1, pos2 - pos1 - 1);
-            int key = 0;
-            if (isValidNum<int>(strKey, key)) {
-                throw std::out_of_range("Error: invalid " + finder + " value in config file");
-            }
-            data[key] = strValue;
+        line = line.substr(pos + finder.length());
+        size_t spacePos = line.find(' ');
+        if (spacePos != std::string::npos) {
+//            printf("line:%s\n", line.c_str());
+//            printf("pos %lu\n", spacePos);
+//            printf("str: %s\n", line.substr(0, spacePos).c_str());
+//            int key = std::stoi(line.substr(0, spacePos));
+//            std::string value = line.substr(spacePos + 1);
+//            data[key] = value;
+//            line.erase();
         }
+        else
+            throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
 }

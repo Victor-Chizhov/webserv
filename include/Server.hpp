@@ -8,7 +8,6 @@ class Server : public Parser {
     private:
         std::vector<std::string> serverConfig;
         std::string ipAddress;
-        std::string hostName;
         unsigned long port;
         unsigned long clientMaxBodySize;
         std::string serverName;
@@ -19,7 +18,6 @@ class Server : public Parser {
         Server();
         ~Server();
 
-        void setHostName(std::string hostName);
         void setPort(int port);
         void setClientMaxBodySize(unsigned long clientMaxBodySize);
         void setServerName(std::string serverName);
@@ -29,7 +27,6 @@ class Server : public Parser {
         void setIpAddress(std::string ipAddress);
 
 
-        std::string getHostName() const;
         int getPort() const;
         unsigned long getClientMaxBodySize() const;
         std::string getServerName() const;
@@ -38,7 +35,11 @@ class Server : public Parser {
         std::string getIpAddress() const;
 
         void printServerConfig() const;
+        void printServerAttributes();
         void addAttributesInServer();
+
+
+
 
 
 };
