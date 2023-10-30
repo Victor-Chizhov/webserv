@@ -4,7 +4,6 @@
 #include "Server.hpp"
 #include "Parser.hpp"
 
-
 class Config : public Parser {
     private:
         std::string pathConfig;
