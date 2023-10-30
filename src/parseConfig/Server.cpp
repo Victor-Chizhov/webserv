@@ -60,7 +60,7 @@ void Server::printServerAttributes() {
     std::cout << "clientMaxBodySize: " << clientMaxBodySize << std::endl;
     std::cout << "errorPages: " << std::endl;
     for (std::map<int, std::string>::iterator it = errorPages.begin(); it != errorPages.end(); ++it) {
-        std::cout << "Key: " << it->first << ", Value: " << it->second << std::endl;
+        std::cout << "Key: " << it->first << " | Value: " << it->second << std::endl;
     }
 
 }

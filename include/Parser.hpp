@@ -18,13 +18,15 @@ class Parser {
         void cutDataStr(std::string &line, std::string finder, std::string &data);
         void cutDataMap(std::string &line, std::string finder, std::map<int, std::string> &data);
         void cutDataNum(std::string &line, std::string finder, unsigned long &data);
-        bool checkEmptyString(std::string str);
+        void ParseAndCheckLine(std::string &line, std::string finder);
+        std::string trim(const std::string &line);
 
         template<typename T>
         bool isValidNum(const std::string& str, T numValue);
 
         template<typename T>
         void addConfigsInArray(std::vector<T> &array, std::vector<std::string> &configLine, std::string finder);
+
 };
 
 template<typename T>
@@ -51,6 +53,8 @@ bool Parser::isValidNum(const std::string& str, T numValue) {
     std::istringstream iss(str);
     return (iss >> numValue) && iss.eof();
 }
+
+
 
 
 #endif
