@@ -1,5 +1,14 @@
 #include "../../include/Parser.hpp"
 
+std::string Parser::fullTrim(const std::string &line) {
+    size_t posLeft = line.find_first_not_of(" \t\r\n");
+    size_t posRight = line.find_last_not_of(" \t\r\n");
+
+    if (posLeft == std::string::npos || posRight == std::string::npos)
+        return "";
+    return line.substr(posLeft, posRight - posLeft + 1);
+}
+
 void Parser::removeSpaces(std::string &line) {
     std::string result = "";
     for (size_t i = 0; i < line.length(); i++) {
@@ -16,22 +25,24 @@ void Parser::ParseAndCheckLine(std::string &line, std::string finder) {
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
     line = line.substr(finder.length());
-    if (line.find_first_not_of(" \t") < 1) {
+    if (line.find_first_not_of(" \t") != 1) {
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
     if (line.find(';') != line.length() - 1) {
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
     line.erase(line.find(';'), 1);
+    if (line.find_last_not_of(" \t") != line.length() - 1) {
+        throw std::out_of_range("Error: invalid " + finder + " value in config file");
+    }
 }
-
 
 std::string Parser::trim(const std::string &line) {
     size_t posLeft = line.find_first_not_of(" \t\r\n");
-    size_t posRight = line.find_last_not_of(" \t\r\n");
-    if (posLeft == std::string::npos || posRight == std::string::npos)
+
+    if (posLeft == std::string::npos)
         return "";
-    return line.substr(posLeft, posRight - posLeft + 1);
+    return line.substr(posLeft);
 }
 
 void Parser::cutDataStr(std::string &line, std::string finder, std::string &data) {

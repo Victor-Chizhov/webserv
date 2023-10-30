@@ -20,6 +20,7 @@ class Parser {
         void cutDataNum(std::string &line, std::string finder, unsigned long &data);
         void ParseAndCheckLine(std::string &line, std::string finder);
         std::string trim(const std::string &line);
+        std::string fullTrim(const std::string &line);
 
         template<typename T>
         bool isValidNum(const std::string& str, T numValue);
