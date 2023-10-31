@@ -29,11 +29,19 @@ void Config::saveConfigInConfigLine() {
     inputFile.close();
 }
 
-void Config::addConfigData() {
+void Config::createVectorOfServers() {
     addConfigInArray<Server>(servers, configLines, "server");
+}
+
+void Config::fillEachServerWithData() {
     for (size_t i = 0; i < servers.size(); i++) {
         servers[i].addDataInServer();
     }
+}
+
+void Config::addConfigData() {
+    createVectorOfServers();
+    fillEachServerWithData();
 }
 
 void Config::parseConfig() {

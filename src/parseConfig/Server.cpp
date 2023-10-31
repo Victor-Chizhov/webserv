@@ -25,7 +25,7 @@ void Server::printDataConfig() const {
     }
 }
 
-void Server::printServerAttributes() {
+void Server::printServerData() {
     std::cout << "-----------------" << std::endl << "Server Config:" << std::endl << "-----------------" << std::endl;
     std::cout << "ipAddress: " << ipAddress << std::endl;
     std::cout << "serverName: " << serverName << std::endl;
@@ -38,12 +38,17 @@ void Server::printServerAttributes() {
 
 }
 
-void Server::addDataInServer() {
-
+void Server::createVectorOfLocations() {
     addConfigInArray<Location>(locations, serverConfig, "location");
-    locations[0].printDataConfig();
-//    std::cout << locations.size() << std::endl;
-//    printDataConfig();
+}
+
+void Server::fillEachLocationWithData() {
+    for (size_t i = 0; i < locations.size(); i++) {
+        /* code */
+    }
+}
+
+void Server::updateDataInServer() {
     for (size_t i = 0; i < serverConfig.size(); i++) {
         cutDataStr(serverConfig[i], "listen", ipAddress);
         cutDataStr(serverConfig[i], "server_name", serverName);
@@ -51,7 +56,13 @@ void Server::addDataInServer() {
         cutDataNum(serverConfig[i], "client_max_body_size", clientMaxBodySize);
         cutDataMap(serverConfig[i], "error_page", errorPages);
     }
-//    printServerAttributes();
+}
+
+void Server::addDataInServer() {
+    createVectorOfLocations();
+    fillEachLocationWithData();
+    updateDataInServer();
+//    printServerData();
 }
 
 

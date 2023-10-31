@@ -24,6 +24,7 @@ Location &Location::operator=(const Location &copy) {
         this->clientMaxBodySize = copy.clientMaxBodySize;
         this->fileUpload = copy.fileUpload;
         this->methods = copy.methods;
+        this->locationConfig = copy.locationConfig;
     }
     return *this;
 }

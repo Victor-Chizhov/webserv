@@ -15,16 +15,20 @@ class Server : public Parser {
         std::map<int, std::string> errorPages;
         std::vector<Location> locations;
 
+        void createVectorOfLocations();
+        void fillEachLocationWithData();
+        void updateDataInServer();
+
     public:
         Server();
         ~Server();
 
         void setConfig(std::string configLine);
-
-        void printDataConfig() const;
         void addDataInServer();
 
-        void printServerAttributes();
+        void printServerData();
+        void printDataConfig() const;
+
 };
 
 

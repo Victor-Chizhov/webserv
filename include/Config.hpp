@@ -14,6 +14,8 @@ class Config : public Parser {
         bool removeComments(std::string &line);
         void saveConfigInConfigLine();
         void addConfigData();
+        void createVectorOfServers();
+        void fillEachServerWithData();
 
     public:
         Config(std::string pathConfig);

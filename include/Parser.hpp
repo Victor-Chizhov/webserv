@@ -49,7 +49,6 @@ void Parser::addConfigInArray(std::vector<T> &array, std::vector<std::string> &c
                 if (openBrackets == 0) { break; }
                 i++;
             }
-//            data.printDataConfig();
             array.push_back(data);
         }
     }
