@@ -9,7 +9,8 @@
 #include <cstring>
 #include <sstream>
 #include <cstdlib>
-#include "Location.hpp"
+#include <sys/stat.h>
+
 
 class Parser {
 
@@ -26,24 +27,29 @@ class Parser {
         bool isValidNum(const std::string& str, T numValue);
 
         template<typename T>
-        void addConfigsInArray(std::vector<T> &array, std::vector<std::string> &configLine, std::string finder);
+        void addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLine, std::string finder);
+
+        void setConfig(std::string configLine);
+
+        void printDataConfig() const;
+
 
 };
 
 template<typename T>
-void Parser::addConfigsInArray(std::vector<T> &array, std::vector<std::string> &configLines, std::string finder) {
+void Parser::addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLines, std::string finder) {
     for (size_t i = 0; i < configLines.size(); i++) {
-        removeSpaces(configLines[i]);
         if (configLines[i].find(finder) != std::string::npos) {
             T data;
             size_t openBrackets = 0;
             while (i < configLines.size()) {
-                data.setServerConfig(configLines[i]);
+                data.setConfig(configLines[i]);
                 if (configLines[i].find("{") != std::string::npos) { openBrackets++; }
                 if (configLines[i].find("}") != std::string::npos) { openBrackets--; }
                 if (openBrackets == 0) { break; }
                 i++;
             }
+//            data.printDataConfig();
             array.push_back(data);
         }
     }
@@ -54,8 +60,6 @@ bool Parser::isValidNum(const std::string& str, T numValue) {
     std::istringstream iss(str);
     return (iss >> numValue) && iss.eof();
 }
-
-
 
 
 #endif

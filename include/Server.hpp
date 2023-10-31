@@ -3,6 +3,7 @@
 
 
 #include "Parser.hpp"
+#include "Location.hpp"
 
 class Server : public Parser {
     private:
@@ -12,36 +13,18 @@ class Server : public Parser {
         unsigned long clientMaxBodySize;
         std::string serverName;
         std::map<int, std::string> errorPages;
-        std::vector<Location> location;
+        std::vector<Location> locations;
 
     public:
         Server();
         ~Server();
 
-        void setPort(int port);
-        void setClientMaxBodySize(unsigned long clientMaxBodySize);
-        void setServerName(std::string serverName);
-        void setErrorPages(std::map<int, std::string> errorPages);
-        void setLocation(std::vector<Location> location);
-        void setServerConfig(std::string serverConfig);
-        void setIpAddress(std::string ipAddress);
+        void setConfig(std::string configLine);
 
+        void printDataConfig() const;
+        void addDataInServer();
 
-        int getPort() const;
-        unsigned long getClientMaxBodySize() const;
-        std::string getServerName() const;
-        std::map<int, std::string> getErrorPages() const;
-        std::vector<Location> getLocation() const;
-        std::string getIpAddress() const;
-
-        void printServerConfig() const;
         void printServerAttributes();
-        void addAttributesInServer();
-
-
-
-
-
 };
 
 

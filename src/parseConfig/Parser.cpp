@@ -91,3 +91,4 @@ void Parser::cutDataMap(std::string &line, std::string finder, std::map<int, std
         line.erase();
     }
 }
+

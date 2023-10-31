@@ -1,13 +1,13 @@
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
-#include <iostream>
-#include <vector>
-#include <map>
+#include "Parser.hpp"
 #include "Method.hpp"
 
-class Location {
+
+class Location : public Parser {
     private:
+        std::vector<std::string> locationConfig;
         std::string root;
         std::string index;
         bool autoIndex;
@@ -20,25 +20,11 @@ class Location {
         Location();
         Location(const Location &copy);
         Location &operator=(const Location &copy);
-        ~Location();
+        virtual ~Location();
 
-        void setRoot(std::string root);
-        void setIndex(std::string index);
-        void setAutoIndex(bool autoIndex);
-        void setCgiPass(std::string cgiPass);
-        void setClientMaxBodySize(unsigned long long clientMaxBodySize);
-        void setFileUpload(bool fileUpload);
-        void setMethods(std::vector<Method> methods);
+        void setConfig(std::string configLine);
+        void printDataConfig() const;
 
-        std::string getRoot() const;
-        std::string getIndex() const;
-        bool getAutoIndex() const;
-        std::string getCgiPass() const;
-        unsigned long long getClientMaxBodySize() const;
-        bool getFileUpload() const;
-        std::vector<Method> getMethods() const;
-
-        void print() const;
 
 };
 

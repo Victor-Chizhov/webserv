@@ -7,6 +7,8 @@ Location::Location() {
     this->cgiPass = "";
     this->clientMaxBodySize = 0;
     this->fileUpload = false;
+    this->locationConfig = std::vector<std::string>();
+    this->methods = std::vector<Method>();
 }
 
 Location::Location(const Location &copy) {
@@ -29,60 +31,16 @@ Location &Location::operator=(const Location &copy) {
 Location::~Location() {
 }
 
-void Location::setRoot(std::string root) {
-    this->root = root;
+void Location::setConfig(std::string configLine) {
+    this->locationConfig.push_back(configLine);
 }
 
-void Location::setIndex(std::string index) {
-    this->index = index;
+void Location::printDataConfig() const {
+    std::cout << "-----------------" << std::endl << "Location Config:" << std::endl << "-----------------" << std::endl;
+    for (std::vector<std::string>::const_iterator it = this->locationConfig.begin(); it != this->locationConfig.end(); it++) {
+        std::cout << *it << std::endl;
+    }
 }
 
-void Location::setAutoIndex(bool autoIndex) {
-    this->autoIndex = autoIndex;
-}
-
-void Location::setCgiPass(std::string cgiPass) {
-    this->cgiPass = cgiPass;
-}
-
-void Location::setClientMaxBodySize(unsigned long long clientMaxBodySize) {
-    this->clientMaxBodySize = clientMaxBodySize;
-}
-
-void Location::setFileUpload(bool fileUpload) {
-    this->fileUpload = fileUpload;
-}
-
-void Location::setMethods(std::vector<Method> methods) {
-    this->methods = methods;
-}
-
-std::string Location::getRoot() const {
-    return this->root;
-}
-
-std::string Location::getIndex() const {
-    return this->index;
-}
-
-bool Location::getAutoIndex() const {
-    return this->autoIndex;
-}
-
-std::string Location::getCgiPass() const {
-    return this->cgiPass;
-}
-
-unsigned long long Location::getClientMaxBodySize() const {
-    return this->clientMaxBodySize;
-}
-
-bool Location::getFileUpload() const {
-    return this->fileUpload;
-}
-
-std::vector<Method> Location::getMethods() const {
-    return this->methods;
-}
 
 

@@ -6,8 +6,6 @@ Config::Config(std::string pathConfig) {
     this->servers = std::vector<Server>();
 }
 
-Config::~Config() {
-}
 
 bool Config::removeComments(std::string &line) {
     std::string::size_type pos = line.find('#');
@@ -31,12 +29,14 @@ void Config::saveConfigInConfigLine() {
     inputFile.close();
 }
 
+void Config::addConfigData() {
+    addConfigInArray<Server>(servers, configLines, "server");
+    for (size_t i = 0; i < servers.size(); i++) {
+        servers[i].addDataInServer();
+    }
+}
+
 void Config::parseConfig() {
     saveConfigInConfigLine();
-    addConfigsInArray<Server>(servers, configLines, "server{");
-    for (size_t i = 0; i < servers.size(); i++) {
-        servers[i].addAttributesInServer();
-//        servers[i].printServerConfig();
-    }
-
+    addConfigData();
 }
