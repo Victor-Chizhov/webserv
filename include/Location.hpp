@@ -2,19 +2,19 @@
 #define LOCATION_HPP
 
 #include "Parser.hpp"
-#include "Method.hpp"
 
 
 class Location : public Parser {
     private:
         std::vector<std::string> locationConfig;
+        std::string pathLocation;
         std::string root;
         std::string index;
         bool autoIndex;
         std::string cgiPass;
-        unsigned long long clientMaxBodySize;
+        unsigned long clientMaxBodySize;
         bool fileUpload;
-        std::vector<Method> methods;
+        std::vector<std::string> methods;
 
     public:
         Location();
@@ -24,8 +24,12 @@ class Location : public Parser {
 
         void setConfig(std::string configLine);
         void printDataConfig() const;
+        void printLocationData();
+
+        void updateDataInLocation();
 
 
 };
+
 
 #endif

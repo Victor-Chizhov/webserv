@@ -9,6 +9,14 @@ std::string Parser::fullTrim(const std::string &line) {
     return line.substr(posLeft, posRight - posLeft + 1);
 }
 
+std::string Parser::trim(const std::string &line) {
+    size_t posLeft = line.find_first_not_of(" \t\r\n");
+
+    if (posLeft == std::string::npos)
+        return "";
+    return line.substr(posLeft);
+}
+
 void Parser::removeSpaces(std::string &line) {
     std::string result = "";
     for (size_t i = 0; i < line.length(); i++) {
@@ -28,6 +36,7 @@ void Parser::ParseAndCheckLine(std::string &line, std::string finder) {
     if (line.find_first_not_of(" \t") != 1) {
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
+    line = fullTrim(line);
     if (line.find(';') != line.length() - 1) {
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
@@ -37,19 +46,13 @@ void Parser::ParseAndCheckLine(std::string &line, std::string finder) {
     }
 }
 
-std::string Parser::trim(const std::string &line) {
-    size_t posLeft = line.find_first_not_of(" \t\r\n");
-
-    if (posLeft == std::string::npos)
-        return "";
-    return line.substr(posLeft);
-}
-
 void Parser::cutDataStr(std::string &line, std::string finder, std::string &data) {
     
     size_t pos = line.find(finder);
     if (pos != std::string::npos) {
-        ParseAndCheckLine(line, finder);
+        if (line.find("location") == std::string::npos) {
+            ParseAndCheckLine(line, finder);
+        }
         data = trim(line);
         line.erase();
     }
@@ -92,3 +95,32 @@ void Parser::cutDataMap(std::string &line, std::string finder, std::map<int, std
     }
 }
 
+void Parser::cutDataBool(std::string &line, std::string finder, bool &data) {
+
+        size_t pos = line.find(finder);
+        if (pos != std::string::npos) {
+            ParseAndCheckLine(line, finder);
+            line = trim(line);
+            if (line == "on")
+                data = true;
+            else if (line == "off")
+                data = false;
+            else
+                throw std::out_of_range("Error: invalid " + finder + " value in config file");
+            line.erase();
+        }
+}
+
+void Parser::cutDataArray(std::string &line, std::string finder, std::vector<std::string> &data) {
+    size_t pos = line.find(finder);
+    if (pos != std::string::npos) {
+        ParseAndCheckLine(line, finder);
+        line = trim(line);
+        std::string s;
+        std::istringstream ss(line);
+        while (std::getline(ss, s, ' ')) {
+            data.push_back(s);
+        }
+        line.erase();
+    }
+}

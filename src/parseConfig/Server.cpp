@@ -35,7 +35,9 @@ void Server::printServerData() {
     for (std::map<int, std::string>::iterator it = errorPages.begin(); it != errorPages.end(); ++it) {
         std::cout << "Key: " << it->first << " | Value: " << it->second << std::endl;
     }
-
+    for (std::vector<Location>::iterator it = locations.begin(); it != locations.end(); ++it) {
+        it->printLocationData();
+    }
 }
 
 void Server::createVectorOfLocations() {
@@ -44,7 +46,7 @@ void Server::createVectorOfLocations() {
 
 void Server::fillEachLocationWithData() {
     for (size_t i = 0; i < locations.size(); i++) {
-        /* code */
+        locations[i].updateDataInLocation();
     }
 }
 
@@ -62,7 +64,7 @@ void Server::addDataInServer() {
     createVectorOfLocations();
     fillEachLocationWithData();
     updateDataInServer();
-//    printServerData();
+    printServerData();
 }
 
 

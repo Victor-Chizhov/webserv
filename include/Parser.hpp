@@ -19,6 +19,8 @@ class Parser {
         void cutDataStr(std::string &line, std::string finder, std::string &data);
         void cutDataMap(std::string &line, std::string finder, std::map<int, std::string> &data);
         void cutDataNum(std::string &line, std::string finder, unsigned long &data);
+        void cutDataBool(std::string &line, std::string finder, bool &data);
+        void cutDataArray(std::string &line, std::string finder, std::vector<std::string> &data);
         void ParseAndCheckLine(std::string &line, std::string finder);
         std::string trim(const std::string &line);
         std::string fullTrim(const std::string &line);
@@ -35,6 +37,10 @@ class Parser {
 
 
 };
+
+//сделать проверку на fghfgh server dfkghdfkg {
+//сделать проверку на flgdlfg location dfkgjdkjg {
+
 
 template<typename T>
 void Parser::addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLines, std::string finder) {
