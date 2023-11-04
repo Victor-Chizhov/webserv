@@ -20,7 +20,6 @@ class Location : public Parser {
         Location();
         Location(const Location &copy);
         Location &operator=(const Location &copy);
-        virtual ~Location();
 
         void setConfig(std::string configLine);
         void printDataConfig() const;

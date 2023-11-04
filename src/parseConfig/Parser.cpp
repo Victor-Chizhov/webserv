@@ -121,6 +121,7 @@ void Parser::cutDataArray(std::string &line, std::string finder, std::vector<std
         while (std::getline(ss, s, ' ')) {
             data.push_back(s);
         }
+        std::cout << "line: " << line << std::endl;
         line.erase();
     }
 }

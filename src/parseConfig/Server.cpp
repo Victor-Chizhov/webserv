@@ -11,9 +11,6 @@ Server::Server() {
 
 }
 
-Server::~Server() {
-}
-
 void Server::setConfig(std::string configLine) {
     this->serverConfig.push_back(configLine);
 }
@@ -44,6 +41,8 @@ void Server::createVectorOfLocations() {
     addConfigInArray<Location>(locations, serverConfig, "location");
 }
 
+/* удалить данные из сервера поскольку удаление из локайшн не удаляется */
+
 void Server::fillEachLocationWithData() {
     for (size_t i = 0; i < locations.size(); i++) {
         locations[i].updateDataInLocation();
@@ -64,7 +63,8 @@ void Server::addDataInServer() {
     createVectorOfLocations();
     fillEachLocationWithData();
     updateDataInServer();
-    printServerData();
+//    printServerData();
+    printDataConfig();
 }
 
 

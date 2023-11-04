@@ -31,9 +31,6 @@ Location &Location::operator=(const Location &copy) {
     return *this;
 }
 
-Location::~Location() {
-}
-
 void Location::setConfig(std::string configLine) {
     this->locationConfig.push_back(configLine);
 }
@@ -63,10 +60,10 @@ void Location::updateDataInLocation() {
     for (size_t i = 0; i < locationConfig.size(); i++) {
         cutDataStr(locationConfig[i], "location", pathLocation);
         cutDataStr(locationConfig[i], "root", root);
+        cutDataBool(locationConfig[i], "autoindex", autoIndex);
         cutDataStr(locationConfig[i], "index", index);
         cutDataStr(locationConfig[i], "cgi_pass", cgiPass);
         cutDataNum(locationConfig[i], "client_max_body_size", clientMaxBodySize);
-        cutDataBool(locationConfig[i], "autoindex", autoIndex);
         cutDataBool(locationConfig[i], "file_upload", fileUpload);
         cutDataArray(locationConfig[i], "methods", methods);
     }

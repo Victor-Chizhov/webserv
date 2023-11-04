@@ -21,7 +21,6 @@ class Server : public Parser {
 
     public:
         Server();
-        ~Server();
 
         void setConfig(std::string configLine);
         void addDataInServer();
