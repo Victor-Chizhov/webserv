@@ -22,7 +22,7 @@ class Server : public Parser {
     public:
         Server();
 
-        void setConfig(std::string configLine);
+        void setConfig(std::string &configLine);
         void addDataInServer();
 
         void printServerData();
