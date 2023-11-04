@@ -11,14 +11,15 @@ class Config : public Parser {
         std::vector<std::string> configLines;
 
         bool removeComments(std::string &line);
-        void findServerConfigurations();
         void saveConfigInConfigLine();
-        void copyServConfigInServVector(size_t &index);
+        void addConfigData();
+        void createVectorOfServers();
+        void fillEachServerWithData();
 
     public:
         Config(std::string pathConfig);
-        ~Config();
         void parseConfig();
+
 };
 
 
