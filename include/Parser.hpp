@@ -31,7 +31,7 @@ class Parser {
         template<typename T>
         void addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLine, std::string finder);
 
-        void setConfig(std::string configLine);
+        void setConfig(std::string &configLine);
 
         void printDataConfig() const;
 

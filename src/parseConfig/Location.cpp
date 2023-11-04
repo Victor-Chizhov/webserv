@@ -31,7 +31,7 @@ Location &Location::operator=(const Location &copy) {
     return *this;
 }
 
-void Location::setConfig(std::string configLine) {
+void Location::setConfig(std::string &configLine) {
     this->locationConfig.push_back(configLine);
 }
 
