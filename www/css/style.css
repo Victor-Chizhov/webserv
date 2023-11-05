@@ -352,6 +352,7 @@ button {
     width: 100%;
     float: left;
     padding-bottom: 305px;
+    /* padding-bottom: 180px; */
 }
 
 .banner_taital {
@@ -393,7 +394,7 @@ button {
 }
 
 .read_bt a:hover {
-    background-color: #0a41ae;
+    background-color: #111111;
     color: #ffffff;
 }
 
@@ -431,10 +432,23 @@ button {
     margin-top: 90px;
 }
 
+.services_section_3 {
+    width: 100%;
+    float: left;
+    margin-top: 1rem;
+}
+
 .services_img {
     width: 100%;
     float: left;
     text-align: center;
+}
+
+.services_img2 {
+    width: 100%;
+    text-align: center;
+    border-radius: 50%;
+    margin-bottom: 1rem;
 }
 
 .btn_main {
@@ -464,7 +478,7 @@ button {
 
 .btn_main.active a {
     color: #ffffff;
-    background-color: #000d10;
+    background-color: #0a52dd;
 }
 
 
@@ -517,7 +531,7 @@ button {
     float: left;
     font-size: 16px;
     color: #ffffff;
-    background-color: #000d10;
+    background-color: #0a52dd;
     text-align: center;
     padding: 10px 0px;
     border-radius: 30px;
@@ -527,7 +541,7 @@ button {
 
 .readmore_bt a:hover {
     color: #ffffff;
-    background-color: #0a52dd;
+    background-color: #111111;
 }
 
 .about_img {
@@ -544,7 +558,7 @@ button {
 .blog_section {
     width: 100%;
     float: left;
-    background-image: url(../images/blog-bg.png);
+    background-image: url(../images/bg-info.jpg);
     height: auto;
     background-repeat: no-repeat;
     background-size: 100%;
@@ -770,7 +784,7 @@ button {
     float: left;
     font-size: 16px;
     color: #ffffff;
-    background-color: #000d10;
+    background-color: #0a52dd;
     text-align: center;
     padding: 10px 0px;
     border-radius: 30px;
@@ -780,7 +794,7 @@ button {
 }
 
 .read_bt_1 a:hover {
-    background-color: #0a52dd;
+    background-color: #111111;
     color: #ffffff;
 }
 
