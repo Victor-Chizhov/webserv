@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="viewport" content="initial-scale=1, maximum-scale=1">
       <!-- site metas -->
-      <title>A World</title>
+      <title>Web Server</title>
       <meta name="keywords" content="">
       <meta name="description" content="">
       <meta name="author" content="">
@@ -153,7 +153,7 @@
                   </div>
                </div>
                <div class="col-md-6 padding_right_0">
-                  <div><img src="images/intra.jpg" class="about_img"></div>
+                  <div><img src="images/intra2.jpg" class="about_img"></div>
                </div>
             </div>
          </div>
@@ -206,8 +206,15 @@
       <!-- choose section start -->
       <div class="choose_section layout_padding">
          <div class="container">
-            <h1 class="choose_taital">Why Choose Us</h1>
-            <p class="choose_text">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All </p>
+            <h1 class="choose_taital">Common Gateway Interface</h1>
+            <p class="choose_text">In computing, Common Gateway Interface (CGI) is an interface specification that enables web servers to execute an external program to process HTTP/S user requests.</p>
+            <p class="choose_text">Such programs are often written in a scripting language and are commonly referred to as CGI scripts, but they may include compiled programs.</p>
+            <p class="choose_text">A typical use case occurs when a web user submits a web form on a web page that uses CGI. 
+               The form's data is sent to the web server within an HTTP request with a URL denoting a CGI script. The web server then launches the CGI script in a new computer process, 
+               passing the form data to it. The output of the CGI script, usually in the form of HTML, is returned by the script to the Web server, 
+               and the server relays it back to the browser as its response to the browser's request.</p>
+            <p class="choose_text">Developed in the early 1990s, CGI was the earliest common method available that allowed a web page to be interactive. 
+               Due to a necessity to run CGI scripts in a separate process every time the request comes in from a client, various alternatives were developed. </p>
             <div class="read_bt_1"><a href="#">Read More</a></div>
             <div class="newsletter_box">
                <h1 class="let_text">Upload Files Now</h1>
@@ -219,19 +226,77 @@
       <!-- footer section start -->
       <div class="footer_section">
          <div class="container">
-            <div class="location_main">
-               <div class="call_text"><img src="images/call-icon.png"></div>
-               <div class="call_text"><a href="#">Call +01 1234567890</a></div>
-               <div class="call_text"><img src="images/mail-icon.png"></div>
-               <div class="call_text"><a href="#">demo@gmail.com</a></div>
-            </div>
-            <div class="social_icon">
-               <ul>
-                  <li><a href="#"><img src="images/fb-icon.png"></a></li>
-                  <li><a href="#"><img src="images/twitter-icon.png"></a></li>
-                  <li><a href="#"><img src="images/linkedin-icon.png"></a></li>
-                  <li><a href="#"><img src="images/instagram-icon.png"></a></li>
-               </ul>
+            <footer class="bg-color text-white mt-6">
+               <div class="container">
+                 <div class="row py-5">
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
+                     <div class="pe-lg-5 pe-0 pe-md-3">
+                       <img src="./images/logo42white.svg" alt="" width="200" class="mb-3">
+                       <p class="opacity-75">
+                         Webserv Project
+                       </p>
+                     </div>
+                   </div>
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
+                     <h6 class="text-uppercase fw-bold mb-4 text-white">
+                       42 Yerevan
+                     </h6>
+                     <p class="opacity-75">
+                       <a href="/#about" class="text-decoration-none text-white">
+                         About Project
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="/#features" class="text-decoration-none text-white">
+                         What is Webserver
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="/#questions" class="text-decoration-none text-white">
+                         Our Team
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="/#trial" class="text-decoration-none text-white">
+                        Common Gateway Interface
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="/#!" class="text-decoration-none text-white">
+                         {{ $t('footer.action') }}
+                       </a>
+                     </p>
+                   </div>
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
+                     <h6 class="text-uppercase fw-bold mb-4">
+                       {{ $t('footer.contacts') }}
+                     </h6>
+                     <p class="opacity-75">
+                       <font-awesome-icon icon="fa-solid fa-home" class="me-3" />
+                       {{ $t('footer.address') }}
+                     </p>
+                     <p class="opacity-75">
+                       <font-awesome-icon icon="fa-solid fa-envelope" class="me-3" />
+                       info@accountify.site
+                     </p>
+                     <p class="opacity-75">
+                       <font-awesome-icon icon="fa-solid fa-phone" class="me-3" />
+                       + 374 55 498401
+                     </p>
+                     <p class="opacity-75 mt-5 underline">
+                       <router-link to="/privacy-policy" class="text-decoration-none text-white">
+                         {{ $t('footer.license') }}
+                       </router-link>
+                     </p>
+                   </div>
+                 </div>
+               </div>
+               <!-- Copyright -->
+               <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.35);">
+                 © 2023 Copyright 42 Yerevan
+               </div>
+               <!-- Copyright -->
+             </footer>
             </div>
          </div>
       </div>

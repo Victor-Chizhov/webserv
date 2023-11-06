@@ -351,8 +351,9 @@ button {
 .banner_section {
     width: 100%;
     float: left;
-    padding-bottom: 305px;
+    /* padding-bottom: 305px; */
     /* padding-bottom: 180px; */
+    height: 80vh;
 }
 
 .banner_taital {
@@ -556,6 +557,17 @@ button {
 /* blog section start */
 
 .blog_section {
+    width: 100%;
+    float: left;
+    background-image: url(../images/bg-info.jpg);
+    height: auto;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    padding-bottom: 345px;
+    padding-top: 200px;
+}
+
+.blog_section2 {
     width: 100%;
     float: left;
     background-image: url(../images/bg-info.jpg);
@@ -801,7 +813,7 @@ button {
 .newsletter_box {
     width: 100%;
     border: 1px solid #6e6e6e;
-    border-radius: 25px;
+    /* border-radius: 25px; */
     padding: 20px 30px;
     display: flex;
     margin-top: 90px !important;
@@ -910,7 +922,8 @@ button {
 .footer_section {
     width: 100%;
     float: left;
-    background-image: url(../images/bg-foot.jpg);
+    /* background-image: url(../images/bg-foot.jpg); */
+    background-color: #1c1c1c;
     height: auto;
     /* padding-top: 250px; */
     background-size: 100% 100%;
