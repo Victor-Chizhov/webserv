@@ -17,11 +17,12 @@ class Location : public Parser {
         std::vector<std::string> methods;
 
     public:
+
         Location();
         Location(const Location &copy);
         Location &operator=(const Location &copy);
 
-        void setConfig(std::string configLine);
+        void setConfig(std::string &configLine);
         void printDataConfig() const;
         void printLocationData();
 

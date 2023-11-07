@@ -11,12 +11,12 @@ Server::Server() {
 
 }
 
-void Server::setConfig(std::string configLine) {
+void Server::setConfig(std::string &configLine) {
     this->serverConfig.push_back(configLine);
 }
 
 void Server::printDataConfig() const {
-    std::cout << "-----------------" << std::endl << "Server Config:" << std::endl << "-----------------" << std::endl;
+    std::cout << "----------------------------------" << std::endl;
     for (std::vector<std::string>::const_iterator it = this->serverConfig.begin(); it != this->serverConfig.end(); it++) {
         std::cout << *it << std::endl;
     }
@@ -41,8 +41,6 @@ void Server::createVectorOfLocations() {
     addConfigInArray<Location>(locations, serverConfig, "location");
 }
 
-/* удалить данные из сервера поскольку удаление из локайшн не удаляется */
-
 void Server::fillEachLocationWithData() {
     for (size_t i = 0; i < locations.size(); i++) {
         locations[i].updateDataInLocation();
@@ -56,6 +54,9 @@ void Server::updateDataInServer() {
         cutDataNum(serverConfig[i], "port", port);
         cutDataNum(serverConfig[i], "client_max_body_size", clientMaxBodySize);
         cutDataMap(serverConfig[i], "error_page", errorPages);
+        if (serverConfig[i].find("location") != std::string::npos) {
+            break;
+        }
     }
 }
 
@@ -63,8 +64,7 @@ void Server::addDataInServer() {
     createVectorOfLocations();
     fillEachLocationWithData();
     updateDataInServer();
-//    printServerData();
-    printDataConfig();
+    printServerData();
 }
 
 
