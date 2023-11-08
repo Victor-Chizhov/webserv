@@ -14,11 +14,12 @@
 
 #include <iostream>
 #include <ratio>
+#include <stdexcept>
+#include <string>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fstream>
-#include <streamoff>
 #include "../request/Request.hpp"
 #include "../../include/Parser.hpp"
 
@@ -78,29 +79,42 @@ int main() {
 		std::string url = request.getUrl();
 		url.erase(0, 1);
 
-		if (url.find(".jpg") != std::string::npos || url.find(".png") != std::string::npos) {
+		if (url.find(".jpg") != std::string::npos ||
+				url.find(".png") != std::string::npos ||
+				url.find(".svg") != std::string::npos ||
+				url.find(".ico") != std::string::npos) {
+			std::cout << "IMAGE" << std::endl;
 			std::ifstream file(url.c_str(), std::ios::binary);
+			if (!file.is_open() || file.fail()){
+				std::cout << url << std::endl;
+				close(newsockfd);
+				continue;
+			}
 			// get length of file:
-			std::streampos len = file.seekg(0, std::ios::end);
+			std::streampos len = file.seekg(0, std::ios::end).tellg();
 			file.seekg(0, std::ios::beg);
 
 			std::string response;
 
-			response = "HTTP/1.1 200 OK\n\n";
-			response += "Content-Type: ";
-			response += url.substr(url.find_last_of(".") + 1);
-			response += "\n\n";
-			response += "Content-Length: ";
-			response += std::to_string(file.tellg());
-			response += "\n\n";
-			char *buffer = new char[1024];
-			while (file.read(buffer, 1024)) {
-				response.append(buffer, 1024);
+			response = "HTTP/1.1 200 OK\n";
+			if (url.find(".svg") != std::string::npos)
+				response += "Content-Type: image/svg+xml";
+			else {
+				response += "Content-Type: image/";
+				response += url.substr(url.find(".") + 1);
 			}
-			response.append("\n\n");
+			response += "\n";
+			response += "Content-Length: ";
+			response += std::to_string(len);
+			response += "\n\n";
+			std::string line;
+			line.resize(len);
+			file.read(&line[0], len);
+			response += line;
+			response += "\n\n";
+			std::cout << "len: " << response.length() << std::endl;
 			send(newsockfd, response.c_str(), response.length(), 0);
 			file.close();
-			delete [] buffer;
 			close(newsockfd);
 			continue;
 		}
