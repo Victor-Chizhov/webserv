@@ -1,7 +1,7 @@
 #include "../../include/Config.hpp"
 
 int main() {
-    Config data("/Users/vchizhov/Desktop/WebserProject/webserv/config/webserv.conf");
+    Config data("config/webserv.conf");
 
     try {
         data.parseConfig();
