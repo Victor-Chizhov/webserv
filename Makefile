@@ -1,6 +1,6 @@
 NAME     = webserv
 GCC      = c++
-CFLAGS   = -Wall -Wextra -Werror -std=c++98 -I./include #-fsanitize=address
+CFLAGS   = -Wall -Wextra -Werror -std=c++98 -I./include -g #-fsanitize=address
 RM       = rm -rf
 OUTPUT   = ./$(NAME)
 LIBS     = -I./include/
@@ -8,7 +8,7 @@ LIBS     = -I./include/
 # Compiled directories
 SRC = src
 OBJ = obj
-SUBDIRS = main parseConfig
+SUBDIRS = main parseConfig request
 
 # Folder directions
 SRC_DIR = $(foreach dir, $(SUBDIRS), $(addprefix $(SRC)/, $(dir)))
