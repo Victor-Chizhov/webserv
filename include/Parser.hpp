@@ -9,7 +9,8 @@
 #include <cstring>
 #include <sstream>
 #include <cstdlib>
-#include "Location.hpp"
+#include <sys/stat.h>
+
 
 class Parser {
 
@@ -18,24 +19,37 @@ class Parser {
         void cutDataStr(std::string &line, std::string finder, std::string &data);
         void cutDataMap(std::string &line, std::string finder, std::map<int, std::string> &data);
         void cutDataNum(std::string &line, std::string finder, unsigned long &data);
-        bool checkEmptyString(std::string str);
+        void cutDataBool(std::string &line, std::string finder, bool &data);
+        void cutDataArray(std::string &line, std::string finder, std::vector<std::string> &data);
+        void ParseAndCheckLine(std::string &line, std::string finder);
+        std::string trim(const std::string &line);
+        std::string fullTrim(const std::string &line);
 
         template<typename T>
         bool isValidNum(const std::string& str, T numValue);
 
         template<typename T>
-        void addConfigsInArray(std::vector<T> &array, std::vector<std::string> &configLine, std::string finder);
+        void addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLine, std::string finder);
+
+        void setConfig(std::string &configLine);
+
+        void printDataConfig() const;
+
+
 };
 
+//сделать проверку на fghfgh server dfkghdfkg {
+//сделать проверку на flgdlfg location dfkgjdkjg {
+
+
 template<typename T>
-void Parser::addConfigsInArray(std::vector<T> &array, std::vector<std::string> &configLines, std::string finder) {
+void Parser::addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLines, std::string finder) {
     for (size_t i = 0; i < configLines.size(); i++) {
-        removeSpaces(configLines[i]);
         if (configLines[i].find(finder) != std::string::npos) {
             T data;
             size_t openBrackets = 0;
             while (i < configLines.size()) {
-                data.setServerConfig(configLines[i]);
+                data.setConfig(configLines[i]);
                 if (configLines[i].find("{") != std::string::npos) { openBrackets++; }
                 if (configLines[i].find("}") != std::string::npos) { openBrackets--; }
                 if (openBrackets == 0) { break; }
