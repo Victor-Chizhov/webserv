@@ -1,33 +1,31 @@
 NAME     = webserv
 GCC      = c++
-CFLAGS   = -Wall -Wextra -Werror -std=c++98 -I./include -g #-fsanitize=address
+CXXFLAGS   = -Wall -Wextra -Werror -std=c++98 -I./include -g
 RM       = rm -rf
 OUTPUT   = ./$(NAME)
 LIBS     = -I./include/
 
-# Compiled directories
 SRC = src
 OBJ = obj
-SUBDIRS = main parseConfig request
 
-# Folder directions
-SRC_DIR = $(foreach dir, $(SUBDIRS), $(addprefix $(SRC)/, $(dir)))
-OBJ_DIR = $(foreach dir, $(SUBDIRS), $(addprefix $(OBJ)/, $(dir)))
-
-# File directions
-SRCS = $(foreach dir, $(SRC_DIR), $(wildcard $(dir)/*.cpp))
-OBJS = $(subst $(SRC), $(OBJ), $(SRCS:.cpp=.o))
+SRCS = $(wildcard $(SRC)/**/*.cpp)
+SRCS += $(wildcard $(SRC)/*.cpp)
+OBJS = $(SRCS:$(SRC)%.cpp=$(OBJ)%.o)
 
 all: $(NAME)
 
-$(NAME): $(LIB_DIR) Makefile $(OBJS)
-	@$(GCC) -o $(NAME) $(OBJS) -g $(CFLAGS) -lncurses
+$(NAME): $(OBJ) $(LIB_DIR) Makefile $(OBJS)
+	@$(GCC) -o $(NAME) $(OBJS) -g $(CXXFLAGS)
 
-$(OBJ)/%.o: $(SRC)/%.cpp $(LIB_DIR)
-	@mkdir -p $(OBJ) $(OBJ_DIR)
-	@$(GCC) $(CFLAGS) $(LIBS) -c $< -o $@
+$(OBJ)/%.o: $(SRC)/%.cpp
+	@mkdir -p $(@D)
+	@$(GCC) $(CXXFLAGS) -c $< -o $@
+
+$(OBJ):
+	@mkdir -p $(OBJ)
 
 clean:
+	@$(RM) $(OBJS)
 	@$(RM) $(OBJ)
 
 fclean: clean
