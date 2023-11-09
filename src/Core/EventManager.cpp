@@ -20,6 +20,7 @@ void EventManager::addClientSocket(int clientSocket) {
 
 // Метод для ожидания событий и их обработки
 void EventManager::waitAndHandleEvents() {
+	struct sockaddr_in clientAddr;
     while (true) {
         fd_set tempReadSet = readSet;
         int activity = select(maxSocket + 1, &tempReadSet, NULL, NULL, NULL);
@@ -35,7 +36,7 @@ void EventManager::waitAndHandleEvents() {
                 if (FD_ISSET(currentSocket, &tempReadSet)) {
                     if (currentSocket == listenSocket) {
                         // Если событие на слушающем сокете, это новое подключение
-                        int clientSocket = accept(listenSocket, /*...*/);
+                        int clientSocket = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrLen);
                         if (clientSocket == -1) {
                             perror("Error accepting connection");
                             // Обработка ошибки при принятии нового соединения

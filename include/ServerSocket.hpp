@@ -16,6 +16,7 @@ private:
     int port;
     int backlog;
 	EventManager eventManager;
+	
     // Другие члены данных для настроек сервера
 };
 

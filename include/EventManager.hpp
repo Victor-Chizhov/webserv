@@ -7,7 +7,7 @@
 
 //Класс, отвечающий за управление событиями. 
 
-class EventManager {
+class EventManager : {
 public:
     EventManager();
     ~EventManager();
