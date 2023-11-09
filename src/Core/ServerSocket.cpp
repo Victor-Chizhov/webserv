@@ -46,7 +46,7 @@ void ServerSocket::start() {
 	std::cout << "Server listening on port " << port << std::endl;
 
 	// настройка event-менеджера
-    eventManager.addClientSocket(listenSocket);
+    eventManager.addServerSocket(listenSocket);
 	eventManager.waitAndHandleEvents();
 	stop();
 }

@@ -8,7 +8,7 @@ LIBS     = -I./include/
 # Compiled directories
 SRC = src
 OBJ = obj
-SUBDIRS = main parseConfig request
+SUBDIRS = main parseConfig request Core
 
 # Folder directions
 SRC_DIR = $(foreach dir, $(SUBDIRS), $(addprefix $(SRC)/, $(dir)))
