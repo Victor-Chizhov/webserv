@@ -79,7 +79,12 @@ void handleRequest(std::string buffer, int newsockfd)
 			response += line;
 		}
 		file.close();
-		send(newsockfd, response.c_str(), response.length(), 0);
+    ssize_t bytesSent = send(newsockfd, response.c_str(), response.length(), 0);
+    if (bytesSent == -1) {
+        perror("Error in send");
+    } else {
+        std::cout << "Sent " << bytesSent << " bytes successfully." << std::endl;
+    }
 
 		// Close sockets
 		close(newsockfd);
@@ -145,7 +150,6 @@ void EventManager::waitAndHandleEvents() {
                         int bytesRead = read(clientSocket, buffer, 1024);
                         printf("%s\n", buffer);
                         printf("%d\n", bytesRead);
-                        close(clientSocket);
                         std::string httpRequest(buffer, bytesRead);
 					    handleRequest(httpRequest, clientSocket);
 					}
