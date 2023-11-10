@@ -15,6 +15,7 @@
 void handleRequest(std::string buffer, int newsockfd)
 {
 		// Print message from client
+        std::cout << "LOL" << std::endl;
 		std::cout << buffer << std::endl;
 
 		Request request(buffer);
@@ -124,7 +125,6 @@ void EventManager::waitAndHandleEvents() {
             perror("Error in select");
             break;
         }
-
         if (activity > 0) {
 			if (FD_ISSET(serverSockets[0], &readSet)) {
 					// Если событие на слушающем сокете, это новое подключение
@@ -136,28 +136,44 @@ void EventManager::waitAndHandleEvents() {
 						// Обработка ошибки при принятии нового соединения
 					} else {
 						std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-						addClientSocket(clientSocket);
+//						addClientSocket(clientSocket);
+
+
+
+                        char buffer[1024];
+                        memset(buffer, 0, 1024);
+                        int bytesRead = read(clientSocket, buffer, 1024);
+                        printf("%s\n", buffer);
+                        printf("%d\n", bytesRead);
+                        close(clientSocket);
+                        std::string httpRequest(buffer, bytesRead);
+					    handleRequest(httpRequest, clientSocket);
 					}
 			} 
-			std::list<Client>::iterator itBegin = clientSockets.begin();
-			std::list<Client>::iterator itEnd = clientSockets.end();
-			for (std::list<Client>::iterator it = itBegin; it != itEnd; ++it) {
-				int currentSocket = (*it).getClientSocket();
-				// Обработка других событий, например, чтение данных из клиентского сокета
-				char buffer[1024];
-				ssize_t bytesRead = recv(currentSocket, buffer, sizeof(buffer), 0);
-				if (bytesRead <= 0) {
-					std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
-					close(currentSocket);
-					FD_CLR(currentSocket, &readSet);
-					clientSockets.erase(it);
-					--it;
-				} else {
-					std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
-					std::string httpRequest(buffer, bytesRead);
-					handleRequest(httpRequest, currentSocket);
-				}
-			}
+//			std::list<Client>::iterator itBegin = clientSockets.begin();
+//			std::list<Client>::iterator itEnd = clientSockets.end();
+//			for (std::list<Client>::iterator it = itBegin; it != itEnd; ++it) {
+//				int currentSocket = it->getClientSocket();
+//				// Обработка других событий, например, чтение данных из клиентского сокета
+//				//char buffer[1024];
+//				//ssize_t bytesRead = recv(currentSocket, buffer, sizeof(buffer), 0);
+//
+//				char buffer[1024];
+//    			memset(buffer, 0, 1024);
+//
+//    			int bytesRead = read(currentSocket, buffer, 1024);
+//				if (bytesRead <= 0) {
+//					std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
+//					close(currentSocket);
+//					FD_CLR(currentSocket, &readSet);
+//					clientSockets.erase(it);
+//					--it;
+//				} else {
+//					std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
+//					std::string httpRequest(buffer, bytesRead);
+//					handleRequest(httpRequest, currentSocket);
+//				}
+//			}
 		}
 	}
 }
