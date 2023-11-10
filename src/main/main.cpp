@@ -49,6 +49,7 @@ int main() {
 	// }
 
 	ServerSocket run;
+	run.configure(8080, 120);
 	run.start();
 
 	// while (true) {

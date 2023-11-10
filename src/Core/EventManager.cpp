@@ -7,13 +7,13 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <fstream>
+#include <fcntl.h>
 #include "../request/Request.hpp"
 #include "../../include/Parser.hpp"
 #include "../../include/ServerSocket.hpp"
 
 void handleRequest(std::string buffer, int newsockfd)
 {
-
 		// Print message from client
 		std::cout << buffer << std::endl;
 
@@ -32,6 +32,7 @@ void handleRequest(std::string buffer, int newsockfd)
 				std::cout << url << std::endl;
 				close(newsockfd);
 				//continue;
+				return;
 			}
 			// get length of file:
 			std::streampos len = file.seekg(0, std::ios::end).tellg();
@@ -60,6 +61,7 @@ void handleRequest(std::string buffer, int newsockfd)
 			file.close();
 			close(newsockfd);
 			//continue;
+			return;
 		}
 		std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
 		std::string response;
@@ -68,6 +70,7 @@ void handleRequest(std::string buffer, int newsockfd)
 			send(newsockfd, response.c_str(), response.length(), 0);
 			close(newsockfd);
 			//continue;
+			return;
 		}
 		response = "HTTP/1.1 200 OK\n\n";
 		std::string line;
@@ -83,23 +86,22 @@ void handleRequest(std::string buffer, int newsockfd)
 
 EventManager::EventManager() : maxSocket(0) {
     FD_ZERO(&readSet);
+	FD_ZERO(&writeSet);
 }
 
 EventManager::~EventManager() {
     // Ничего особенного для деструктора, но можно добавить необходимую логику
 }
 
-// Метод для добавления клиентского сокета в event-менеджер
+// Метод для добавления серверного сокета в event-менеджер
 void EventManager::addServerSocket(int ServerSocket) {
     serverSockets.push_back(ServerSocket);
-    FD_SET(ServerSocket, &readSet);
-
-    if (ServerSocket > maxSocket) {
-        maxSocket = ServerSocket;
-    }
+	FD_SET(ServerSocket, &readSet); //тут по-моему использовать readSet не правильно
+	maxSocket = ServerSocket;
 }
 
 void EventManager::addClientSocket(int clientSocket) {
+	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
     // Добавляем клиентский сокет в список отслеживаемых сокетов
     clientSockets.push_back(Client(clientSocket));
 
@@ -114,7 +116,6 @@ void EventManager::addClientSocket(int clientSocket) {
 
 // Метод для ожидания событий и их обработки
 void EventManager::waitAndHandleEvents() {
-	
     while (true) {
         fd_set tempReadSet = readSet;
         int activity = select(maxSocket + 1, &tempReadSet, NULL, NULL, NULL);
@@ -125,37 +126,36 @@ void EventManager::waitAndHandleEvents() {
         }
 
         if (activity > 0) {
+			if (FD_ISSET(serverSockets[0], &readSet)) {
+					// Если событие на слушающем сокете, это новое подключение
+					struct sockaddr_in currentClientAddr = (*clientSockets.begin()).getStruct();
+					socklen_t clientAddrLen = sizeof(currentClientAddr);
+					int clientSocket = accept(serverSockets[0], (struct sockaddr*) &currentClientAddr, &clientAddrLen);
+					if (clientSocket == -1) {
+						perror("Error accepting connection");
+						// Обработка ошибки при принятии нового соединения
+					} else {
+						std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
+						addClientSocket(clientSocket);
+					}
+			} 
 			std::list<Client>::iterator itBegin = clientSockets.begin();
 			std::list<Client>::iterator itEnd = clientSockets.end();
-            for (std::list<Client>::iterator it = itBegin; it != itEnd; ++it) {
-                int currentSocket = (*it).getClientSocket();
-                if (FD_ISSET(serverSockets[0], &tempReadSet)) {
-                        // Если событие на слушающем сокете, это новое подключение
-						struct sockaddr_in currentClientAddr = (*it).getStruct();
-						socklen_t clientAddrLen = sizeof(currentClientAddr);
-                        int clientSocket = accept(serverSockets[0], (struct sockaddr*) &currentClientAddr, &clientAddrLen);
-                        if (clientSocket == -1) {
-                            perror("Error accepting connection");
-                            // Обработка ошибки при принятии нового соединения
-                        } else {
-                            std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-                            addClientSocket(clientSocket);
-                        }
+			for (std::list<Client>::iterator it = itBegin; it != itEnd; ++it) {
+				int currentSocket = (*it).getClientSocket();
+				// Обработка других событий, например, чтение данных из клиентского сокета
+				char buffer[1024];
+				ssize_t bytesRead = recv(currentSocket, buffer, sizeof(buffer), 0);
+				if (bytesRead <= 0) {
+					std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
+					close(currentSocket);
+					FD_CLR(currentSocket, &readSet);
+					clientSockets.erase(it);
+					--it;
 				} else {
-					// Обработка других событий, например, чтение данных из клиентского сокета
-					char buffer[1024];
-					ssize_t bytesRead = recv(currentSocket, buffer, sizeof(buffer), 0);
-					if (bytesRead <= 0) {
-						std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
-						close(currentSocket);
-						FD_CLR(currentSocket, &readSet);
-						clientSockets.erase(it);
-						--it;
-					} else {
-						std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
-						std::string httpRequest(buffer, bytesRead);
-						handleRequest(httpRequest, currentSocket);
-					}
+					std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
+					std::string httpRequest(buffer, bytesRead);
+					handleRequest(httpRequest, currentSocket);
 				}
 			}
 		}

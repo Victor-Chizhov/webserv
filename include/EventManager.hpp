@@ -33,6 +33,7 @@ public:
 
 private:
     fd_set readSet;
+	fd_set writeSet;
     std::vector<int> serverSockets;
 	std::list<Client> clientSockets;
     int maxSocket;
