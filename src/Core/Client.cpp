@@ -7,7 +7,8 @@ Client::Client(int clientSocket) : clientSocket(clientSocket) {
 
 Client::~Client() {
     // Закрытие клиентского сокета при уничтожении объекта
-    close(clientSocket);
+	std::cout << "Client " << clientSocket << " destructor" << std::endl;
+    //close(clientSocket);
 }
 
 // Метод для чтения данных из клиентского сокета в предоставленный буфер.
