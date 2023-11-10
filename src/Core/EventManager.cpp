@@ -127,6 +127,7 @@ void EventManager::waitAndHandleEvents() {
         }
 
         if (activity > 0) {
+			// int currentClientSocket = 0;
 			if (FD_ISSET(serverSockets[0], &readSet)) {
 					// Если событие на слушающем сокете, это новое подключение
 					struct sockaddr_in clientAddr;
@@ -137,12 +138,16 @@ void EventManager::waitAndHandleEvents() {
 						// Обработка ошибки при принятии нового соединения
 					} else {
 						std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-						addClientSocket(clientSocket);
+						// addClientSocket(clientSocket);
+						clientSockets.push_back(new Client(clientSocket));
+						// currentClientSocket = clientSocket;
 					}
-			} 
-			std::list<Client *>::iterator itBegin = clientSockets.begin();
-			std::list<Client *>::iterator itEnd = clientSockets.end();
-			for (std::list<Client *>::iterator it = itBegin; it != itEnd; ++it) {
+			} else {
+				assert(0);
+			}
+			// std::list<Client *>::iterator itBegin = clientSockets.begin();
+			// std::list<Client *>::iterator itEnd = clientSockets.end();
+			for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
 				int currentSocket = (*it)->getClientSocket();
 				// Обработка других событий, например, чтение данных из клиентского сокета
                 char buffer[1024];
@@ -150,15 +155,18 @@ void EventManager::waitAndHandleEvents() {
 
                 int bytesRead = read(currentSocket, buffer, 1024);
 				if (bytesRead <= 0) {
+					assert(0);
 					std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
 					close(currentSocket);
 					FD_CLR(currentSocket, &readSet);
-					clientSockets.erase(it);
-					--it;
+					// clientSockets.erase(it); // To-do: fix iterator invalidatation.
+					// --it;
 				} else {
 					std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
 					std::string httpRequest(buffer, bytesRead);
 					handleRequest(httpRequest, currentSocket);
+					it = clientSockets.erase(it);
+					--it; // Edge cases?
 				}
 			}
 		}
