@@ -1,37 +1,16 @@
-/* #include "../../include/Config.hpp" */
-
-/* int main() { */
-/*     Config data("/Users/gkhaishb/Desktop/Webserv/config/webserv.conf"); */
-
-/*     try { */
-/*         data.parseConfig(); */
-/*     } catch (std::exception &e) { */
-/*         std::cout << e.what() << std::endl; */
-/*     } */
-
-/*     return 0; */
-/* } */
-
-#include <iostream>
-#include <ratio>
-#include <stdexcept>
-#include <string>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fstream>
+#include "../../include/Config.hpp"
 #include "../request/Request.hpp"
 #include "../../include/Parser.hpp"
 
 #define PORT 8000
 
-int main() {
-<<<<<<< HEAD
+int start() {
+
     Config data("config/webserv.conf");
-=======
+
 	// Create socket
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
->>>>>>> requset
+
 
 	// Check if socket was created
 	if (sockfd < 0) {
@@ -143,4 +122,17 @@ int main() {
 	}
 	close(sockfd);
 	return (0);
+}
+
+int main() {
+    Config data("/Users/gkhaishb/Desktop/Webserv/config/webserv.conf");
+
+    try {
+        data.parseConfig();
+        data.startServers();
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    return 0;
 }
