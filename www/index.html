@@ -85,7 +85,13 @@
                            You will be able to test it with an actual browser.
                            HTTP is one of the most used protocols on the internet.
                            Knowing its arcane will be useful, even if you won’t be working on a website.</p>
-                        <div class="read_bt"><a href="#">Upload Files</a></div>
+                        <div class="read_bt">
+<!--                            <a href="#">Upload Files</a>-->
+                            <label for="fileInput" class="upload">
+                                Upload Files
+                            </label>
+                            <input type="file" name="file" id="fileInput" style="display: none;" onchange="handleFileUpload(this)" />
+                        </div>
                      </div>
                   </div>
                </div>
@@ -291,5 +297,6 @@
             </div>
          </div>
       </div>
+   <script src="js/download.js"></script>
    </body>
 </html>
