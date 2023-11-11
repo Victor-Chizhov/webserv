@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 	// }
 	(void)argc;
 	ServerSocket run;
-	run.configure(atoi(argv[1]), 120);
+	run.configure(atoi(argv[1]), 32);
 	run.start();
 
 	// while (true) {

@@ -86,6 +86,8 @@ void handleRequest(std::string buffer, int newsockfd)
 EventManager::EventManager() : maxSocket(0) {
     FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
+	//FD_ZERO(&read_master);
+	//FD_ZERO(&write_master);
 }
 
 EventManager::~EventManager() {
@@ -95,8 +97,10 @@ EventManager::~EventManager() {
 // Метод для добавления серверного сокета в event-менеджер
 void EventManager::addServerSocket(int ServerSocket) {
     serverSockets.push_back(ServerSocket);
-	FD_SET(ServerSocket, &readSet); //тут по-моему использовать readSet не правильно
-	maxSocket = ServerSocket;
+	FD_SET(ServerSocket, &read_master);
+	if (ServerSocket > maxSocket) {
+        maxSocket = ServerSocket;
+    }
 }
 
 void EventManager::CreateAddClientSocket(int serverSocket) {
@@ -113,7 +117,7 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 	В неблокирующем режиме операции ввода-вывода не блокируют выполнение программы, даже если данных на самом деле нет или данные не могут быть записаны. Вместо этого функции чтения и записи возвращают управление сразу, даже если операция не может быть завершена. Это полезно в асинхронных или многозадачных приложениях, где важно избегать блокировки программы в ожидании данных. */
 	
     // Добавляем клиентский сокет в множество для использования в select
-    //FD_SET(clientSocket, &readSet);
+    //FD_SET(clientSocket, &read_master);
 
     // Обновляем максимальный дескриптор, если необходимо
     if (clientSocket > maxSocket) {
@@ -126,6 +130,8 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 // Метод для ожидания событий и их обработки
 void EventManager::waitAndHandleEvents() {
     while (maxSocket) {
+		readSet = read_master;
+		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
 		/* Функция select возвращает количество готовых дескрипторов (сокетов), на которых произошли события, из общего числа дескрипторов в множестве (наборе). Если возвратное значение select равно 0, то это означает, что прошло указанное время ожидания, но ни на одном из дескрипторов не произошло событие. Если значение меньше 0, то произошла ошибка. 
 		maxSocket: Это самый большой дескриптор во множестве плюс 1.

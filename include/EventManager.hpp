@@ -34,6 +34,8 @@ public:
 private:
     fd_set readSet;
 	fd_set writeSet;
+	fd_set read_master;
+	fd_set write_master;
     std::vector<int> serverSockets;
 	std::list<Client *> clientSockets;
     int maxSocket;
