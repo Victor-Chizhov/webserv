@@ -43,19 +43,13 @@ void handleRequest(std::string buffer, int newsockfd)
 			response = "HTTP/1.1 200 OK\n";
 			if (url.find(".svg") != std::string::npos)
 				response += "Content-Type: image/svg+xml";
-			else {
-				response += "Content-Type: image/";
-				response += url.substr(url.find(".") + 1);
-			}
-			response += "\n";
-			response += "Content-Length: ";
-			response += std::to_string(len);
-			response += "\n\n";
+			else
+				response += "Content-Type: image/" + url.substr(url.find(".") + 1);
+			response += "\nContent-Length: " + std::to_string(len) + "\n\n";
 			std::string line;
 			line.resize(len);
 			file.read(&line[0], len);
-			response += line;
-			response += "\n\n";
+			response += line + "\n\n";
 			std::cout << "len: " << response.length() << std::endl;
 			send(newsockfd, response.c_str(), response.length(), 0);
 			file.close();
