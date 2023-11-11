@@ -107,77 +107,68 @@ void EventManager::addServerSocket(int ServerSocket) {
 }
 
 void EventManager::addClientSocket(int clientSocket) {
-	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+	//fcntl(clientSocket, F_SETFL, O_NONBLOCK);
     // Добавляем клиентский сокет в список отслеживаемых сокетов
-    clientSockets.push_back(Client(clientSocket));
+	Client *newClient = new Client(clientSocket);
+	clientSockets.push_back(newClient);
 
     // Добавляем клиентский сокет в множество для использования в select
-    FD_SET(clientSocket, &readSet);
+    //FD_SET(clientSocket, &readSet);
 
     // Обновляем максимальный дескриптор, если необходимо
-    if (clientSocket > maxSocket) {
-        maxSocket = clientSocket;
-    }
+    // if (clientSocket > maxSocket) {
+    //     maxSocket = clientSocket;
+    // }
 }
 
 // Метод для ожидания событий и их обработки
 void EventManager::waitAndHandleEvents() {
-    while (true) {
-        fd_set tempReadSet = readSet;
-        int activity = select(maxSocket + 1, &tempReadSet, NULL, NULL, NULL);
+    while (maxSocket) {
+        int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
+		/* Функция select возвращает количество готовых дескрипторов (сокетов), на которых произошли события, из общего числа дескрипторов в множестве (наборе). Если возвратное значение select равно 0, то это означает, что прошло указанное время ожидания, но ни на одном из дескрипторов не произошло событие. Если значение меньше 0, то произошла ошибка. 
+		maxSocket: Это самый большой дескриптор во множестве плюс 1.
+		readSet, writeSet, exceptfds(четвертый аргумент): Это три указателя на множества дескрипторов, где readSet используется для отслеживания событий чтения, writeSet - для событий записи, exceptfds - для исключительных событий (ошибок).
+		timeout(пятый аргумент): Это указатель на структуру timeval, который определяет максимальное время ожидания. Если timeout установлен в NULL, то select будет ждать бесконечно. */
 
-        if (activity == -1) {
-            perror("Error in select");
-            break;
+        if (activity <= 0) {
+            continue ;
         }
-        if (activity > 0) {
-			if (FD_ISSET(serverSockets[0], &readSet)) {
-					// Если событие на слушающем сокете, это новое подключение
-					struct sockaddr_in currentClientAddr = (*clientSockets.begin()).getStruct();
-					socklen_t clientAddrLen = sizeof(currentClientAddr);
-					int clientSocket = accept(serverSockets[0], (struct sockaddr*) &currentClientAddr, &clientAddrLen);
-					if (clientSocket == -1) {
-						perror("Error accepting connection");
-						// Обработка ошибки при принятии нового соединения
-					} else {
-						std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-//						addClientSocket(clientSocket);
 
+		if (FD_ISSET(serverSockets[0], &readSet)) {
+				// Если событие на слушающем сокете, это новое подключение
+				struct sockaddr_in clientAddr;
+				socklen_t clientAddrLen = sizeof(clientAddr);
+				int clientSocket = accept(serverSockets[0], (struct sockaddr*) &clientAddr, &clientAddrLen);
+				if (clientSocket == -1) {
+					perror("Error accepting connection");
+					// Обработка ошибки при принятии нового соединения
+				} else {
+					std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
+					addClientSocket(clientSocket);
+				}
+		}
+		for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
+			//бегаем по всем клиентам и выполняем действия read и write
+			int currentSocket = (*it)->getClientSocket();
+			// Обработка других событий, например, чтение данных из клиентского сокета
+			char buffer[1024];
+			memset(buffer, 0, 1024);
 
-
-                        char buffer[1024];
-                        memset(buffer, 0, 1024);
-                        int bytesRead = read(clientSocket, buffer, 1024);
-                        printf("%s\n", buffer);
-                        printf("%d\n", bytesRead);
-                        std::string httpRequest(buffer, bytesRead);
-					    handleRequest(httpRequest, clientSocket);
-					}
-			} 
-//			std::list<Client>::iterator itBegin = clientSockets.begin();
-//			std::list<Client>::iterator itEnd = clientSockets.end();
-//			for (std::list<Client>::iterator it = itBegin; it != itEnd; ++it) {
-//				int currentSocket = it->getClientSocket();
-//				// Обработка других событий, например, чтение данных из клиентского сокета
-//				//char buffer[1024];
-//				//ssize_t bytesRead = recv(currentSocket, buffer, sizeof(buffer), 0);
-//
-//				char buffer[1024];
-//    			memset(buffer, 0, 1024);
-//
-//    			int bytesRead = read(currentSocket, buffer, 1024);
-//				if (bytesRead <= 0) {
-//					std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
-//					close(currentSocket);
-//					FD_CLR(currentSocket, &readSet);
-//					clientSockets.erase(it);
-//					--it;
-//				} else {
-//					std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
-//					std::string httpRequest(buffer, bytesRead);
-//					handleRequest(httpRequest, currentSocket);
-//				}
-//			}
+			int bytesRead = read(currentSocket, buffer, 1024);
+			if (bytesRead <= 0) {
+				assert(0);
+				std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
+				close(currentSocket);
+				FD_CLR(currentSocket, &readSet);
+				// clientSockets.erase(it); // To-do: fix iterator invalidatation.
+				// --it;
+			} else {
+				std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
+				std::string httpRequest(buffer, bytesRead);
+				handleRequest(httpRequest, currentSocket);
+				it = clientSockets.erase(it);
+				--it; // Edge cases?
+			}
 		}
 	}
 }
