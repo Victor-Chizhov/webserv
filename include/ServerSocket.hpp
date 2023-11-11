@@ -1,19 +1,12 @@
 #ifndef SERVERSOCKET_HPP
 #define SERVERSOCKET_HPP
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <cstring>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <stdio.h>
-
 #include "EventManager.hpp"
+#include "Libraries.hpp"
 
 class EventManager;
 
 
-//Этот класс ответственен за создание и управление слушающим сокетом, а также обработку входящих соединений.
 
 class ServerSocket {
 public:
@@ -28,8 +21,6 @@ private:
     int port;
     int backlog;
 	EventManager eventManager;
-	
-    // Другие члены данных для настроек сервера
 };
 
 
