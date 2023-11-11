@@ -26,7 +26,7 @@ public:
 
     // Метод для добавления клиентского сокета в event-менеджер
     void addServerSocket(int clientSocket);
-	void addClientSocket(int clientSocket);
+	void CreateAddClientSocket(int serverSocket);
 
     // Метод для ожидания событий и их обработки
     void waitAndHandleEvents();
