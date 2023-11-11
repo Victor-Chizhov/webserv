@@ -26,7 +26,7 @@
 
 #define PORT 8000
 
-int main() {
+int main(int argc, char **argv) {
 	// Create socket
 	// int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -47,9 +47,9 @@ int main() {
 	// 	std::cout << "Error binding socket" << std::endl;
 	// 	return (1);
 	// }
-
+	(void)argc;
 	ServerSocket run;
-	run.configure(8065, 120);
+	run.configure(atoi(argv[1]), 120);
 	run.start();
 
 	// while (true) {
