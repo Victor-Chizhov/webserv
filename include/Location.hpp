@@ -2,6 +2,7 @@
 #define LOCATION_HPP
 
 #include "Parser.hpp"
+#include "Libraries.hpp"
 
 
 class Location : public Parser {
