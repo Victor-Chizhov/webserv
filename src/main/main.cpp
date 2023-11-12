@@ -13,6 +13,8 @@ int main(int argc, char **argv) {
             //server.parseConfigFile(DataStorage::root + "/webserv.conf");
         } else {
             //server.parseConfigFile(DataStorage::root + "/" + argv[1]);
+			Config config(argv[1]);
+			config.parseConfig();
         }
         server.start();
     }

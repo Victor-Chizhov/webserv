@@ -33,22 +33,22 @@ void WebServ::generateListenSockets() {
 }
 
 void WebServ::parseConfigFile(const std::string &configFile) {
-    std::ifstream infile(configFile.c_str());
-    if (!infile.is_open())
-        configError();
-    std::vector<std::string> lines;
-    std::string line;
-    while (std::getline(infile, line)) {
-        lines.push_back(line);
-    }
-    infile.close();
-    removeComments(lines);
-    for (int i = 0; i < static_cast<int>(lines.size()); ++i) {
-        if (lines[i] == "server {")
-            parseServer(lines, _servers, i);
-        else
-            configError();
-    }
+    // std::ifstream infile(configFile.c_str());
+    // if (!infile.is_open())
+    //     configError();
+    // std::vector<std::string> lines;
+    // std::string line;
+    // while (std::getline(infile, line)) {
+    //     lines.push_back(line);
+    // }
+    // infile.close();
+    // removeComments(lines);
+    // for (int i = 0; i < static_cast<int>(lines.size()); ++i) {
+    //     if (lines[i] == "server {")
+    //         parseServer(lines, _servers, i);
+    //     else
+    //         configError();
+    // }
 }
 
 const std::vector<Server> &WebServ::getServers() const {

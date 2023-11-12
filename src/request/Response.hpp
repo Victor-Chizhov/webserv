@@ -11,13 +11,14 @@ private:
     std::string buffer;
     int newsockfd;
     std::string url;
-    std::string response;
 
     void getUrl();
     void findImage();
     void createResponse();
 
 public:
+    std::string response;
+	int sentLength;
     Response(std::string buf, int newsockfd);
     void handleRequest();
 };

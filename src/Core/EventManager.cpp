@@ -21,19 +21,21 @@ void EventManager::loop(std::vector<ListenSocket> &serverSockets, std::list<Clie
             } else if (clientSocketFd != -1) {
                 Client &clientSocket = getClientBySocketFd(clientSockets, currentEventSocketFd);
                 kEvent event = _eventsArr[i];
-                switch (event.filter) {
-                    ///if client socket event on reading
-                    case EVFILT_READ: {
-                        readRequest(clientSocket, event);
-                        createResponse(clientSocket);
-                        break;
-                    }
-                        ///if client socket event on writing
-                    case EVFILT_WRITE: {
-                        writeResponse(clientSocket, clientSockets);
-                        break;
-                    }
-                }
+				Response response(buf, clientSocket);
+				response.handleRequest();
+                // switch (event.filter) {
+                //     ///if client socket event on reading
+                //     case EVFILT_READ: {
+                //         readRequest(clientSocket, event);
+                //         createResponse(clientSocket);
+                //         break;
+                //     }
+                //         ///if client socket event on writing
+                //     case EVFILT_WRITE: {
+                //         writeResponse(clientSocket, clientSockets);
+                //         break;
+                //     }
+                // }
             }
         }
     }
@@ -41,9 +43,9 @@ void EventManager::loop(std::vector<ListenSocket> &serverSockets, std::list<Clie
 
 void EventManager::writeResponse(Client &clientSocket, std::list<Client> &clientSockets) const {
     int bufToWrite = 1024;
-    std::string response = clientSocket.Response.ResponseData;
+    std::string response = clientSocket.Response.response;
     int &sentLength = clientSocket.Response.sentLength;
-    int length = clientSocket.Response.ResponseData.size();
+    int length = clientSocket.Response.response.size();
     int writingRemainder = length - clientSocket.Response.sentLength;
     if (bufToWrite > writingRemainder)
         bufToWrite = writingRemainder;
@@ -78,7 +80,7 @@ void EventManager::readRequest(Client &clientSocket, const EventManager::kEvent 
     }
     if (received > 0)
         buf[received] = '\0';
-    clientSocket.Request.RequestData.append(buf, received);
+    //clientSocket.Request.RequestData.append(buf, received);
     validateEOF(clientSocket, event);
 }
 
@@ -91,7 +93,7 @@ void EventManager::createResponse(Client &clientSocket) const {
         return;
     }
     clientSocket.generateResponse();
-    if (!clientSocket.Response.ResponseData.empty())
+    if (!clientSocket.Response.response.empty())
         addClientEvent(clientSocket);
     RemoveClientEvent(clientSocket);
 }
@@ -117,9 +119,9 @@ void EventManager::registerListeningEvent(int socket) {
 
 void EventManager::validateEOF(Client &clientSocket, const EventManager::kEvent &event) const {
     ///check that request is empty and EOF
-    if (event.flags & EV_EOF && clientSocket.Request.RequestData.size() == 0) {
-        close(clientSocket.getSocket());
-    }
+    //if (event.flags & EV_EOF && clientSocket.Request.RequestData.size() == 0) {
+      //  close(clientSocket.getSocket());
+    //}
 }
 
 int EventManager::getEventsNumber() {

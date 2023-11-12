@@ -25,6 +25,7 @@ class Request {
 		Request(Request const &src);
 		Request &operator=(Request const &src);
 
+		
 		std::string const &getMethod() const;
 		std::string const &getVersion() const;
 		std::string const &getUrl() const;
