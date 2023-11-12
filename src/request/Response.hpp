@@ -8,18 +8,15 @@
 
 class Response {
 private:
-    std::string buffer;
-    int newsockfd;
-    std::string url;
-    std::string response;
+
 
     void getUrl();
     void findImage();
     void createResponse();
 
 public:
-    Response(std::string buf, int newsockfd);
-    void handleRequest();
+//    Response(std::string buf, int newsockfd);
+    void handleRequest(std::string buffer, int newsockfd);
 };
 
 
