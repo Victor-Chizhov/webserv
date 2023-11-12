@@ -1,21 +1,5 @@
 #include "../../include/EventManager.hpp"
-#include <iostream>
-#include <ratio>
-#include <stdexcept>
-#include <string>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <fstream>
-#include <fcntl.h>
-#include "../request/Request.hpp"
-#include "../../include/Parser.hpp"
-#include "../../include/ServerSocket.hpp"
 
-void handleRequest(std::string buffer, int newsockfd)
-{
-		// Print message from client
-		std::cout << buffer << std::endl;
 
 		Request request(buffer);
 		std::cout << request.getUrl() << std::endl;
@@ -91,10 +75,9 @@ EventManager::EventManager() : maxSocket(0) {
 }
 
 EventManager::~EventManager() {
-    // Ничего особенного для деструктора, но можно добавить необходимую логику
+
 }
 
-// Метод для добавления серверного сокета в event-менеджер
 void EventManager::addServerSocket(int ServerSocket) {
     serverSockets.push_back(ServerSocket);
 	FD_SET(ServerSocket, &read_master);
@@ -119,7 +102,6 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
     // Добавляем клиентский сокет в множество для использования в select
     //FD_SET(clientSocket, &read_master);
 
-    // Обновляем максимальный дескриптор, если необходимо
     if (clientSocket > maxSocket) {
         maxSocket = clientSocket;
     }
@@ -127,51 +109,35 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 	clientSockets.push_back(newClient);
 }
 
-// Метод для ожидания событий и их обработки
 void EventManager::waitAndHandleEvents() {
     while (maxSocket) {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
-		/* Функция select возвращает количество готовых дескрипторов (сокетов), на которых произошли события, из общего числа дескрипторов в множестве (наборе). Если возвратное значение select равно 0, то это означает, что прошло указанное время ожидания, но ни на одном из дескрипторов не произошло событие. Если значение меньше 0, то произошла ошибка. 
-		maxSocket: Это самый большой дескриптор во множестве плюс 1.
-		readSet, writeSet, exceptfds(четвертый аргумент): Это три указателя на множества дескрипторов, где readSet используется для отслеживания событий чтения, writeSet - для событий записи, exceptfds - для исключительных событий (ошибок).
-		timeout(пятый аргумент): Это указатель на структуру timeval, который определяет максимальное время ожидания. Если timeout установлен в NULL, то select будет ждать бесконечно. */
-
         if (activity <= 0) {
             continue ;
         }
 
 		if (FD_ISSET(serverSockets[0], &readSet)) {
-				// Если событие на слушающем сокете, это новое подключение, значит надо создать клиентский сокет и добавить его в list
 				CreateAddClientSocket(serverSockets[0]);
 		}
 		for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
-			//бегаем по всем клиентам и выполняем действия read и write
 			int currentSocket = (*it)->getClientSocket();
-			// Обработка других событий, например, чтение данных из клиентского сокета
 			char buffer[1024];
 			memset(buffer, 0, 1024);
 
 			int bytesRead = read(currentSocket, buffer, 1024);
 			if (bytesRead <= 0) {
 				assert(0);
-				std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
-				close(currentSocket);
 				FD_CLR(currentSocket, &readSet);
-				// clientSockets.erase(it); // To-do: fix iterator invalidatation.
-				// --it;
+
 			} else {
-				std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
-				std::string httpRequest(buffer, bytesRead);
-				handleRequest(httpRequest, currentSocket);
-				it = clientSockets.erase(it);
-				--it; // Edge cases?
+              std::string httpRequest(buffer, bytesRead);
+              Response response(httpRequest, currentSocket);
+              response.handleRequest();
+              it = clientSockets.erase(it);
+              --it;
 			}
 		}
 	}
 }
-
-// Если select() возвращает положительное значение, идем по всем добавленным сокетам, проверяем, какие из них имеют активные события (например, данные для чтения), и обрабатываем их соответственно.
-
-//Если при чтении обнаруживается, что соединение закрыто или произошла ошибка, сокет закрывается, удаляется из fd_set и удаляется из вектора clientSockets.
