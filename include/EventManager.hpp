@@ -26,6 +26,7 @@ private:
     std::vector<int> serverSockets;
 	std::list<Client *> clientSockets;
     int maxSocket;
+	Response responder;
 };
 
 

@@ -1,6 +1,8 @@
 #include "../../include/ServerSocket.hpp"
 
-ServerSocket::ServerSocket() : listenSocket(-1), port(0), backlog(0) {}
+ServerSocket::ServerSocket() : listenSocket(-1), port(0), backlog(0) {
+	eventManager = new EventManager();
+}
 
 ServerSocket::~ServerSocket() {
     if (listenSocket != -1) {
@@ -52,8 +54,8 @@ void ServerSocket::start() {
 	std::cout << "Server listening on port " << port << std::endl;
 
 	// настройка event-менеджера
-    eventManager.addServerSocket(listenSocket);
-	eventManager.waitAndHandleEvents();
+    eventManager->addServerSocket(listenSocket);
+	eventManager->waitAndHandleEvents();
 	stop();
 }
 

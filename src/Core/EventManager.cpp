@@ -3,8 +3,8 @@
 EventManager::EventManager() : maxSocket(0) {
     FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
-	//FD_ZERO(&read_master);
-	//FD_ZERO(&write_master);
+	FD_ZERO(&read_master);
+	FD_ZERO(&write_master);
 }
 
 EventManager::~EventManager() {
@@ -28,6 +28,14 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 		return;
 	}
 	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
+	//fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+	/* системный вызов fcntl для установки флага O_NONBLOCK для файлового дескриптора fd. Этот флаг указывает на неблокирующий режим для данного дескриптора.
+	В неблокирующем режиме операции ввода-вывода не блокируют выполнение программы, даже если данных на самом деле нет или данные не могут быть записаны. Вместо этого функции чтения и записи возвращают управление сразу, даже если операция не может быть завершена. Это полезно в асинхронных или многозадачных приложениях, где важно избегать блокировки программы в ожидании данных. */
+	
+    // Добавляем клиентский сокет в множество для использования в select
+    //FD_SET(clientSocket, &read_master);
+
+    // Обновляем максимальный дескриптор, если необходимо
     if (clientSocket > maxSocket) {
         maxSocket = clientSocket;
     }
@@ -40,7 +48,11 @@ void EventManager::waitAndHandleEvents() {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
-
+		/* Функция select возвращает количество готовых дескрипторов (сокетов), на которых произошли события, из общего числа дескрипторов в множестве (наборе). Если возвратное значение select равно 0, то это означает, что прошло указанное время ожидания, но ни на одном из дескрипторов не произошло событие. Если значение меньше 0, то произошла ошибка. 
+		maxSocket: Это самый большой дескриптор во множестве плюс 1.
+		readSet, writeSet, exceptfds(четвертый аргумент): Это три указателя на множества дескрипторов, где readSet используется для отслеживания событий чтения, writeSet - для событий записи, exceptfds - для исключительных событий (ошибок).
+		timeout(пятый аргумент): Это указатель на структуру timeval, который определяет максимальное время ожидания. Если timeout установлен в NULL, то select будет ждать бесконечно. */
+		
         if (activity <= 0) {
             continue ;
         }
