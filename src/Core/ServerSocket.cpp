@@ -29,6 +29,12 @@ void ServerSocket::start() {
 	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);  // Слушаем все интерфейсы
 	serverAddr.sin_port = htons(port);  // Установка порта
 
+	int opt = 1;
+    setsockopt(listenSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	/* SOL_SOCKET указывает, что опция применяется к сокету на уровне сокета.
+	SO_REUSEADDR - это опция, которая разрешает повторное использование локального адреса. Это полезно, например, когда сервер завершает работу и снова запускается: если опция установлена, сервер может снова использовать тот же адрес, не дожидаясь полного освобождения ресурсов.
+	Таким образом, с помощью setsockopt и опции SO_REUSEADDR сервер может быстрее повторно использовать адрес, к которому он был привязан ранее. */
+
 	//После настройки структуры, используется функция bind(), чтобы связать сокет с указанным адресом и портом.
 	if (bind(listenSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
 		perror("Error binding socket");

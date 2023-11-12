@@ -1040,3 +1040,21 @@ button {
 .copyright_text a:hover {
     color: #e27141;
 }
+
+.upload {
+    width: 100%;
+    float: left;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #0a52dd;
+    text-align: center;
+    padding: 10px 0px;
+    border-radius: 30px;
+    margin-top: 50px;
+    font-weight: 400;
+}
+
+.upload:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
