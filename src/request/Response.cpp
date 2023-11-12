@@ -1,77 +1,70 @@
 #include "Response.hpp"
+#include "../../include/DataStorage.hpp"
 
-Response::Response(std::string buf, int newsockfd) {
-    buffer = buf;
-    this->newsockfd = newsockfd;
+Response::Response() {
+    sentLength = 0;
+    NumStatus = "HTTP/1.1 200 OK\n";
+    ContentType = "Content-Type: ";
+    sentLength = 0;
 }
 
-void Response::getUrl() {
-    Request request(buffer);
-    url = request.getUrl();
-    url.erase(0, 1);
-}
-
-void Response::findImage() {
-    if (url.find(".jpg") != std::string::npos || url.find(".png") != std::string::npos ||
-        url.find(".svg") != std::string::npos || url.find(".ico") != std::string::npos) {
-
-        std::ifstream file(url.c_str(), std::ios::binary);
-        if (!file.is_open() || file.fail()){
-            close(newsockfd);
-            return;
-        }
-        std::streampos len = file.seekg(0, std::ios::end).tellg();
-        file.seekg(0, std::ios::beg);
-
-        response = "HTTP/1.1 200 OK\n";
-        if (url.find(".svg") != std::string::npos)
-            response += "Content-Type: image/svg+xml";
-        else {
-            response += "Content-Type: image/";
-            response += url.substr(url.find(".") + 1);
-        }
-        response += "\n";
-        response += "Content-Length: ";
-        response += std::to_string(len);
-        response += "\n\n";
-        std::string line;
-        line.resize(len);
-        file.read(&line[0], len);
-        response += line;
-        response += "\n\n";
-        send(newsockfd, response.c_str(), response.length(), 0);
-        file.close();
-        close(newsockfd);
-        return;
+void Response::generateDefaultErrorPage(int code) {
+    if(code == 400) {
+        GenerateErrorStatus("HTTP/1.1 400 Bad Request\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 401) {
+        GenerateErrorStatus("HTTP/1.1 401 Unauthorized\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 403) {
+        GenerateErrorStatus("HTTP/1.1 403 Forbidden\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    }
+    else if (code == 404) {
+        GenerateErrorStatus("HTTP/1.1 404 Not Found\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 405) {
+        GenerateErrorStatus("HTTP/1.1 405 Method Not Allowed\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 413) {
+        GenerateErrorStatus("HTTP/1.1 413 Payload Too Large\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 500) {
+        GenerateErrorStatus("HTTP/1.1 500 Internal Server Error\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 501) {
+        GenerateErrorStatus("HTTP/1.1 501 Not Implemented\n", "text/html\n\n");
+        getDefaultErrorPage(code);
+    } else if (code == 505) {
+        GenerateErrorStatus("HTTP/1.1 505 HTTP Version Not Supported\n", "text/html\n\n");
+        getDefaultErrorPage(code);
     }
 }
 
-void Response::createResponse() {
-    std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
+void Response::GenerateErrorStatus(std::string numStatus, std::string contType) {
+    NumStatus = numStatus;
+    ContentType += contType;
+    Status = NumStatus + ContentType;
+}
+
+void Response::getDefaultErrorPage(int code) {
+    std::string errorRoot = DataStorage::defaultErrorPages[code];
+    std::ifstream file(errorRoot.c_str());
     std::string response;
-    if (!file.is_open() || file.fail()){
-        response = "HTTP/1.1 404 Not Found\n\n";
-        send(newsockfd, response.c_str(), response.length(), 0);
-        close(newsockfd);
-        return;
+    if (file.is_open()) {
+        getline(file, response, '\0');
+        file.close();
     }
-    response = "HTTP/1.1 200 OK\n\n";
-    std::string line;
-    while (std::getline(file, line)){
-        response += line;
-    }
-    file.close();
-    ssize_t bytesSent = send(newsockfd, response.c_str(), response.length(), 0);
-    if (bytesSent == -1)
-        perror("Error in send");
-
-    close(newsockfd);
-
+    Body = response;
+    ResponseData = Status + Body;
 }
 
-
-void Response::handleRequest() {
-    getUrl();
-    findImage();
-    createResponse();
+void Response::GenerateContentType(const std::string& path) {
+    std::string res;
+    size_t pos = path.find_last_of('.');
+    if (pos != std::string::npos)
+        res = path.substr(pos + 1);
+    else
+        res = "txt";
+    ContentType += DataStorage::MimeTypes[res] + "\n\n";
+    Status += NumStatus + ContentType;
 }

@@ -1,6 +1,6 @@
 NAME     = webserv
 GCC      = c++
-CFLAGS   = -Wall -Wextra -Werror -std=c++98 -I./include -g #-fsanitize=address
+#CFLAGS   = -Wall -Wextra -Werror -std=c++98 -I./include -g #-fsanitize=address
 RM       = rm -rf
 OUTPUT   = ./$(NAME)
 LIBS     = -I./include/

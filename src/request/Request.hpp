@@ -4,33 +4,38 @@
 #include "../../include/Libraries.hpp"
 
 class Request {
-	private:
-		std::string method;
-		std::string version;
-		std::string url;
-		std::map<std::string, std::string> headers;
+public:
+    std::string RequestData;
 
-		Request();
+    bool hasCGI();
 
-		std::string const parseMethod(std::string const &input);
-		std::string const parseUrl(std::string const &input);
-		std::string const parseVersion(std::string const &input);
-		std::string const parseHost(std::string const &input);
-		std::string const toLower(std::string const &input);
-		std::map<std::string, std::string> const parseHeaders(std::string const &input);
+    void parse_request(const std::string &request);
 
-	public:
-		~Request();
-		Request(std::string	const &input);
-		Request(Request const &src);
-		Request &operator=(Request const &src);
+    const std::string &getMethod() const;
 
-		
-		std::string const &getMethod() const;
-		std::string const &getVersion() const;
-		std::string const &getUrl() const;
-		std::string const &getHost() const;
-		std::map<std::string, std::string> const &getHeaders() const;
+    const std::string &getPath() const;
+
+    bool isVersion() const;
+
+    const std::map<std::string, std::string> &getHeaders() const;
+
+    const std::string &getBody() const;
+
+    const std::map<std::string, std::string> &getArgs() const;
+
+    int Error;
+    bool hasError;
+
+    Request();
+
+private:
+    std::string method;
+    std::string path;
+    std::map<std::string, std::string> args;
+    bool version;
+    std::map<std::string, std::string> headers;
+    std::string body;
 };
 
-#endif
+
+#endif //WEBSERV_REQUEST_HPP

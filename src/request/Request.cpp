@@ -1,91 +1,102 @@
 #include "Request.hpp"
 
-Request::Request() {}
-Request::~Request() {}
-Request::Request(std::string const &input) {
-	std::map<std::string, std::string>	headers;
-	std::string							line;
-	std::istringstream					iss(input);
-
-	std::getline(iss, line);
-	this->method = this->parseMethod(line);
-	this->url = this->parseUrl(line);
-	this->version = this->parseVersion(line);
-	this->headers = this->parseHeaders(input);
-}
-Request::Request(Request const &src) {
-	*this = src;
-}
-Request &Request::operator=(Request const &src) {
-	if (this != &src) {
-		this->method = src.method;
-		this->url = src.url;
-		this->version = src.version;
-		this->headers = src.headers;
-	}
-	return *this;
+bool Request::hasCGI() {
+    if (RequestData.find(".py") != std::string::npos)
+        return true;
+    return false;
 }
 
-std::string const &Request::getMethod() const {
-	return this->method;
+void Request::parse_request(const std::string &request) {
+    if (request.find("\r\n") == std::string::npos) {
+        return;
+    }
+    std::string line = request.substr(0, request.find("\r\n"));
+    std::stringstream ss(line);
+    std::string ver;
+    ss >> this->method >> this->path >> ver;
+    if (ver == "HTTP/1.1") {
+        this->version = true;
+    } else
+        this->version = false;
+
+    if (this->path.find("?") != std::string::npos) {
+        if (this->path.find("?") == this->path.size() - 1 || this->path.find("?") == 0) {
+            return;
+        }
+        std::string arguments = this->path.substr(this->path.find("?") + 1);
+        this->path = this->path.substr(0, this->path.find("?"));
+        while (arguments.find("&") != std::string::npos) {
+            std::string arg = arguments.substr(0, arguments.find("&"));
+            this->args.insert(std::make_pair(arg.substr(0, arg.find("=")), arg.substr(arg.find("=") + 1)));
+            arguments = arguments.substr(arguments.find("&") + 1);
+        }
+        this->args.insert(
+                std::make_pair(arguments.substr(0, arguments.find("=")), arguments.substr(arguments.find("=") + 1)));
+    }
+    if (request.find("\r\n\r\n") == std::string::npos) {
+        return;
+    }
+
+    size_t pos = request.find("\r\n\r\n");
+    size_t i = 0;
+    while (i < pos) {
+        if (request.find("\r\n") == std::string::npos) {
+            return;
+        }
+        line = request.substr(i, request.find("\r\n", i) - i);
+        i += line.size() + 2;
+        size_t p = line.find(": ");
+        if (p != std::string::npos) {
+            this->headers.insert(std::make_pair(line.substr(0, p), line.substr(p + 2)));
+        }
+    }
+    if (method != "GET" && method != "POST" && method != "DELETE") {
+        hasError = true;
+        Error = 501;
+        std::cout << "bad request(method)" << std::endl;
+    }
+    if (method == "POST")
+        this->body = request.substr(pos + 4);
+    if (method == "POST" && headers["Transfer-Encoding"] == "chunked") {
+        int chunk_size = 0;
+        std::string chunk;
+        std::string bd = this->body;
+        this->body.clear();
+        chunk_size = std::atoi(bd.substr(0, bd.find("\r\n")).c_str());
+        while (chunk_size != 0) {
+            chunk = bd.substr(bd.find("\r\n") + 2, chunk_size);
+            this->body += chunk;
+            bd = bd.substr(bd.find("\r\n") + 2 + chunk_size + 2);
+            chunk_size = std::atoi(bd.substr(0, bd.find("\r\n")).c_str());
+        }
+    }
 }
 
-std::string const &Request::getVersion() const {
-	return this->version;
+const std::string &Request::getMethod() const {
+    return method;
 }
 
-std::string const &Request::getUrl() const {
-	return this->url;
+const std::string &Request::getPath() const {
+    return path;
 }
 
-std::map<std::string, std::string> const &Request::getHeaders() const {
-	return this->headers;
+bool Request::isVersion() const {
+    return version;
 }
 
-std::string const Request::parseMethod(std::string const &input) {
-	std::istringstream	iss(input);
-	std::string			method;
-
-	std::getline(iss, method, ' ');
-	return method;
+const std::map<std::string, std::string> &Request::getHeaders() const {
+    return headers;
 }
 
-std::string const Request::parseUrl(std::string const &input) {
-	std::istringstream	iss(input);
-	std::string			url;
-
-	std::getline(iss, url, ' ');
-	if (url.empty())
-		throw std::invalid_argument("Invalid URL");
-	std::getline(iss, url, ' ');
-	if (url.empty())
-		throw std::invalid_argument("Invalid URL");
-	return url;
+const std::string &Request::getBody() const {
+    return body;
 }
 
-std::string const Request::parseVersion(std::string const &input) {
-	return (input.substr(input.find("HTTP/")));
+const std::map<std::string, std::string> &Request::getArgs() const {
+    return args;
 }
 
-std::map<std::string, std::string> const Request::parseHeaders(std::string const &input) {
-	std::map<std::string, std::string>	headers;
-	std::istringstream					iss(input);
-	std::string							line;
-
-	std::getline(iss, line);
-	while (std::getline(iss, line)) {
-		if (line.empty() || line == "\n" || line == "\r" || line == "\r\n")
-			continue;
-		headers.insert(std::pair<std::string, std::string>(this->toLower(line.substr(0, line.find(":"))),
-															line.substr(line.find(":") + 2)));
-	}
-	return headers;
-}
-
-std::string const Request::toLower(std::string const &input) {
-	std::string	output;
-
-	for (size_t i = 0; i < input.length(); i++)
-		output += std::tolower(input[i]);
-	return output;
+Request::Request() {
+    this->Error = 0;
+    this->hasError = false;
 }
