@@ -1,6 +1,5 @@
 #include "../../include/EventManager.hpp"
 
-
 EventManager::EventManager() : maxSocket(0) {
     FD_ZERO(&readSet);
 	FD_ZERO(&writeSet);
@@ -29,13 +28,6 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 		return;
 	}
 	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-	//fcntl(clientSocket, F_SETFL, O_NONBLOCK);
-	/* системный вызов fcntl для установки флага O_NONBLOCK для файлового дескриптора fd. Этот флаг указывает на неблокирующий режим для данного дескриптора.
-	В неблокирующем режиме операции ввода-вывода не блокируют выполнение программы, даже если данных на самом деле нет или данные не могут быть записаны. Вместо этого функции чтения и записи возвращают управление сразу, даже если операция не может быть завершена. Это полезно в асинхронных или многозадачных приложениях, где важно избегать блокировки программы в ожидании данных. */
-	
-    // Добавляем клиентский сокет в множество для использования в select
-    //FD_SET(clientSocket, &read_master);
-
     if (clientSocket > maxSocket) {
         maxSocket = clientSocket;
     }
@@ -48,6 +40,7 @@ void EventManager::waitAndHandleEvents() {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
+
         if (activity <= 0) {
             continue ;
         }
@@ -63,14 +56,16 @@ void EventManager::waitAndHandleEvents() {
 			int bytesRead = read(currentSocket, buffer, 1024);
 			if (bytesRead <= 0) {
 				assert(0);
+				std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
+				close(currentSocket);
 				FD_CLR(currentSocket, &readSet);
-
 			} else {
-              std::string httpRequest(buffer, bytesRead);
-              Response response(httpRequest, currentSocket);
-              response.handleRequest();
-              it = clientSockets.erase(it);
-              --it;
+				std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
+				std::string httpRequest(buffer, bytesRead);
+                Response response;
+				response.handleRequest(httpRequest, currentSocket);
+				it = clientSockets.erase(it);
+				--it;
 			}
 		}
 	}
