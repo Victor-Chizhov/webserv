@@ -14,8 +14,10 @@ private:
     void findImage();
     void createResponse();
 
+    void handleGet(std::string buffer, int newsockfd);
+
 public:
-//    Response(std::string buf, int newsockfd);
+
     void handleRequest(std::string buffer, int newsockfd);
 };
 

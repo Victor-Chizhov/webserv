@@ -60,7 +60,7 @@ void EventManager::waitAndHandleEvents() {
 				close(currentSocket);
 				FD_CLR(currentSocket, &readSet);
 			} else {
-				std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
+				std::cout << buffer << std::endl;
 				std::string httpRequest(buffer, bytesRead);
                 Response response;
 				response.handleRequest(httpRequest, currentSocket);

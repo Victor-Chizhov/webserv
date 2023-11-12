@@ -69,13 +69,7 @@
 //
 //}
 
-
-void Response::handleRequest(std::string buffer, int newsockfd) {
-//    getUrl();
-//    findImage();
-//    createResponse();
-
-
+void Response::handleGet(std::string buffer, int newsockfd) {
     std::cout << buffer << std::endl;
 
     Request request(buffer);
@@ -137,4 +131,25 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
     }
 
     close(newsockfd);
+
+
+}
+
+
+void Response::handleRequest(std::string buffer, int newsockfd) {
+//    getUrl();
+//    findImage();
+//    createResponse();
+
+    if (buffer.find("GET") != std::string::npos) {
+        handleGet(buffer, newsockfd);
+    } else if (buffer.find("POST") != std::string::npos) {
+        std::cout << "POST" << std::endl;
+    } else if (buffer.find("DELETE") != std::string::npos) {
+        std::cout << buffer << std::endl;
+    } else {
+        std::cout << "ERROR" << std::endl;
+    }
+
+
 }
