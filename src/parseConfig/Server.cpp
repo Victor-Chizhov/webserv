@@ -67,6 +67,15 @@ void Server::addDataInServer() {
     printServerData();
 }
 
+int Server::getPort() const
+{
+	return port;
+}
 
+
+const std::string &Server::getHost() const
+{
+	return ipAddress;
+}
 
 

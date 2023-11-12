@@ -1,22 +1,23 @@
 #include "../../include/Config.hpp"
-
+#include "../../include/WebServ.hpp"
 
 int main(int argc, char **argv) {
 
-    if (argc != 2) {
-        std::cout << "Usage: ./webserv <config>" << std::endl;
-        return (1);
-    }
-
-//    Config config(argv[1]);
-
     try {
-//        config.parseConfig();
-
-    } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
-        return (1);
+        WebServ server;
+        if (argc > 2) {
+            std::cout << "Too many arguments" << std::endl;
+            return 0;
+        }
+        if (argc == 1) {
+            //server.parseConfigFile(DataStorage::root + "/webserv.conf");
+        } else {
+            //server.parseConfigFile(DataStorage::root + "/" + argv[1]);
+        }
+        server.start();
     }
-
-	return (0);
+    catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
+    return 0;
 }

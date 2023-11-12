@@ -25,6 +25,9 @@ class Server : public Parser {
         void setConfig(std::string &configLine);
         void addDataInServer();
 
+		int getPort() const;
+		const std::string &getHost() const;
+
         void printServerData();
         void printDataConfig() const;
 
