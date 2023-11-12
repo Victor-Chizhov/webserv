@@ -1,45 +1,26 @@
-#include "../../include/Config.hpp"
-#include "../request/Request.hpp"
-#include "../../include/Parser.hpp"
+
 #include "../../include/ServerSocket.hpp"
+#include "../../include/Config.hpp"
 
 
+int main(int argc, char **argv) {
 
-<<<<<<< HEAD
-int main() {
-    Config data("config/webserv.conf");
-
-	// // Check if socket was bound
-	// if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-	// 	std::cout << "Error binding socket" << std::endl;
-	// 	return (1);
-	// }
-
-	ServerSocket run;
-	run.configure(8065, 120);
-	run.start();
-
-	// while (true) {
-	// // Listen for connections
-	// 	if (listen(sockfd, 10) < 0) {
-	// 		std::cout << "Error listening socket" << std::endl;
-	// 		return (1);
-	// 	}
-
-	// 	// Accept connection and create new socket
-	// 	int newsockfd = accept(sockfd, NULL, NULL);
-	// 	if (newsockfd < 0) {
-	// 		std::cout << "Error accepting socket" << std::endl;
-	// 		return (1);
-	// 	}
->>>>>>> workwithAlan
-
-    try {
-        data.configure(8086, 120);
-        data.start();
-    } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+    if (argc != 2) {
+        std::cout << "Usage: ./webserv <config>" << std::endl;
+        return (1);
     }
 
-    return 0;
+	ServerSocket run;
+//    Config config(argv[1]);
+
+    try {
+//        config.parseConfig();
+        run.configure(atoi(argv[1]), 120); //???
+        run.start();
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+        return (1);
+    }
+
+	return (0);
 }

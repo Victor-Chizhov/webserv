@@ -1,15 +1,7 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
-#include <iostream>
-#include <vector>
-#include <map>
-#include <fstream>
-#include <unistd.h>
-#include <cstring>
-#include <sstream>
-#include <cstdlib>
-#include <sys/stat.h>
+#include "Libraries.hpp"
 
 
 class Parser {
