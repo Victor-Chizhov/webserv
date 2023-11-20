@@ -27,7 +27,7 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 		perror("Error accepting connection");
 		return;
 	}
-	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
+//	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
     if (clientSocket > maxSocket) {
         maxSocket = clientSocket;
     }
@@ -60,7 +60,7 @@ void EventManager::waitAndHandleEvents() {
 				close(currentSocket);
 				FD_CLR(currentSocket, &readSet);
 			} else {
-				std::cout << buffer << std::endl;
+//				std::cout << buffer << std::endl;
 				std::string httpRequest(buffer, bytesRead);
                 Response response;
 				response.handleRequest(httpRequest, currentSocket);

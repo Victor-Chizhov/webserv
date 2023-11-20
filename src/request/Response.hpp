@@ -4,6 +4,7 @@
 #include "../../include/Libraries.hpp"
 #include "Request.hpp"
 
+//сделать обработчик для гет запроса с параметрами
 
 
 class Response {
