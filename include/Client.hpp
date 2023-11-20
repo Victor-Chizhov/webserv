@@ -5,7 +5,7 @@
 
 class Client {
 public:
-	Client(int clientSocket);
+	Client(int clientSocket, struct sockaddr_in clientAddr);
     ~Client();
 
     ssize_t readData(char* buffer, size_t bufferSize);

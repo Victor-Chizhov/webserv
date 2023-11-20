@@ -21,6 +21,7 @@ void EventManager::addServerSocket(int ServerSocket) {
 
 void EventManager::CreateAddClientSocket(int serverSocket) {
 	struct sockaddr_in clientAddr;
+    // clientAddr - структура, в которую будет записан адрес клиента (ip:port), он нужен чтобы потом по частям из него читать или записывать информацию
 	socklen_t clientAddrLen = sizeof(clientAddr);
 	int clientSocket = accept(serverSocket, (struct sockaddr*) &clientAddr, &clientAddrLen);
 	if (clientSocket == -1) {
@@ -39,7 +40,7 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
     if (clientSocket > maxSocket) {
         maxSocket = clientSocket;
     }
-	Client *newClient = new Client(clientSocket);
+	Client *newClient = new Client(clientSocket, clientAddr);
 	clientSockets.push_back(newClient);
 }
 

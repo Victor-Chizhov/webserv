@@ -28,7 +28,7 @@ void ServerSocket::start() {
 
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);  // Слушаем все интерфейсы
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);  // сейчас слушаем все интерфейсы, но потом надо будет прописать конкретный IP из конфига сервера
 	serverAddr.sin_port = htons(port);  // Установка порта
 
 	int opt = 1;
