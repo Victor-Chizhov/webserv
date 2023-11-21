@@ -73,6 +73,43 @@ void Response::handleGet(std::string buffer, int newsockfd) {
 
 }
 
+void Response::handlePost(std::string buffer, int newsockfd) {
+
+    std::istringstream request(buffer);
+    std::string line;
+    std::string boundary;
+
+    while (std::getline(request, line) && line.find("boundary=") == std::string::npos);
+
+    size_t pos = line.find("boundary=");
+    if (pos != std::string::npos) {
+        boundary = line.substr(pos + 9);
+    }
+
+    while (std::getline(request, line) && line != "\r\n");
+
+    // Проверка Content-Disposition на наличие "filename"
+    while (std::getline(request, line) && line.find("filename=\"") == std::string::npos);
+    size_t filenamePos = line.find("filename=\"");
+    if (filenamePos != std::string::npos) {
+        std::string filename = line.substr(filenamePos + 10, line.size() - filenamePos - 12);
+
+        std::ofstream outfile(filename.c_str(), std::ios::binary);
+        while (std::getline(request, line) && line != "--" + boundary + "--") {
+            outfile << line << std::endl;
+        }
+        outfile.close();
+
+        std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
+        send(newsockfd, response.c_str(), response.length(), 0);
+    } else {
+        std::string response = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n";
+        send(newsockfd, response.c_str(), response.length(), 0);
+    }
+
+    close(newsockfd);
+}
+
 
 void Response::handleRequest(std::string buffer, int newsockfd) {
 //    getUrl();
@@ -82,7 +119,7 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
     if (buffer.find("GET") != std::string::npos) {
         handleGet(buffer, newsockfd);
     } else if (buffer.find("POST") != std::string::npos) {
-        std::cout << "POST" << std::endl;
+        handlePost(buffer, newsockfd);
     } else if (buffer.find("DELETE") != std::string::npos) {
         std::cout << buffer << std::endl;
     } else {

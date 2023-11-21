@@ -16,6 +16,7 @@ private:
     void createResponse();
 
     void handleGet(std::string buffer, int newsockfd);
+    void handlePost(std::string buffer, int newsockfd);
 
 public:
 
