@@ -10,7 +10,7 @@ protected:
         std::string pathConfig;
         std::vector<Server> servers;
         std::vector<std::string> configLines;
-        std::set<int> ports;
+        std::set<unsigned long> ports;
 
 
         bool removeComments(std::string &line);
@@ -23,6 +23,7 @@ protected:
     public:
         Config(std::string pathConfig);
         void parseConfig();
+        std::set<unsigned long> getCountPorts() const;
 
 };
 

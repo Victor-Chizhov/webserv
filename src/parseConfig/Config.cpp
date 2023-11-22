@@ -35,6 +35,10 @@ void Config::countPorts() {
     }
 }
 
+std::set<unsigned long> Config::getCountPorts() const {
+    return ports;
+}
+
 void Config::createVectorOfServers() {
     addConfigInArray<Server>(servers, configLines, "server");
 }
@@ -53,4 +57,5 @@ void Config::addConfigData() {
 void Config::parseConfig() {
     saveConfigInConfigLine();
     addConfigData();
+    countPorts();
 }

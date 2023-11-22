@@ -27,6 +27,7 @@ class Server : public Parser {
 
         void printServerData();
         void printDataConfig() const;
+        unsigned long getPort() const;
 
 };
 

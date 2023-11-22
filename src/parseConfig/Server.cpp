@@ -47,6 +47,10 @@ void Server::fillEachLocationWithData() {
     }
 }
 
+unsigned long Server::getPort() const {
+    return port;
+}
+
 void Server::updateDataInServer() {
     for (size_t i = 0; i < serverConfig.size(); i++) {
         cutDataStr(serverConfig[i], "listen", ipAddress);
