@@ -77,6 +77,13 @@ void EventManager::waitAndHandleEvents() {
                     current.request.request += std::string(buffer, bytesRead);
                 }
             }
+            if (( current.request.request.find("\r\n\r\n") != std::string::npos )) {
+                FD_CLR(currentSocket, &read_master);
+                FD_SET(currentSocket, &write_master);
+                current.request.Parsing(current.request.request);
+                current.response.handleRequest(current.request);
+                current.request.request.clear();
+            }
             if (FD_ISSET(currentSocket, &writeSet)) {
                 std::string name = current.response.response;
                 send(currentSocket, current.response.response.c_str(), current.response.response.length(), 0);
