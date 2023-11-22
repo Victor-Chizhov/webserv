@@ -29,6 +29,12 @@ void Config::saveConfigInConfigLine() {
     inputFile.close();
 }
 
+void Config::countPorts() {
+    for (size_t i = 0; i < servers.size(); i++) {
+        ports.insert(servers[i].getPort());
+    }
+}
+
 void Config::createVectorOfServers() {
     addConfigInArray<Server>(servers, configLines, "server");
 }
