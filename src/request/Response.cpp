@@ -70,7 +70,7 @@
 //}
 
 
-void Response::handleRequest(std::string buffer, int newsockfd) {
+std::string Response::handleRequest(std::string buffer, int newsockfd) {
 //    getUrl();
 //    findImage();
 //    createResponse();
@@ -91,8 +91,7 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
         std::ifstream file(url.c_str(), std::ios::binary);
         if (!file.is_open() || file.fail()){
             std::cout << url << std::endl;
-            close(newsockfd);
-            return;
+            return NULL;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
         file.seekg(0, std::ios::beg);
@@ -110,18 +109,14 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
         file.read(&line[0], len);
         response += line + "\n\n";
         std::cout << "len: " << response.length() << std::endl;
-        send(newsockfd, response.c_str(), response.length(), 0);
         file.close();
-        close(newsockfd);
-        return;
+        return response;
     }
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     std::string response;
     if (!file.is_open() || file.fail()){
         response = "HTTP/1.1 404 Not Found\n\n";
-        send(newsockfd, response.c_str(), response.length(), 0);
-        close(newsockfd);
-        return;
+        return response;
     }
     response = "HTTP/1.1 200 OK\n\n";
     std::string line;
@@ -129,12 +124,5 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
         response += line;
     }
     file.close();
-    ssize_t bytesSent = send(newsockfd, response.c_str(), response.length(), 0);
-    if (bytesSent == -1) {
-        perror("Error in send");
-    } else {
-        std::cout << "Sent " << bytesSent << " bytes successfully." << std::endl;
-    }
-
-    close(newsockfd);
+    return response;
 }

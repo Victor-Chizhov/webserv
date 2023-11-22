@@ -69,16 +69,17 @@ void EventManager::waitAndHandleEvents() {
             if (FD_ISSET(currentSocket, &readSet)) { // FD_ISSET проверяет готов ли сокет в данном случае для чтения
                 int bytesRead = read(currentSocket, buffer, 1024);
                 if (bytesRead <= 0) {
-                    assert(0);
                     std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
                     close(currentSocket);
-                    FD_CLR(currentSocket, &readSet);
+                    FD_CLR(currentSocket, &read_master);
                 } else {
                     std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
                     std::string httpRequest(buffer, bytesRead);
                     FD_SET(currentSocket, &write_master);
                     Response response;
-                    response.handleRequest(httpRequest, currentSocket);
+                    std::string response_str;
+                    response_str = response.handleRequest(httpRequest, currentSocket);
+                    send(currentSocket, response_str.c_str(), response_str.length(), 0);
                     it = clientSockets.erase(it);
                     --it;
                 }
