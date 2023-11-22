@@ -36,14 +36,14 @@ void Location::setConfig(std::string &configLine) {
 }
 
 void Location::printDataConfig() const {
-    std::cout << "-----------------" << std::endl << "Location Config:" << std::endl << "-----------------" << std::endl;
+    std::cout << "-----------------" << std::endl << "Location WebServer:" << std::endl << "-----------------" << std::endl;
     for (std::vector<std::string>::const_iterator it = this->locationConfig.begin(); it != this->locationConfig.end(); it++) {
         std::cout << *it << std::endl;
     }
 }
 
 void Location::printLocationData() {
-    std::cout << "-----------------" << std::endl << "Location Config:" << std::endl << "-----------------" << std::endl;
+    std::cout << "-----------------" << std::endl << "Location WebServer:" << std::endl << "-----------------" << std::endl;
     std::cout << "pathLocation: " << pathLocation << std::endl;
     std::cout << "root: " << root << std::endl;
     std::cout << "index: " << index << std::endl;

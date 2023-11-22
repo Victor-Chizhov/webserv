@@ -4,12 +4,15 @@
 #include "Server.hpp"
 #include "Parser.hpp"
 #include "Libraries.hpp"
+#include "ServerSocket.hpp"
 
-class Config : public Parser {
+
+class WebServer : public Parser {
 protected:
         std::string pathConfig;
         std::vector<Server> servers;
         std::vector<std::string> configLines;
+        std::vector<ServerSocket> serverSockets;
         std::set<unsigned long> ports;
 
 
@@ -18,12 +21,15 @@ protected:
         void addConfigData();
         void createVectorOfServers();
         void fillEachServerWithData();
-        void countPorts();
+        void runListenSocket();
+        void createStructServerSocket();
 
-    public:
-        Config(std::string pathConfig);
-        void parseConfig();
-        std::set<unsigned long> getCountPorts() const;
+        int countPorts();
+
+public:
+    WebServer(std::string pathConfig);
+    void parseConfig();
+    void start();
 
 };
 

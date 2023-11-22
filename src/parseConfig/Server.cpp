@@ -23,7 +23,7 @@ void Server::printDataConfig() const {
 }
 
 void Server::printServerData() {
-    std::cout << "-----------------" << std::endl << "Server Config:" << std::endl << "-----------------" << std::endl;
+    std::cout << "-----------------" << std::endl << "Server WebServer:" << std::endl << "-----------------" << std::endl;
     std::cout << "ipAddress: " << ipAddress << std::endl;
     std::cout << "serverName: " << serverName << std::endl;
     std::cout << "port: " << port << std::endl;
@@ -68,7 +68,7 @@ void Server::addDataInServer() {
     createVectorOfLocations();
     fillEachLocationWithData();
     updateDataInServer();
-    printServerData();
+//    printServerData();
 }
 
 

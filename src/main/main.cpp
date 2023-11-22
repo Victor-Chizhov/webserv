@@ -1,22 +1,22 @@
 
 #include "../../include/ServerSocket.hpp"
-#include "../../include/Config.hpp"
+#include "../../include/WebServer.hpp"
 
 
 int main(int argc, char **argv) {
 
-    if (argc != 2) {
+    (void)argv;
+
+    if (argc != 1) {
         std::cout << "Usage: ./webserv <config>" << std::endl;
         return (1);
     }
 
-	ServerSocket run;
-//    Config config(argv[1]);
+    WebServer webserver("config/webserv.conf");
 
     try {
-//        config.parseConfig();
-        run.configure(atoi(argv[1]), 120); //???
-        run.start();
+        webserver.parseConfig();
+        webserver.start();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
         return (1);

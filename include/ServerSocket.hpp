@@ -3,7 +3,6 @@
 
 #include "EventManager.hpp"
 #include "Libraries.hpp"
-#include "Config.hpp"
 
 class EventManager;
 
@@ -13,14 +12,13 @@ class ServerSocket {
 public:
     ServerSocket();
     ~ServerSocket();
-    void start();
-    void configure(int port, int backlog);
-    void stop();
-    void createListenSockets();
+
+    void initListenSocket(unsigned long portno);
 
 private:
-    int listenSocket;
+    int sockfd;
     int port;
+    std::string ip;
     int backlog;
 	EventManager eventManager;
 
