@@ -70,17 +70,17 @@ void EventManager::waitAndHandleEvents() {
                 if (bytesRead <= 0) {
                     FD_CLR(currentSocket, &read_master);
                     FD_SET(currentSocket, &write_master);
-                    (*it)->response.handleRequest((*it)->request.request, currentSocket);
-                    (*it)->request.request.clear();
+                    current.request.Parsing(current.request.request);
+                    current.response.handleRequest(current.request);
+                    current.request.request.clear();
                 } else {
-                    buffer[bytesRead] = '\0';
-                    (*it)->request.request.append(buffer, bytesRead);
+                    current.request.request += std::string(buffer, bytesRead);
                 }
             }
             if (FD_ISSET(currentSocket, &writeSet)) {
-                std::string name = (*it)->response.response;
-                send(currentSocket, (*it)->response.response.c_str(), (*it)->response.response.length(), 0);
-                std::cout << "name" << name << "end" << std::endl;
+                std::string name = current.response.response;
+                send(currentSocket, current.response.response.c_str(), current.response.response.length(), 0);
+                std::cout << "name " << name << "end" << std::endl;
                 it = clientSockets.erase(it);
                 --it;
                 close(currentSocket);

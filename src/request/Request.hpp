@@ -20,7 +20,7 @@ class Request {
 	public:
         Request();
 		~Request();
-		Request(std::string	const &input);
+		void Parsing(std::string	const &input);
 		Request(Request const &src);
 		Request &operator=(Request const &src);
 

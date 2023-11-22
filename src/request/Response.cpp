@@ -70,15 +70,13 @@
 //}
 
 
-void Response::handleRequest(std::string buffer, int newsockfd) {
+void Response::handleRequest(Request &request) {
 //    getUrl();
 //    findImage();
 //    createResponse();
 
-    (void)newsockfd;
     //std::cout << buffer << std::endl;
     //response.clear();
-    Request request(buffer);
     std::cout << request.getUrl() << std::endl;
     std::string url = request.getUrl();
     url.erase(0, 1);
@@ -115,8 +113,7 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
     }
     response = "HTTP/1.1 200 OK\n\n";
     std::string line;
-    while (std::getline(file, line, '\0')){
-        response += line;
-    }
+    std::getline(file, line, '\0');
+    response += line;
     file.close();
 }
