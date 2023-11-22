@@ -29,7 +29,8 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 		return;
 	}
 	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-	fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+	//fcntl(clientSocket, F_SETFL, O_NONBLOCK);
+    fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 	/* системный вызов fcntl для установки флага O_NONBLOCK для файлового дескриптора fd. Этот флаг указывает на неблокирующий режим для данного дескриптора.
 	В неблокирующем режиме операции ввода-вывода не блокируют выполнение программы, даже если данных на самом деле нет или данные не могут быть записаны. Вместо этого функции чтения и записи возвращают управление сразу, даже если операция не может быть завершена. Это полезно в асинхронных или многозадачных приложениях, где важно избегать блокировки программы в ожидании данных. */
 	
@@ -53,40 +54,38 @@ void EventManager::waitAndHandleEvents() {
 		maxSocket: Это самый большой дескриптор во множестве плюс 1.
 		readSet, writeSet, exceptfds(четвертый аргумент): Это три указателя на множества дескрипторов, где readSet используется для отслеживания событий чтения, writeSet - для событий записи, exceptfds - для исключительных событий (ошибок).
 		timeout(пятый аргумент): Это указатель на структуру timeval, который определяет максимальное время ожидания. Если timeout установлен в NULL, то select будет ждать бесконечно. */
-		
-        if (activity <= 0) {
+        if (activity < 0) {
             continue ;
         }
-
 		if (FD_ISSET(serverSockets[0], &readSet)) { // FD_ISSET проверяет готов ли сокет в данном случае для чтения
 				CreateAddClientSocket(serverSockets[0]);
 		}
 		for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
-			int currentSocket = (*it)->getClientSocket();
+            Client &current = **it;
+			int currentSocket = current.getClientSocket();
 			char buffer[1024];
 			memset(buffer, 0, 1024);
-
             if (FD_ISSET(currentSocket, &readSet)) { // FD_ISSET проверяет готов ли сокет в данном случае для чтения
-                int bytesRead = read(currentSocket, buffer, 1024);
+                int bytesRead = recv(currentSocket, buffer, 1024,0);
                 if (bytesRead <= 0) {
-                    std::cout << "Connection closed or error on socket: " << currentSocket << std::endl;
-                    close(currentSocket);
                     FD_CLR(currentSocket, &read_master);
-                } else {
-                    std::cout << "Received data from socket " << currentSocket << ": " << buffer << std::endl;
-                    std::string httpRequest(buffer, bytesRead);
                     FD_SET(currentSocket, &write_master);
-                    Response response;
-                    std::string response_str;
-                    response_str = response.handleRequest(httpRequest, currentSocket);
-                    send(currentSocket, response_str.c_str(), response_str.length(), 0);
-                    it = clientSockets.erase(it);
-                    --it;
+                    (*it)->response.handleRequest((*it)->request.request, currentSocket);
+                    (*it)->request.request.clear();
+                } else {
+                    buffer[bytesRead] = '\0';
+                    (*it)->request.request.append(buffer, bytesRead);
                 }
             }
-            //if (FD_ISSET(currentSocket, &writeSet)) {
-
-           // }
+            if (FD_ISSET(currentSocket, &writeSet)) {
+                std::string name = (*it)->response.response;
+                send(currentSocket, (*it)->response.response.c_str(), (*it)->response.response.length(), 0);
+                std::cout << "name" << name << "end" << std::endl;
+                it = clientSockets.erase(it);
+                --it;
+                close(currentSocket);
+                FD_CLR(currentSocket, &write_master);
+            }
 		}
 	}
 }

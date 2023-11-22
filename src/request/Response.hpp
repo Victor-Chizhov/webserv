@@ -16,7 +16,8 @@ private:
 
 public:
 //    Response(std::string buf, int newsockfd);
-    std::string handleRequest(std::string buffer, int newsockfd);
+    void handleRequest(std::string buffer, int newsockfd);
+    std::string response;
 };
 
 

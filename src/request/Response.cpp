@@ -70,14 +70,14 @@
 //}
 
 
-std::string Response::handleRequest(std::string buffer, int newsockfd) {
+void Response::handleRequest(std::string buffer, int newsockfd) {
 //    getUrl();
 //    findImage();
 //    createResponse();
 
-
-    std::cout << buffer << std::endl;
-
+    (void)newsockfd;
+    //std::cout << buffer << std::endl;
+    //response.clear();
     Request request(buffer);
     std::cout << request.getUrl() << std::endl;
     std::string url = request.getUrl();
@@ -91,12 +91,10 @@ std::string Response::handleRequest(std::string buffer, int newsockfd) {
         std::ifstream file(url.c_str(), std::ios::binary);
         if (!file.is_open() || file.fail()){
             std::cout << url << std::endl;
-            return NULL;
+            return;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
         file.seekg(0, std::ios::beg);
-
-        std::string response;
 
         response = "HTTP/1.1 200 OK\n";
         if (url.find(".svg") != std::string::npos)
@@ -110,19 +108,15 @@ std::string Response::handleRequest(std::string buffer, int newsockfd) {
         response += line + "\n\n";
         std::cout << "len: " << response.length() << std::endl;
         file.close();
-        return response;
     }
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
-    std::string response;
     if (!file.is_open() || file.fail()){
         response = "HTTP/1.1 404 Not Found\n\n";
-        return response;
     }
     response = "HTTP/1.1 200 OK\n\n";
     std::string line;
-    while (std::getline(file, line)){
+    while (std::getline(file, line, '\0')){
         response += line;
     }
     file.close();
-    return response;
 }

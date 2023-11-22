@@ -2,6 +2,11 @@
 #define CLIENT_HPP
 
 #include "Libraries.hpp"
+#include "../src/request/Response.hpp"
+#include "../src/request/Request.hpp"
+
+class Response;
+class Request;
 
 class Client {
 public:
@@ -12,6 +17,8 @@ public:
     ssize_t writeData(const char* data, size_t dataSize);
 	int getClientSocket() const;
 	struct sockaddr_in getStruct() const;
+    Response response;
+    Request request;
 
 
 private:
