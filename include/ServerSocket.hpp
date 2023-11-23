@@ -11,15 +11,14 @@ class ServerSocket {
 public:
     ServerSocket();
     ~ServerSocket();
-    void start();
-    void configure(int port, int backlog);
+    void initListenSocket(std::string ipAddress, int port);
     void stop();
+    int getListenSocket() const;
 
 private:
     int listenSocket;
-    int port;
     int backlog;
-	EventManager *eventManager;
+    struct sockaddr_in serverAddress;
 };
 
 
