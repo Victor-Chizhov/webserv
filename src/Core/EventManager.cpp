@@ -69,7 +69,6 @@ void EventManager::waitAndHandleEvents() {
                 int bytesRead = recv(currentSocket, buffer, 1024,0);
                 if (bytesRead <= 0) {
                     FD_CLR(currentSocket, &read_master);
-                    FD_SET(currentSocket, &write_master);
                     current.request.Parsing(current.request.request);
                     current.response.handleRequest(current.request);
                     current.request.request.clear();
@@ -77,7 +76,7 @@ void EventManager::waitAndHandleEvents() {
                     current.request.request += std::string(buffer, bytesRead);
                 }
             }
-            if (( current.request.request.find("\r\n\r\n") != std::string::npos )) {
+            if ((current.request.request.find("\r\n\r\n") != std::string::npos )) {
                 FD_CLR(currentSocket, &read_master);
                 FD_SET(currentSocket, &write_master);
                 current.request.Parsing(current.request.request);
@@ -85,13 +84,22 @@ void EventManager::waitAndHandleEvents() {
                 current.request.request.clear();
             }
             if (FD_ISSET(currentSocket, &writeSet)) {
-                std::string name = current.response.response;
-                send(currentSocket, current.response.response.c_str(), current.response.response.length(), 0);
-                std::cout << "name " << name << "end" << std::endl;
-                it = clientSockets.erase(it);
-                --it;
-                close(currentSocket);
-                FD_CLR(currentSocket, &write_master);
+                int byteToWrite = 1024;
+                std::string response = current.response.response;
+                int &sentLength = current.response.sentLength;
+                int length = current.response.response.size();
+                int writingRemainder = length - current.response.sentLength;
+                if (byteToWrite > writingRemainder)
+                    byteToWrite = writingRemainder;
+                int wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
+                if(wasSent == -1 || sentLength + wasSent >= length)
+                {
+                    it = clientSockets.erase(it);
+                    --it;
+                    close(currentSocket);
+                    FD_CLR(currentSocket, &write_master);
+                }
+                sentLength += wasSent;
             }
 		}
 	}

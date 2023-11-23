@@ -18,6 +18,7 @@ public:
 //    Response(std::string buf, int newsockfd);
     void handleRequest(Request &request);
     std::string response;
+    int sentLength;
 };
 
 
