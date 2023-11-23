@@ -93,16 +93,20 @@ void EventManager::waitAndHandleEvents() {
                 int wasSent = 0;
                 if (sentLength < length)
                     wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
-                if (wasSent == -1 && errno == EPIPE)
+                if (wasSent == -1 && errno == EPIPE) {
                     std::cout << "error in send" << std::endl;
+                    exit (1);
+                }
                 if(wasSent == -1 || sentLength + wasSent >= length)
                 {
+                    delete (*it);
                     it = clientSockets.erase(it);
                     --it;
                     close(currentSocket);
                     FD_CLR(currentSocket, &write_master);
                 }
                 sentLength += wasSent;
+                //system("leaks webserv");
             }
 		}
 	}

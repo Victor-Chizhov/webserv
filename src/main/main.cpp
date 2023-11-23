@@ -4,6 +4,7 @@
 
 
 int main(int argc, char **argv) {
+    //signal(SIGPIPE, SIG_IGN);
 
     if (argc != 2) {
         std::cout << "Usage: ./webserv <config>" << std::endl;

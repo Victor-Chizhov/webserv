@@ -119,3 +119,8 @@ void Response::handleRequest(Request &request) {
     response += line;
     file.close();
 }
+
+Response::Response() {
+    sentLength = 0;
+
+}
