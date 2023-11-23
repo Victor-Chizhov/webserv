@@ -1,8 +1,8 @@
 #include "../../include/Client.hpp"
 #include "../../include/ServerSocket.hpp"
 
-Client::Client(int clientSocket) : clientSocket(clientSocket) {
-//	socklen_t clientAddrLen = sizeof(clientAddr);
+Client::Client(int clientSocket, struct sockaddr_in clientAddr) : clientSocket(clientSocket), clientAddr(clientAddr) {
+	//socklen_t clientAddrLen = sizeof(clientAddr);
 }
 
 Client::~Client() {

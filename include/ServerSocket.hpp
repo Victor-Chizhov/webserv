@@ -7,7 +7,6 @@
 class EventManager;
 
 
-
 class ServerSocket {
 public:
     ServerSocket();
@@ -20,7 +19,7 @@ private:
     int listenSocket;
     int port;
     int backlog;
-	EventManager eventManager;
+	EventManager *eventManager;
 };
 
 

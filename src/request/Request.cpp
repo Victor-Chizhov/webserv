@@ -2,7 +2,7 @@
 
 Request::Request() {}
 Request::~Request() {}
-Request::Request(std::string const &input) {
+void Request::Parsing(std::string const &input) {
 	std::map<std::string, std::string>	headers;
 	std::string							line;
 	std::istringstream					iss(input);

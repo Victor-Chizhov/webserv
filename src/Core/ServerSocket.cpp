@@ -1,6 +1,8 @@
 #include "../../include/ServerSocket.hpp"
 
-ServerSocket::ServerSocket() : listenSocket(-1), port(0), backlog(0) {}
+ServerSocket::ServerSocket() : listenSocket(-1), port(0), backlog(0) {
+	eventManager = new EventManager();
+}
 
 ServerSocket::~ServerSocket() {
     if (listenSocket != -1) {
@@ -26,7 +28,7 @@ void ServerSocket::start() {
 
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);  // Слушаем все интерфейсы
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);  // сейчас слушаем все интерфейсы, но потом надо будет прописать конкретный IP из конфига сервера
 	serverAddr.sin_port = htons(port);  // Установка порта
 
 	int opt = 1;
@@ -52,8 +54,8 @@ void ServerSocket::start() {
 	std::cout << "Server listening on port " << port << std::endl;
 
 	// настройка event-менеджера
-    eventManager.addServerSocket(listenSocket);
-	eventManager.waitAndHandleEvents();
+    eventManager->addServerSocket(listenSocket);
+	eventManager->waitAndHandleEvents();
 	stop();
 }
 

@@ -70,15 +70,13 @@
 //}
 
 
-void Response::handleRequest(std::string buffer, int newsockfd) {
+void Response::handleRequest(Request &request) {
 //    getUrl();
 //    findImage();
 //    createResponse();
 
-
-    std::cout << buffer << std::endl;
-
-    Request request(buffer);
+    //std::cout << buffer << std::endl;
+    //response.clear();
     std::cout << request.getUrl() << std::endl;
     std::string url = request.getUrl();
     url.erase(0, 1);
@@ -91,13 +89,10 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
         std::ifstream file(url.c_str(), std::ios::binary);
         if (!file.is_open() || file.fail()){
             std::cout << url << std::endl;
-            close(newsockfd);
             return;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
         file.seekg(0, std::ios::beg);
-
-        std::string response;
 
         response = "HTTP/1.1 200 OK\n";
         if (url.find(".svg") != std::string::npos)
@@ -110,31 +105,22 @@ void Response::handleRequest(std::string buffer, int newsockfd) {
         file.read(&line[0], len);
         response += line + "\n\n";
         std::cout << "len: " << response.length() << std::endl;
-        send(newsockfd, response.c_str(), response.length(), 0);
         file.close();
-        close(newsockfd);
         return;
     }
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
-    std::string response;
     if (!file.is_open() || file.fail()){
         response = "HTTP/1.1 404 Not Found\n\n";
-        send(newsockfd, response.c_str(), response.length(), 0);
-        close(newsockfd);
         return;
     }
     response = "HTTP/1.1 200 OK\n\n";
     std::string line;
-    while (std::getline(file, line)){
-        response += line;
-    }
+    std::getline(file, line, '\0');
+    response += line;
     file.close();
-    ssize_t bytesSent = send(newsockfd, response.c_str(), response.length(), 0);
-    if (bytesSent == -1) {
-        perror("Error in send");
-    } else {
-        std::cout << "Sent " << bytesSent << " bytes successfully." << std::endl;
-    }
+}
 
-    close(newsockfd);
+Response::Response() {
+    sentLength = 0;
+
 }
