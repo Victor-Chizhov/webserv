@@ -5,9 +5,6 @@ ServerSocket::ServerSocket() : listenSocket(-1), backlog(120) {
 }
 
 ServerSocket::~ServerSocket() {
-    if (listenSocket != -1) {
-        close(listenSocket);
-    }
 }
 
 void ServerSocket::stop() {
@@ -52,7 +49,4 @@ void ServerSocket::initListenSocket(std::string ipAddress, int port) {
         close(listenSocket);
         exit(EXIT_FAILURE);
     }
-    int fd = accept(listenSocket, 0, 0);
-    if (fd == -1)
-        std::cout << "erorrr" << std::endl;
 }

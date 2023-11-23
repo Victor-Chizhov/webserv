@@ -44,12 +44,11 @@ void EventManager::waitAndHandleEvents() {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
-        if (activity < 0) {
-            continue ;
+        for (int i = 0; i < serverSockets.size(); i++) {
+            if (FD_ISSET(serverSockets[i].getListenSocket(), &readSet)) {
+                CreateAddClientSocket(serverSockets[i].getListenSocket());
+            }
         }
-		if (FD_ISSET(serverSockets[0].getListenSocket(), &readSet)) {
-				CreateAddClientSocket(serverSockets[0].getListenSocket());
-		}
 		for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
             Client &current = **it;
 			int currentSocket = current.getClientSocket();
