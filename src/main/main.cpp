@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
         return (1);
     }
 
-    WebServer webserv("/Users/vchizhov/Desktop/WebserProject/webserv/config/webserv.conf");
+    WebServer webserv("/Users/gkhaishb/Desktop/webserv_project/Webserv/config/webserv.conf");
 
     try {
         webserv.parseConfig();

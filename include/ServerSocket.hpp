@@ -18,7 +18,7 @@ public:
 private:
     int listenSocket;
     int backlog;
-    struct sockaddr_in serverAddress;
+    struct sockaddr_in serverAddr;
 };
 
 

@@ -21,9 +21,9 @@ int ServerSocket::getListenSocket() const {
 }
 
 void ServerSocket::initListenSocket(std::string ipAddress, int port) {
-    struct sockaddr_in serverAddr;
     std::cout << "ipAddress: " << ipAddress << " | port: " << port << std::endl;
     listenSocket = socket(AF_INET, SOCK_STREAM, 0);
+    std::cout << listenSocket << std::endl;
     if (listenSocket == -1) {
         perror("Error creating socket");
         exit(EXIT_FAILURE);
@@ -52,5 +52,7 @@ void ServerSocket::initListenSocket(std::string ipAddress, int port) {
         close(listenSocket);
         exit(EXIT_FAILURE);
     }
-    this->serverAddress = serverAddr;
+    int fd = accept(listenSocket, 0, 0);
+    if (fd == -1)
+        std::cout << "erorrr" << std::endl;
 }
