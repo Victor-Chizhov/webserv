@@ -11,32 +11,27 @@ EventManager::~EventManager() {
 
 }
 
-void EventManager::addServerSocket(int ServerSocket) {
-    serverSockets.push_back(ServerSocket);
-	FD_SET(ServerSocket, &read_master);
-	if (ServerSocket > maxSocket) {
-        maxSocket = ServerSocket;
+void EventManager::addServerSocket(ServerSocket &serverSocket) {
+    serverSockets.push_back(serverSocket);
+
+	FD_SET(serverSocket.getListenSocket(), &read_master);
+	if (serverSocket.getListenSocket() > maxSocket) {
+        maxSocket = serverSocket.getListenSocket();
     }
 }
 
 void EventManager::CreateAddClientSocket(int serverSocket) {
 	struct sockaddr_in clientAddr;
-    // clientAddr - структура, в которую будет записан адрес клиента (ip:port), он нужен чтобы потом по частям из него читать или записывать информацию
+
 	socklen_t clientAddrLen = sizeof(clientAddr);
 	int clientSocket = accept(serverSocket, (struct sockaddr*) &clientAddr, &clientAddrLen);
 	if (clientSocket == -1) {
 		perror("Error accepting connection");
 		return;
 	}
-	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
     fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
-	/* системный вызов fcntl для установки флага O_NONBLOCK для файлового дескриптора fd. Этот флаг указывает на неблокирующий режим для данного дескриптора.
-	В неблокирующем режиме операции ввода-вывода не блокируют выполнение программы, даже если данных на самом деле нет или данные не могут быть записаны. Вместо этого функции чтения и записи возвращают управление сразу, даже если операция не может быть завершена. Это полезно в асинхронных или многозадачных приложениях, где важно избегать блокировки программы в ожидании данных. */
-	
-    // Добавляем клиентский сокет в множество для использования в select
     FD_SET(clientSocket, &read_master);
 
-    // Обновляем максимальный дескриптор, если необходимо
     if (clientSocket > maxSocket) {
         maxSocket = clientSocket;
     }
@@ -49,22 +44,18 @@ void EventManager::waitAndHandleEvents() {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
-		/* Функция select возвращает количество готовых дескрипторов (сокетов), на которых произошли события, из общего числа дескрипторов в множестве (наборе). Если возвратное значение select равно 0, то это означает, что прошло указанное время ожидания, но ни на одном из дескрипторов не произошло событие. Если значение меньше 0, то произошла ошибка. 
-		maxSocket: Это самый большой дескриптор во множестве плюс 1.
-		readSet, writeSet, exceptfds(четвертый аргумент): Это три указателя на множества дескрипторов, где readSet используется для отслеживания событий чтения, writeSet - для событий записи, exceptfds - для исключительных событий (ошибок).
-		timeout(пятый аргумент): Это указатель на структуру timeval, который определяет максимальное время ожидания. Если timeout установлен в NULL, то select будет ждать бесконечно. */
         if (activity < 0) {
             continue ;
         }
-		if (FD_ISSET(serverSockets[0], &readSet)) { // FD_ISSET проверяет готов ли сокет в данном случае для чтения
-				CreateAddClientSocket(serverSockets[0]);
+		if (FD_ISSET(serverSockets[0].getListenSocket(), &readSet)) {
+				CreateAddClientSocket(serverSockets[0].getListenSocket());
 		}
 		for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
             Client &current = **it;
 			int currentSocket = current.getClientSocket();
 			char buffer[1024];
 			memset(buffer, 0, 1024);
-            if (FD_ISSET(currentSocket, &readSet)) { // FD_ISSET проверяет готов ли сокет в данном случае для чтения
+            if (FD_ISSET(currentSocket, &readSet)) {
                 int bytesRead = recv(currentSocket, buffer, 1024,0);
                 if (bytesRead <= 0) {
                     FD_CLR(currentSocket, &read_master);
