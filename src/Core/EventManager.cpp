@@ -29,7 +29,6 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
 		return;
 	}
 	std::cout << "New connection accepted, socket: " << clientSocket << std::endl;
-	//fcntl(clientSocket, F_SETFL, O_NONBLOCK);
     fcntl(clientSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
 	/* системный вызов fcntl для установки флага O_NONBLOCK для файлового дескриптора fd. Этот флаг указывает на неблокирующий режим для данного дескриптора.
 	В неблокирующем режиме операции ввода-вывода не блокируют выполнение программы, даже если данных на самом деле нет или данные не могут быть записаны. Вместо этого функции чтения и записи возвращают управление сразу, даже если операция не может быть завершена. Это полезно в асинхронных или многозадачных приложениях, где важно избегать блокировки программы в ожидании данных. */
@@ -91,7 +90,11 @@ void EventManager::waitAndHandleEvents() {
                 int writingRemainder = length - current.response.sentLength;
                 if (byteToWrite > writingRemainder)
                     byteToWrite = writingRemainder;
-                int wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
+                int wasSent = 0;
+                if (sentLength < length)
+                    wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
+                if (wasSent == -1 && errno == EPIPE)
+                    std::cout << "error in send" << std::endl;
                 if(wasSent == -1 || sentLength + wasSent >= length)
                 {
                     it = clientSockets.erase(it);

@@ -106,10 +106,12 @@ void Response::handleRequest(Request &request) {
         response += line + "\n\n";
         std::cout << "len: " << response.length() << std::endl;
         file.close();
+        return;
     }
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open() || file.fail()){
         response = "HTTP/1.1 404 Not Found\n\n";
+        return;
     }
     response = "HTTP/1.1 200 OK\n\n";
     std::string line;
