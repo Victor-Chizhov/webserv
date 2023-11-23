@@ -52,7 +52,4 @@ void ServerSocket::initListenSocket(std::string ipAddress, int port) {
         close(listenSocket);
         exit(EXIT_FAILURE);
     }
-    int fd = accept(listenSocket, 0, 0);
-    if (fd == -1)
-        std::cout << "erorrr" << std::endl;
 }

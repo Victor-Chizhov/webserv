@@ -43,8 +43,14 @@ void EventManager::waitAndHandleEvents() {
     while (maxSocket) {
 		readSet = read_master;
 		writeSet = write_master;
+//        int flags = fcntl(4, F_GETFL);
+//        if (flags != -1)
+//            std::cout << "opened" << std::endl;
+//        pause();
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
         if (activity < 0) {
+            perror("Error in select");
+            exit(1);
             continue ;
         }
 		if (FD_ISSET(serverSockets[0].getListenSocket(), &readSet)) {
