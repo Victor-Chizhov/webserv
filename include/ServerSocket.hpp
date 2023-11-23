@@ -4,9 +4,6 @@
 #include "EventManager.hpp"
 #include "Libraries.hpp"
 
-class EventManager;
-
-
 class ServerSocket {
 public:
     ServerSocket();

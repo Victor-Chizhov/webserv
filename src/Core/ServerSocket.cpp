@@ -5,9 +5,6 @@ ServerSocket::ServerSocket() : listenSocket(-1), backlog(120) {
 }
 
 ServerSocket::~ServerSocket() {
-    if (listenSocket != -1) {
-        close(listenSocket);
-    }
 }
 
 void ServerSocket::stop() {
