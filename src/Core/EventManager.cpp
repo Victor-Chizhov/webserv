@@ -44,6 +44,10 @@ void EventManager::waitAndHandleEvents() {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
+        if (activity < 0) {
+            perror("Error in select");
+            continue;
+        }
         for (int i = 0; i < serverSockets.size(); i++) {
             if (FD_ISSET(serverSockets[i].getListenSocket(), &readSet)) {
                 CreateAddClientSocket(serverSockets[i].getListenSocket());
@@ -69,7 +73,7 @@ void EventManager::waitAndHandleEvents() {
                 FD_CLR(currentSocket, &read_master);
                 FD_SET(currentSocket, &write_master);
                 current.request.Parsing(current.request.request);
-                current.response.handleRequest(current.request);
+                current.response.generateResponse(current.request);
                 current.request.request.clear();
             }
             if (FD_ISSET(currentSocket, &writeSet)) {

@@ -8,12 +8,14 @@ class Request {
 		std::string method;
 		std::string version;
 		std::string url;
+        std::string body;
 		std::map<std::string, std::string> headers;
 
 		std::string const parseMethod(std::string const &input);
 		std::string const parseUrl(std::string const &input);
 		std::string const parseVersion(std::string const &input);
 		std::string const parseHost(std::string const &input);
+        std::string const parseBody(std::string const &input);
 		std::string const toLower(std::string const &input);
 		std::map<std::string, std::string> const parseHeaders(std::string const &input);
 
@@ -28,6 +30,7 @@ class Request {
 		std::string const &getVersion() const;
 		std::string const &getUrl() const;
 		std::string const &getHost() const;
+        std::string const &getBody() const;
 		std::map<std::string, std::string> const &getHeaders() const;
         std::string request;
 };

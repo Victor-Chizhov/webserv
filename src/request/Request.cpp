@@ -12,6 +12,7 @@ void Request::Parsing(std::string const &input) {
 	this->url = this->parseUrl(line);
 	this->version = this->parseVersion(line);
 	this->headers = this->parseHeaders(input);
+    this->request = this->parseBody(input);
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -48,6 +49,15 @@ std::string const Request::parseMethod(std::string const &input) {
 
 	std::getline(iss, method, ' ');
 	return method;
+}
+
+std::string const Request::parseBody(std::string const &input) {
+    std::istringstream	iss(input);
+    std::string			body;
+
+    //std::getline(iss, body, '\n');
+    //реализовать метод получения тела запроса
+    return body;
 }
 
 std::string const Request::parseUrl(std::string const &input) {
@@ -88,4 +98,8 @@ std::string const Request::toLower(std::string const &input) {
 	for (size_t i = 0; i < input.length(); i++)
 		output += std::tolower(input[i]);
 	return output;
+}
+
+std::string const &Request::getBody() const {
+    return this->body;
 }

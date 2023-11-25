@@ -7,7 +7,7 @@ Client::Client(int clientSocket, struct sockaddr_in clientAddr) : clientSocket(c
 
 Client::~Client() {
     // Закрытие клиентского сокета при уничтожении объекта
-	std::cout << "Client " << clientSocket << " destructor" << std::endl;
+	//std::cout << "Client " << clientSocket << " destructor" << std::endl;
     //close(clientSocket);
 }
 
