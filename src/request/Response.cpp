@@ -89,12 +89,15 @@ void Response::generateCGIResponse(Request &request) {
         //generateErrorPage(config, 400);
         return;
     }
-    const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/current_time.py"; //захардкодил путь к скрипту, потом переделаю
+    const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/what_day.py"; //захардкодил путь к скрипту, потом переделаю
     const char *pythonInterpreter = "/usr/bin/python2.7"; //захардкодил путь к интерпретатору, потом переделаю
     std::string pathInfo;
     std::string pathTranslated;
     std::string tmpBodyFile;
     int hasBody = request.getMethod() == "POST" ? 1 : 0;
+    char **pythonEnv = new char *[2];
+    pythonEnv[0] = strdup("Number=3"); //цифра захаркодена, потом переделаю (это для второго скрипта какой день недели через n дней)
+    pythonEnv[1] = NULL;
     ///generate args for execve
     char **pythonArgs = new char *[3];
     pythonArgs[0] = strdup(pythonInterpreter);
@@ -109,7 +112,7 @@ void Response::generateCGIResponse(Request &request) {
     int pid = fork();
     if (!pid) {
         dup2(fdCGIFile, 1);
-        if (execve(pythonInterpreter, pythonArgs, NULL) == -1) { //переменная окружения пока не нужна
+        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
             perror("Ошибка при выполнении execve");
             exit(1);
         }
