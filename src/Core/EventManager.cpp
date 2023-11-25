@@ -63,7 +63,7 @@ void EventManager::waitAndHandleEvents() {
                 if (bytesRead <= 0) {
                     FD_CLR(currentSocket, &read_master);
                     current.request.Parsing(current.request.request);
-                    current.response.handleRequest(current.request);
+                    current.response.generateResponse(current.request);
                     current.request.request.clear();
                 } else {
                     current.request.request += std::string(buffer, bytesRead);

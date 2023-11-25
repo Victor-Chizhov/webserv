@@ -163,8 +163,6 @@ try:
 </html>
 """.format(current_time=current_time)
 
-
-
     print("HTTP/1.1 200 OK")
     print("\r\n")
     print(HTML)

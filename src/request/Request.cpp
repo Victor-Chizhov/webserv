@@ -13,6 +13,7 @@ void Request::Parsing(std::string const &input) {
 	this->version = this->parseVersion(line);
 	this->headers = this->parseHeaders(input);
     this->request = this->parseBody(input);
+    this->body = this->parseBody(input);
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -52,12 +53,18 @@ std::string const Request::parseMethod(std::string const &input) {
 }
 
 std::string const Request::parseBody(std::string const &input) {
-    std::istringstream	iss(input);
     std::string			body;
 
-    //std::getline(iss, body, '\n');
-    //реализовать метод получения тела запроса
-    return body;
+    // Находим пустую строку, разделяющую заголовки и тело
+    size_t doubleLineBreakPos = input.find("\r\n\r\n");
+    if (doubleLineBreakPos != std::string::npos) {
+        // Если нашли разделение, извлекаем тело
+        body = input.substr(doubleLineBreakPos + 4);
+        return body;
+    } else {
+        // Если разделения нет, вернем пустую строку или что-то еще, что покажет отсутствие тела
+        return "";
+    }
 }
 
 std::string const Request::parseUrl(std::string const &input) {
