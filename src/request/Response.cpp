@@ -73,7 +73,7 @@ void Response::generateResponse(Request &request) {
     //generateAutoindexPage
 
     // generateRedirectResponse
-
+    std::cout << request.request << std::endl;
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
         generateCGIResponse(request);
@@ -95,8 +95,12 @@ void Response::generateCGIResponse(Request &request) {
     std::string pathTranslated;
     std::string tmpBodyFile;
     int hasBody = request.getMethod() == "POST" ? 1 : 0;
+    std::map<std::string, std::string> env = request.getArgs();
     char **pythonEnv = new char *[2];
-    pythonEnv[0] = strdup("Number=3"); //цифра захаркодена, потом переделаю (это для второго скрипта какой день недели через n дней)
+    std::map<std::string, std::string>::iterator it = env.begin();
+    std::string tmp = it->first + "=" + it->second;
+    pythonEnv[0] = strdup(tmp.c_str());
+    //pythonEnv[0] = strdup("Number=3"); //цифра захаркодена, потом переделаю (это для второго скрипта какой день недели через n дней)
     pythonEnv[1] = NULL;
     ///generate args for execve
     char **pythonArgs = new char *[3];

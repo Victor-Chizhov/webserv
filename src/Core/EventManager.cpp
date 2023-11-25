@@ -60,21 +60,16 @@ void EventManager::waitAndHandleEvents() {
 			memset(buffer, 0, 1024);
             if (FD_ISSET(currentSocket, &readSet)) {
                 int bytesRead = recv(currentSocket, buffer, 1024,0);
-                if (bytesRead <= 0) {
+                if (bytesRead < 1024) {
+                    current.request.request += std::string(buffer, bytesRead);
                     FD_CLR(currentSocket, &read_master);
+                    FD_SET(currentSocket, &write_master);
                     current.request.Parsing(current.request.request);
                     current.response.generateResponse(current.request);
                     current.request.request.clear();
                 } else {
                     current.request.request += std::string(buffer, bytesRead);
                 }
-            }
-            if ((current.request.request.find("\r\n\r\n") != std::string::npos )) {
-                FD_CLR(currentSocket, &read_master);
-                FD_SET(currentSocket, &write_master);
-                current.request.Parsing(current.request.request);
-                current.response.generateResponse(current.request);
-                current.request.request.clear();
             }
             if (FD_ISSET(currentSocket, &writeSet)) {
                 int byteToWrite = 1024;

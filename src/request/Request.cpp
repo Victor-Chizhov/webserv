@@ -14,6 +14,7 @@ void Request::Parsing(std::string const &input) {
 	this->headers = this->parseHeaders(input);
     this->request = this->parseBody(input);
     this->body = this->parseBody(input);
+    this->args = this->parseArgs();
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -80,6 +81,28 @@ std::string const Request::parseUrl(std::string const &input) {
 	return url;
 }
 
+std::map<std::string, std::string> const Request::parseArgs() {
+    std::map<std::string, std::string> args;
+    std::string url = this->getUrl();
+    std::string argsString;
+    size_t argsStart = url.find('?');
+    if (argsStart != std::string::npos) {
+        argsString = url.substr(argsStart + 1);
+        url = url.substr(0, argsStart);
+    }
+    std::istringstream iss(argsString);
+    std::string arg;
+    while (std::getline(iss, arg, '&')) {
+        size_t argStart = arg.find('=');
+        if (argStart != std::string::npos) {
+            std::string key = arg.substr(0, argStart);
+            std::string value = arg.substr(argStart + 1);
+            args.insert(std::pair<std::string, std::string>(key, value));
+        }
+    }
+    return args;
+}
+
 std::string const Request::parseVersion(std::string const &input) {
 	return (input.substr(input.find("HTTP/")));
 }
@@ -109,4 +132,8 @@ std::string const Request::toLower(std::string const &input) {
 
 std::string const &Request::getBody() const {
     return this->body;
+}
+
+const std::map<std::string, std::string> &Request::getArgs() const {
+    return args;
 }
