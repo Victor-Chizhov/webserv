@@ -28,9 +28,7 @@ class Server : public Parser {
         void printServerData();
         void printDataConfig() const;
         unsigned long getPort() const;
-
         const std::string &getHost() const;
-        unsigned long getPort() const;
 
 };
 

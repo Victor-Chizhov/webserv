@@ -15,8 +15,8 @@ private:
     void findImage();
     void createResponse();
 
-    void handleGet(std::string buffer, int newsockfd);
-    void handlePost(std::string buffer, int newsockfd);
+    void handleGet(Request &request);
+    void handlePost(Request &request);
 
 public:
     Response();
