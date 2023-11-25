@@ -44,7 +44,11 @@ void EventManager::waitAndHandleEvents() {
 		readSet = read_master;
 		writeSet = write_master;
         int activity = select(maxSocket + 1, &readSet, &writeSet, NULL, NULL);
-        for (int i = 0; i < serverSockets.size(); i++) {
+        if (activity < 0) {
+            perror("Error in select");
+            continue;
+        }
+        for (size_t i = 0; i < serverSockets.size(); i++) {
             if (FD_ISSET(serverSockets[i].getListenSocket(), &readSet)) {
                 CreateAddClientSocket(serverSockets[i].getListenSocket());
             }
@@ -84,7 +88,7 @@ void EventManager::waitAndHandleEvents() {
                 if (sentLength < length)
                     wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
                 if (wasSent == -1 && errno == EPIPE) {
-                    std::cout << "error in send" << std::endl;
+//                    std::cout << "error in send" << std::endl;
                     exit (1);
                 }
                 if(wasSent == -1 || sentLength + wasSent >= length)

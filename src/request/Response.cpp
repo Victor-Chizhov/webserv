@@ -77,7 +77,7 @@ void Response::handleRequest(Request &request) {
 
     //std::cout << buffer << std::endl;
     //response.clear();
-    std::cout << request.getUrl() << std::endl;
+//    std::cout << request.getUrl() << std::endl;
     std::string url = request.getUrl();
     url.erase(0, 1);
 
@@ -85,10 +85,10 @@ void Response::handleRequest(Request &request) {
         url.find(".png") != std::string::npos ||
         url.find(".svg") != std::string::npos ||
         url.find(".ico") != std::string::npos) {
-        std::cout << "IMAGE" << std::endl;
+//        std::cout << "IMAGE" << std::endl;
         std::ifstream file(url.c_str(), std::ios::binary);
         if (!file.is_open() || file.fail()){
-            std::cout << url << std::endl;
+//            std::cout << url << std::endl;
             return;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
@@ -104,7 +104,7 @@ void Response::handleRequest(Request &request) {
         line.resize(len);
         file.read(&line[0], len);
         response += line + "\n\n";
-        std::cout << "len: " << response.length() << std::endl;
+//        std::cout << "len: " << response.length() << std::endl;
         file.close();
         return;
     }

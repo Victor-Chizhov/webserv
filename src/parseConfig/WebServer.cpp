@@ -59,9 +59,9 @@ void WebServer::createUniquePair() {
 
 void WebServer::createEventManager() {
    for (std::set<std::pair<std::string, int> >::iterator it = unique.begin(); it != unique.end(); it++) {
-        ServerSocket *listenSocket = new ServerSocket;
-        listenSocket->initListenSocket(it->first, it->second);
-        eventManager->addServerSocket(*listenSocket);
+       ServerSocket listenSocket;
+       listenSocket.initListenSocket(it->first, it->second);
+       eventManager->addServerSocket(listenSocket);
     }
 }
 
