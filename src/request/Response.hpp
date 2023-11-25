@@ -4,6 +4,7 @@
 #include "../../include/Libraries.hpp"
 #include "Request.hpp"
 
+//сделать обработчик для гет запроса с параметрами
 
 
 class Response {
@@ -14,8 +15,10 @@ private:
     void findImage();
     void createResponse();
 
+    void handleGet(std::string buffer, int newsockfd);
+    void handlePost(std::string buffer, int newsockfd);
+
 public:
-//    Response(std::string buf, int newsockfd);
     Response();
     void handleRequest(Request &request);
     std::string response;

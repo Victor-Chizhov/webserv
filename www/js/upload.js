@@ -1,4 +1,4 @@
-function handleFileUpload(input) {
+function fileUpload(input) {
     const file = input.files[0];
     if (file) {
         const formData = new FormData();

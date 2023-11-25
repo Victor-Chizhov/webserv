@@ -47,6 +47,15 @@ void Server::fillEachLocationWithData() {
     }
 }
 
+const std::string &Server::getHost() const {
+    return ipAddress;
+}
+
+unsigned long Server::getPort() const {
+    return port;
+}
+
+
 void Server::updateDataInServer() {
     for (size_t i = 0; i < serverConfig.size(); i++) {
         cutDataStr(serverConfig[i], "listen", ipAddress);
@@ -67,13 +76,6 @@ void Server::addDataInServer() {
 //    printServerData();
 }
 
-const std::string &Server::getHost() const {
-    return ipAddress;
-}
-
-unsigned long Server::getPort() const {
-    return port;
-}
 
 
 

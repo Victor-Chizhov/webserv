@@ -18,9 +18,7 @@ int ServerSocket::getListenSocket() const {
 }
 
 void ServerSocket::initListenSocket(std::string ipAddress, int port) {
-//    std::cout << "ipAddress: " << ipAddress << " | port: " << port << std::endl;
     listenSocket = socket(AF_INET, SOCK_STREAM, 0);
-//    std::cout << listenSocket << std::endl;
     if (listenSocket == -1) {
         perror("Error creating socket");
         exit(EXIT_FAILURE);
