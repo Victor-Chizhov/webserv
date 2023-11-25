@@ -60,6 +60,7 @@ std::string const Request::parseUrl(std::string const &input) {
 	std::getline(iss, url, ' ');
 	if (url.empty())
 		throw std::invalid_argument("Invalid URL");
+
 	return url;
 }
 
