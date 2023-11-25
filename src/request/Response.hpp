@@ -17,10 +17,12 @@ private:
 
     void handleGet(Request &request);
     void handlePost(Request &request);
+    void canMakeResponse(Request &request);
 
 public:
     Response();
     void handleRequest(Request &request);
+    void createResponse(Request &request);
     std::string response;
     int sentLength;
 };

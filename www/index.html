@@ -86,11 +86,17 @@
                            HTTP is one of the most used protocols on the internet.
                            Knowing its arcane will be useful, even if you won’t be working on a website.</p>
                         <div class="read_bt">
+<!--                            <form action="/upload" method="post" enctype="multipart/form-data">-->
+<!--                                <label for="fileInput" class="upload">-->
+<!--                                    Upload Files-->
+<!--                                </label>-->
+<!--                                <input type="file" name="file" id="fileInput" style="display: none;" onchange="fileUpload(this)" />-->
+<!--                            </form>-->
                             <form action="/upload" method="post" enctype="multipart/form-data">
-                                <label for="fileInput" class="upload">
-                                    Upload Files
-                                </label>
-                                <input type="file" name="file" id="fileInput" style="display: none;" onchange="fileUpload(this)" />
+                                <label for="file">Choose a file:</label>
+                                <input type="file" id="file" name="file" accept=".jpg, .jpeg, .png" onchange="fileUpload(this)">
+                                <br>
+                                <input type="submit" value="Upload">
                             </form>
                         </div>
                      </div>
