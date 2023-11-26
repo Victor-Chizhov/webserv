@@ -12,23 +12,31 @@ void Response::generateErrorsPage(int code) {
     std::string errorStatus;
     if (code == 400) {
         errorPageName = "400.html";
+        errorStatus = "Bad Request";
     } else if (code == 403) {
         errorPageName = "403.html";
+        errorStatus = "Forbidden";
     } else if (code == 404) {
         errorPageName = "404.html";
+        errorStatus = "Not Found";
     } else if (code == 405) {
         errorPageName = "405.html";
+        errorStatus = "Method Not Allowed";
     } else if (code == 413) {
         errorPageName = "413.html";
+        errorStatus = "Request Entity Too Large";
     } else if (code == 500) {
         errorPageName = "500.html";
-    } else if (code == 501) {
-        errorPageName = "501.html";
-    } else if (code == 505) {
-        errorPageName = "505.html";
+        errorStatus = "Internal Server Error";
+    } else if (code == 502) {
+        errorPageName = "502.html";
+        errorStatus = "Bad Gateway";
+    } else if (code == 503) {
+        errorPageName = "503.html";
+        errorStatus = "Service Unavailable";
     } else
         errorPageName = "404.html";
-    response = "HTTP/1.1 " + std::to_string(code) + " Not Found\n";
+    response = "HTTP/1.1 " + std::to_string(code) + " " + errorStatus + "\n";
     response += "Content-Type: text/html\n\n";
     std::string line;
     std::ifstream file((errorPagePath + errorPageName).c_str(), std::ios::in | std::ios::binary);
