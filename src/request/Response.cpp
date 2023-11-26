@@ -72,8 +72,12 @@
 void Response::generateResponse(Request &request) {
     //generateAutoindexPage
 
-    // generateRedirectResponse
-    std::cout << request.request << std::endl;
+    // generateRedirectResponse //это предложил чатгпт, но пока не работает
+    if (request.getMethod() == "GET" && request.getUrl() == "/redirect") {
+        response = "HTTP/1.1 301 Moved Permanently\nLocation: http://localhost:8080/\n\n";
+        return;
+    }
+
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
         generateCGIResponse(request);
@@ -139,6 +143,8 @@ void Response::generateCGIResponse(Request &request) {
 bool Response::isCGI(std::string path) {
     ///check that last 3 symbols is .py
     if (path.size() > 2 && path.substr(path.size() - 3, 3) == ".py")
+        return true;
+    if (path.find(".py?") != std::string::npos)
         return true;
     return false;
 }
