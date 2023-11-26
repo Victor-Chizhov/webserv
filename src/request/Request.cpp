@@ -12,6 +12,9 @@ void Request::Parsing(std::string const &input) {
 	this->url = this->parseUrl(line);
 	this->version = this->parseVersion(line);
 	this->headers = this->parseHeaders(input);
+    this->request = this->parseBody(input);
+    this->body = this->parseBody(input);
+    this->args = this->parseArgs();
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -50,6 +53,21 @@ std::string const Request::parseMethod(std::string const &input) {
 	return method;
 }
 
+std::string const Request::parseBody(std::string const &input) {
+    std::string			body;
+
+    // Находим пустую строку, разделяющую заголовки и тело
+    size_t doubleLineBreakPos = input.find("\r\n\r\n");
+    if (doubleLineBreakPos != std::string::npos) {
+        // Если нашли разделение, извлекаем тело
+        body = input.substr(doubleLineBreakPos + 4);
+        return body;
+    } else {
+        // Если разделения нет, вернем пустую строку или что-то еще, что покажет отсутствие тела
+        return "";
+    }
+}
+
 std::string const Request::parseUrl(std::string const &input) {
 	std::istringstream	iss(input);
 	std::string			url;
@@ -62,6 +80,28 @@ std::string const Request::parseUrl(std::string const &input) {
 		throw std::invalid_argument("Invalid URL");
 
 	return url;
+}
+
+std::map<std::string, std::string> const Request::parseArgs() {
+    std::map<std::string, std::string> args;
+    std::string url = this->getUrl();
+    std::string argsString;
+    size_t argsStart = url.find('?');
+    if (argsStart != std::string::npos) {
+        argsString = url.substr(argsStart + 1);
+        url = url.substr(0, argsStart);
+    }
+    std::istringstream iss(argsString);
+    std::string arg;
+    while (std::getline(iss, arg, '&')) {
+        size_t argStart = arg.find('=');
+        if (argStart != std::string::npos) {
+            std::string key = arg.substr(0, argStart);
+            std::string value = arg.substr(argStart + 1);
+            args.insert(std::pair<std::string, std::string>(key, value));
+        }
+    }
+    return args;
 }
 
 std::string const Request::parseVersion(std::string const &input) {
@@ -89,4 +129,12 @@ std::string const Request::toLower(std::string const &input) {
 	for (size_t i = 0; i < input.length(); i++)
 		output += std::tolower(input[i]);
 	return output;
+}
+
+std::string const &Request::getBody() const {
+    return this->body;
+}
+
+const std::map<std::string, std::string> &Request::getArgs() const {
+    return args;
 }

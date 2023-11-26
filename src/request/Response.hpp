@@ -21,6 +21,9 @@ private:
 public:
     Response();
     void handleRequest(Request &request);
+    void generateResponse(Request &request);
+    bool isCGI(std::string path);
+    void generateCGIResponse(Request &request);
     std::string response;
     int sentLength;
 };

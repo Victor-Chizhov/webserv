@@ -5,6 +5,94 @@ Response::Response() {
 
 
 void Response::handleGet(Request &request) {
+void Response::generateResponse(Request &request) {
+    //generateAutoindexPage
+
+    // generateRedirectResponse //это предложил чатгпт, но пока не работает
+    if (request.getMethod() == "GET" && request.getUrl() == "/redirect") {
+        response = "HTTP/1.1 301 Moved Permanently\nLocation: http://localhost:8080/\n\n";
+        return;
+    }
+
+    //generate generateCGIResponse
+    if (isCGI(request.getUrl())) {
+        generateCGIResponse(request);
+        return;
+    }
+
+    //generate HTML response
+    handleRequest(request);
+}
+
+void Response::generateCGIResponse(Request &request) {
+    if (request.getMethod() == "POST" && request.getBody().empty()) {
+        //generateErrorPage(config, 400);
+        return;
+    }
+    const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/what_day.py"; //захардкодил путь к скрипту, потом переделаю
+    const char *pythonInterpreter = "/usr/bin/python2.7"; //захардкодил путь к интерпретатору, потом переделаю
+    std::string pathInfo;
+    std::string pathTranslated;
+    std::string tmpBodyFile;
+    int hasBody = request.getMethod() == "POST" ? 1 : 0;
+    std::map<std::string, std::string> env = request.getArgs();
+    char **pythonEnv = new char *[2];
+    std::map<std::string, std::string>::iterator it = env.begin();
+    std::string tmp = it->first + "=" + it->second;
+    pythonEnv[0] = strdup(tmp.c_str());
+    //pythonEnv[0] = strdup("Number=3"); //цифра захаркодена, потом переделаю (это для второго скрипта какой день недели через n дней)
+    pythonEnv[1] = NULL;
+    ///generate args for execve
+    char **pythonArgs = new char *[3];
+    pythonArgs[0] = strdup(pythonInterpreter);
+    pythonArgs[1] = strdup(pythonScriptPath);
+    pythonArgs[2] = NULL;
+    std::string tmpCGIFile = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/tmpCGIFile"; //захардкодил путь к временному файлу, потом переделаю
+    int fdCGIFile = open(tmpCGIFile.c_str(), O_RDWR | O_CREAT, 0666);
+    if (fdCGIFile == -1) {
+        perror("Ошибка при открытии файла");
+        exit(1);
+    }
+    int pid = fork();
+    if (!pid) {
+        dup2(fdCGIFile, 1);
+        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
+            perror("Ошибка при выполнении execve");
+            exit(1);
+        }
+        close(fdCGIFile);
+    }
+    std::ifstream file( tmpCGIFile.c_str(), std::ios::binary);
+    waitpid(pid, NULL, 0);
+    if (file) {
+        file.seekg(0, std::ios::end);
+        std::streampos length = file.tellg();
+        file.seekg(0, std::ios::beg);
+        response.resize(length);
+        file.read(&response[0], length);
+        file.close();
+    }
+    remove(tmpCGIFile.c_str());
+    delete[] pythonArgs;
+}
+
+bool Response::isCGI(std::string path) {
+    ///check that last 3 symbols is .py
+    if (path.size() > 2 && path.substr(path.size() - 3, 3) == ".py")
+        return true;
+    if (path.find(".py?") != std::string::npos)
+        return true;
+    return false;
+}
+
+void Response::handleRequest(Request &request) {
+//    getUrl();
+//    findImage();
+//    createResponse();
+
+    //std::cout << buffer << std::endl;
+    //response.clear();
+    std::cout << request.getUrl() << std::endl;
     std::string url = request.getUrl();
     url.erase(0, 1);
 
@@ -12,7 +100,7 @@ void Response::handleGet(Request &request) {
         url.find(".png") != std::string::npos ||
         url.find(".svg") != std::string::npos ||
         url.find(".ico") != std::string::npos) {
-//        std::cout << "IMAGE" << std::endl;
+        //std::cout << "IMAGE" << std::endl;
         std::ifstream file(url.c_str(), std::ios::binary);
         if (!file.is_open() || file.fail()){
 //            std::cout << url << std::endl;
@@ -31,7 +119,7 @@ void Response::handleGet(Request &request) {
         line.resize(len);
         file.read(&line[0], len);
         response += line + "\n\n";
-//        std::cout << "len: " << response.length() << std::endl;
+        //std::cout << "len: " << response.length() << std::endl;
         file.close();
         return;
     }
