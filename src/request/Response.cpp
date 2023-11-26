@@ -9,23 +9,24 @@ void Response::generateErrorsPage(int code) {
     std::string errorPage;
     std::string errorPagePath = "www/errorPages/";
     std::string errorPageName;
-    if (code == 400)
+    std::string errorStatus;
+    if (code == 400) {
         errorPageName = "400.html";
-    else if (code == 403)
+    } else if (code == 403) {
         errorPageName = "403.html";
-    else if (code == 404)
+    } else if (code == 404) {
         errorPageName = "404.html";
-    else if (code == 405)
+    } else if (code == 405) {
         errorPageName = "405.html";
-    else if (code == 413)
+    } else if (code == 413) {
         errorPageName = "413.html";
-    else if (code == 500)
+    } else if (code == 500) {
         errorPageName = "500.html";
-    else if (code == 501)
+    } else if (code == 501) {
         errorPageName = "501.html";
-    else if (code == 505)
+    } else if (code == 505) {
         errorPageName = "505.html";
-    else
+    } else
         errorPageName = "404.html";
     response = "HTTP/1.1 " + std::to_string(code) + " Not Found\n";
     response += "Content-Type: text/html\n\n";
