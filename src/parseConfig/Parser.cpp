@@ -58,9 +58,9 @@ void Parser::cutDataStr(std::string &line, std::string finder, std::string &data
     }
 }
 
-void Parser::cutDataNum(std::string &line, std::string finder, unsigned long &data) {
+void Parser::cutDataNum(std::string &line, std::string finder, int &data) {
 
-    unsigned long numValue = 0;
+    int numValue = 0;
 
     size_t pos = line.find(finder);
     if (pos != std::string::npos) {

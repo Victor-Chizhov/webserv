@@ -51,7 +51,7 @@ const std::string &Server::getHost() const {
     return ipAddress;
 }
 
-unsigned long Server::getPort() const {
+int Server::getPort() const {
     return port;
 }
 
@@ -74,6 +74,10 @@ void Server::addDataInServer() {
     fillEachLocationWithData();
     updateDataInServer();
 //    printServerData();
+}
+
+const std::vector<Location> &Server::getLocations() const {
+    return locations;
 }
 
 

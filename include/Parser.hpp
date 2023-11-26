@@ -10,7 +10,7 @@ class Parser {
         void removeSpaces(std::string &line);
         void cutDataStr(std::string &line, std::string finder, std::string &data);
         void cutDataMap(std::string &line, std::string finder, std::map<int, std::string> &data);
-        void cutDataNum(std::string &line, std::string finder, unsigned long &data);
+        void cutDataNum(std::string &line, std::string finder, int &data);
         void cutDataBool(std::string &line, std::string finder, bool &data);
         void cutDataArray(std::string &line, std::string finder, std::vector<std::string> &data);
         void ParseAndCheckLine(std::string &line, std::string finder);

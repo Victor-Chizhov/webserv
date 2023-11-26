@@ -26,18 +26,19 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
         //generateErrorPage(config, 400);
         return;
     }
+    const char *pythonInterpreter;
     std::cout << servers.size() << std::endl;
-//    for (int i = 0; i < servers.size(); i++) {
-//        if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port
-//            if (servers[i].getCGIPath().empty()) {
-//                //generateErrorPage(config, 404);
-//                return;
-//            }
-//            break;
-//        }
-//    }
+    for (size_t i = 0; i < servers.size(); i++) {
+        if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port) {
+            for (size_t j = 0; j < servers[i].getLocations().size(); j++) {
+                    if (!servers[i].getLocations()[j].getCgiPass().empty()) {
+                        pythonInterpreter = servers[i].getLocations()[j].getCgiPass().c_str();
+                        break;
+                    }
+            }
+        }
+    }
     const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/what_day.py"; //захардкодил путь к скрипту, потом переделаю
-    const char *pythonInterpreter = "/usr/bin/python2.7"; //захардкодил путь к интерпретатору, потом переделаю
     std::string pathInfo;
     std::string pathTranslated;
     std::string tmpBodyFile;

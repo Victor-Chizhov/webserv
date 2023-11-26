@@ -69,5 +69,9 @@ void Location::updateDataInLocation() {
     }
 }
 
+std::string Location::getCgiPass() const {
+    return cgiPass;
+}
+
 
 

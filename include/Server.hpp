@@ -9,8 +9,8 @@ class Server : public Parser {
     private:
         std::vector<std::string> serverConfig;
         std::string ipAddress;
-        unsigned long port;
-        unsigned long clientMaxBodySize;
+        int port;
+        int clientMaxBodySize;
         std::string serverName;
         std::map<int, std::string> errorPages;
         std::vector<Location> locations;
@@ -27,8 +27,9 @@ class Server : public Parser {
 
         void printServerData();
         void printDataConfig() const;
-        unsigned long getPort() const;
+        int getPort() const;
         const std::string &getHost() const;
+        const std::vector<Location> &getLocations() const;
 
 };
 
