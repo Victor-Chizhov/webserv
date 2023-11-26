@@ -12,7 +12,6 @@ void Request::Parsing(std::string const &input) {
 	this->url = this->parseUrl(line);
 	this->version = this->parseVersion(line);
 	this->headers = this->parseHeaders(input);
-    this->request = this->parseBody(input);
     this->body = this->parseBody(input);
     this->args = this->parseArgs();
 }

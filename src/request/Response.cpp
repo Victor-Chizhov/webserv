@@ -1,7 +1,43 @@
 #include "Response.hpp"
+
 Response::Response() {
     sentLength = 0;
 }
+
+
+void Response::generateErrorsPage(int code) {
+    std::string errorPage;
+    std::string errorPagePath = "www/errorPages/";
+    std::string errorPageName;
+    if (code == 400)
+        errorPageName = "400.html";
+    else if (code == 403)
+        errorPageName = "403.html";
+    else if (code == 404)
+        errorPageName = "404.html";
+    else if (code == 405)
+        errorPageName = "405.html";
+    else if (code == 413)
+        errorPageName = "413.html";
+    else if (code == 500)
+        errorPageName = "500.html";
+    else if (code == 501)
+        errorPageName = "501.html";
+    else if (code == 505)
+        errorPageName = "505.html";
+    else
+        errorPageName = "404.html";
+    response = "HTTP/1.1 " + std::to_string(code) + " Not Found\n";
+    response += "Content-Type: text/html\n\n";
+    std::string line;
+    std::ifstream file((errorPagePath + errorPageName).c_str(), std::ios::in | std::ios::binary);
+    if (file.is_open()) {
+        getline(file, line, '\0');
+        file.close();
+    }
+    response += line;
+}
+
 
 void Response::generateResponse(Request &request) {
     //generateAutoindexPage
@@ -92,7 +128,7 @@ void Response::handleGet(Request &request) {
         url.find(".svg") != std::string::npos ||
         url.find(".ico") != std::string::npos) {
         std::ifstream file(url.c_str(), std::ios::binary);
-        if (!file.is_open() || file.fail()){
+        if (!file.is_open() || file.fail()) {
             return;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
@@ -111,9 +147,23 @@ void Response::handleGet(Request &request) {
         file.close();
         return;
     }
+
+    //жесткий костыль надо хендлить
+    if (url.find("css") != std::string::npos) {
+        std::istringstream ss(url);
+        std::string segment;
+        std::string path;
+        while (std::getline(ss, segment, '/'))
+            path = segment;
+
+        url = "www/css/" + path;
+    }
+
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open() || file.fail()){
-        response = "HTTP/1.1 404 Not Found\n\n";
+//        response = "HTTP/1.1 404 Not Found\n\n";
+        generateErrorsPage(404);
+//        std::cout << response << std::endl;
         return;
     }
     response = "HTTP/1.1 200 OK\n\n";

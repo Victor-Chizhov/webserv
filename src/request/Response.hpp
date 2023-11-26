@@ -18,6 +18,7 @@ private:
     void handleGet(Request &request);
     void handlePost(Request &request);
     void canMakeResponse(Request &request);
+    void generateErrorsPage(int code);
 
 public:
     Response();
