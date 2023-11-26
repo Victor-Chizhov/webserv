@@ -37,6 +37,7 @@ std::string const &Request::getVersion() const {
 	return this->version;
 }
 
+
 std::string const &Request::getUrl() const {
 	return this->url;
 }

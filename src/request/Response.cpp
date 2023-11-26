@@ -3,8 +3,6 @@ Response::Response() {
     sentLength = 0;
 }
 
-
-void Response::handleGet(Request &request) {
 void Response::generateResponse(Request &request) {
     //generateAutoindexPage
 
@@ -34,7 +32,7 @@ void Response::generateCGIResponse(Request &request) {
     std::string pathInfo;
     std::string pathTranslated;
     std::string tmpBodyFile;
-    int hasBody = request.getMethod() == "POST" ? 1 : 0;
+    //int hasBody = request.getMethod() == "POST" ? 1 : 0;
     std::map<std::string, std::string> env = request.getArgs();
     char **pythonEnv = new char *[2];
     std::map<std::string, std::string>::iterator it = env.begin();
@@ -85,14 +83,7 @@ bool Response::isCGI(std::string path) {
     return false;
 }
 
-void Response::handleRequest(Request &request) {
-//    getUrl();
-//    findImage();
-//    createResponse();
-
-    //std::cout << buffer << std::endl;
-    //response.clear();
-    std::cout << request.getUrl() << std::endl;
+void Response::handleGet(Request &request) {
     std::string url = request.getUrl();
     url.erase(0, 1);
 
@@ -100,10 +91,8 @@ void Response::handleRequest(Request &request) {
         url.find(".png") != std::string::npos ||
         url.find(".svg") != std::string::npos ||
         url.find(".ico") != std::string::npos) {
-        //std::cout << "IMAGE" << std::endl;
         std::ifstream file(url.c_str(), std::ios::binary);
         if (!file.is_open() || file.fail()){
-//            std::cout << url << std::endl;
             return;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
@@ -119,7 +108,6 @@ void Response::handleRequest(Request &request) {
         line.resize(len);
         file.read(&line[0], len);
         response += line + "\n\n";
-        //std::cout << "len: " << response.length() << std::endl;
         file.close();
         return;
     }
@@ -137,42 +125,32 @@ void Response::handleRequest(Request &request) {
 
 void Response::handlePost(Request &request) {
     (void)request;
-
-//    std::istringstream request(buffer);
-//    std::string line;
-//    std::string boundary;
-//
-//    while (std::getline(request, line) && line.find("boundary=") == std::string::npos);
-//
-//    size_t pos = line.find("boundary=");
-//    if (pos != std::string::npos) {
-//        boundary = line.substr(pos + 9);
-//    }
-//
-//    while (std::getline(request, line) && line != "\r\n");
-//
-//    // Проверка Content-Disposition на наличие "filename"
-//    while (std::getline(request, line) && line.find("filename=\"") == std::string::npos);
-//    size_t filenamePos = line.find("filename=\"");
-//    if (filenamePos != std::string::npos) {
-//        std::string filename = line.substr(filenamePos + 10, line.size() - filenamePos - 12);
-//
-//        std::ofstream outfile(filename.c_str(), std::ios::binary);
-//        while (std::getline(request, line) && line != "--" + boundary + "--") {
-//            outfile << line << std::endl;
-//        }
-//        outfile.close();
-//
-//        std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
-//        send(newsockfd, response.c_str(), response.length(), 0);
-//    } else {
-//        std::string response = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n";
-//        send(newsockfd, response.c_str(), response.length(), 0);
-//    }
 }
 
 
 void Response::handleRequest(Request &request) {
+
+    std::cout << request.request << std::endl;
+
+    if(request.getUrl() == "/upload") {
+
+        std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
+
+        std::istringstream stream(formData);
+
+        std::cout << formData << std::endl;
+
+        std::string line;
+        std::ofstream destFile;
+        destFile.open("upload.txt", std::ios::binary | std::ios::app);
+
+        while (std::getline(stream, line)) {
+            destFile << line << std::endl;
+        }
+
+        destFile.close();
+    }
+
     if (request.getMethod() == "GET") {
         handleGet(request);
     } else if (request.getMethod() == "POST") {
@@ -182,4 +160,8 @@ void Response::handleRequest(Request &request) {
     } else {
         std::cout << "ERROR" << std::endl;
     }
+}
+
+void Response::createResponse(Request &request) {
+    (void)request;
 }

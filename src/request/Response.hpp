@@ -17,6 +17,7 @@ private:
 
     void handleGet(Request &request);
     void handlePost(Request &request);
+    void canMakeResponse(Request &request);
 
 public:
     Response();
@@ -24,6 +25,7 @@ public:
     void generateResponse(Request &request);
     bool isCGI(std::string path);
     void generateCGIResponse(Request &request);
+    void createResponse(Request &request);
     std::string response;
     int sentLength;
 };
