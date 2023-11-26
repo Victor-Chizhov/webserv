@@ -130,8 +130,6 @@ void Response::handlePost(Request &request) {
 
 void Response::handleRequest(Request &request) {
 
-    std::cout << request.request << std::endl;
-
     if(request.getUrl() == "/upload") {
 
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);

@@ -40,6 +40,10 @@ void WebServer::fillEachServerWithData() {
     }
 }
 
+std::vector<Server> &WebServer::getServers() {
+    return servers;
+}
+
 void WebServer::addConfigData() {
     createVectorOfServers();
     fillEachServerWithData();
@@ -69,6 +73,7 @@ void WebServer::createEventManager() {
 void WebServer::start() {
     createUniquePair();
     createEventManager();
+    eventManager->copyArray(servers);
     eventManager->waitAndHandleEvents();
 
 //    stop();

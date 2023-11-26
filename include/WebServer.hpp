@@ -30,6 +30,7 @@ public:
     WebServer(std::string pathConfig);
     void parseConfig();
     void start();
+    std::vector<Server> &getServers();
 
 
 };
