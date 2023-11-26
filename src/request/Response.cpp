@@ -3,9 +3,8 @@ Response::Response() {
     sentLength = 0;
 }
 
-void Response::generateResponse(Request &request) {
+void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
     //generateAutoindexPage
-
     // generateRedirectResponse //это предложил чатгпт, но пока не работает
     if (request.getMethod() == "GET" && request.getUrl() == "/redirect") {
         response = "HTTP/1.1 301 Moved Permanently\nLocation: http://localhost:8080/\n\n";
@@ -14,7 +13,7 @@ void Response::generateResponse(Request &request) {
 
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
-        generateCGIResponse(request);
+        generateCGIResponse(request, servers);
         return;
     }
 
@@ -22,11 +21,21 @@ void Response::generateResponse(Request &request) {
     handleRequest(request);
 }
 
-void Response::generateCGIResponse(Request &request) {
+void Response::generateCGIResponse(Request &request, std::vector<Server> const &servers) {
     if (request.getMethod() == "POST" && request.getBody().empty()) {
         //generateErrorPage(config, 400);
         return;
     }
+    std::cout << servers.size() << std::endl;
+//    for (int i = 0; i < servers.size(); i++) {
+//        if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port
+//            if (servers[i].getCGIPath().empty()) {
+//                //generateErrorPage(config, 404);
+//                return;
+//            }
+//            break;
+//        }
+//    }
     const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/what_day.py"; //захардкодил путь к скрипту, потом переделаю
     const char *pythonInterpreter = "/usr/bin/python2.7"; //захардкодил путь к интерпретатору, потом переделаю
     std::string pathInfo;
@@ -164,4 +173,20 @@ void Response::handleRequest(Request &request) {
 
 void Response::createResponse(Request &request) {
     (void)request;
+}
+
+std::string Response::getIpAddress() const {
+    return ipAddress;
+}
+
+void Response::setIpAddress(std::string ipAddress) {
+    this->ipAddress = ipAddress;
+}
+
+int Response::getPort() const {
+    return port;
+}
+
+void Response::setPort(int port) {
+    this->port = port;
 }

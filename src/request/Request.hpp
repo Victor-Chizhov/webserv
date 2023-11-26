@@ -8,6 +8,7 @@ class Request {
 		std::string method;
 		std::string version;
 		std::string url;
+        std::string host;
         std::map<std::string, std::string> args;
         std::string body;
 		std::map<std::string, std::string> headers;

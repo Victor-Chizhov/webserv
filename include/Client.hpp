@@ -19,11 +19,17 @@ public:
 	struct sockaddr_in getStruct() const;
     Response response;
     Request request;
+    void setPort(int port);
+    void setIp(std::string ip);
+    std::string getIp() const;
+    int getPort() const;
 
 
 private:
     int clientSocket;
 	struct sockaddr_in clientAddr;
+    std::string ipAddress;
+    int port;
 
 };
 

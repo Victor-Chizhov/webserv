@@ -3,6 +3,8 @@
 
 Client::Client(int clientSocket, struct sockaddr_in clientAddr) : clientSocket(clientSocket), clientAddr(clientAddr) {
 	//socklen_t clientAddrLen = sizeof(clientAddr);
+    //request.request.clear();
+    //response.response.clear();
 }
 
 Client::~Client() {
@@ -30,3 +32,20 @@ struct sockaddr_in Client::getStruct() const
 {
 	return clientAddr;
 }
+
+void Client::setPort(int port) {
+    this->port = port;
+}
+
+void Client::setIp(std::string ip) {
+    this->ipAddress = ip;
+}
+
+int Client::getPort() const {
+    return port;
+}
+
+std::string Client::getIp() const {
+    return ipAddress;
+}
+

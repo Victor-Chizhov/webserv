@@ -5,9 +5,11 @@
 #include "Client.hpp"
 #include "../src/request/Response.hpp"
 #include "../include/ServerSocket.hpp"
+#include "../include/Server.hpp"
 
 class Client;
 class ServerSocket;
+class Server;
 
 
 class EventManager {
@@ -16,9 +18,10 @@ public:
     ~EventManager();
 
     void addServerSocket(ServerSocket &serverSocket);
-	void CreateAddClientSocket(int serverSocket);
+	void CreateAddClientSocket(ServerSocket &Socket);
 
     void waitAndHandleEvents();
+    void copyArray(std::vector<Server> &arrServers);
 
 private:
     fd_set readSet;
@@ -28,6 +31,7 @@ private:
     std::vector<ServerSocket> serverSockets;
 	std::list<Client *> clientSockets;
     int maxSocket;
+    std::vector<Server> servers;
 };
 
 

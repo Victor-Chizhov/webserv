@@ -12,9 +12,9 @@ void Request::Parsing(std::string const &input) {
 	this->url = this->parseUrl(line);
 	this->version = this->parseVersion(line);
 	this->headers = this->parseHeaders(input);
-    this->request = this->parseBody(input);
     this->body = this->parseBody(input);
     this->args = this->parseArgs();
+    this->host = this->parseHost(input);
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -52,6 +52,18 @@ std::string const Request::parseMethod(std::string const &input) {
 
 	std::getline(iss, method, ' ');
 	return method;
+}
+
+std::string const Request::parseHost(std::string const &input)
+{
+    std::istringstream	iss(input);
+    std::string			host;
+
+    std::getline(iss, host, ' ');
+    std::getline(iss, host, ' ');
+    if (host.empty())
+        throw std::invalid_argument("Invalid Host");
+    return host;
 }
 
 std::string const Request::parseBody(std::string const &input) {
@@ -106,7 +118,10 @@ std::map<std::string, std::string> const Request::parseArgs() {
 }
 
 std::string const Request::parseVersion(std::string const &input) {
-	return (input.substr(input.find("HTTP/")));
+	if (input.find("HTTP/") != std::string::npos)
+        return (input.substr(input.find("HTTP/")));
+    else
+        exit(1);
 }
 
 std::map<std::string, std::string> const Request::parseHeaders(std::string const &input) {
@@ -138,4 +153,9 @@ std::string const &Request::getBody() const {
 
 const std::map<std::string, std::string> &Request::getArgs() const {
     return args;
+}
+
+std::string const &Request::getHost() const
+{
+    return this->host;
 }
