@@ -56,7 +56,7 @@ std::string const Request::parseMethod(std::string const &input) {
 std::string const Request::parseBody(std::string const &input) {
     std::string			body;
 
-    std::cout << "input: " << input << std::endl;
+    // std::cout << "input: " << input << std::endl;
 
     size_t doubleLineBreakPos = input.find("\r\n\r\n");
     if (doubleLineBreakPos != std::string::npos) {

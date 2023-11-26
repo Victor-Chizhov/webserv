@@ -1,4 +1,5 @@
 #include "Response.hpp"
+#include "base64.hpp"
 
 Response::Response() {
     sentLength = 0;
@@ -190,22 +191,22 @@ void Response::handlePost(Request &request) {
 void Response::handleRequest(Request &request) {
 
     if(request.getUrl() == "/upload") {
-
-
-//        std::cout << "----------------------------------------------\n" << request.request << "----------------------------------------------\n" << std::endl;
-
+    //    std::cout << "----------------------------------------------\n" << request.request << "----------------------------------------------\n" << std::endl;
+        // std::cout << "lol" << std::endl;
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
 
         std::istringstream stream(formData);
 
-//        std::cout << "Body Request: " << formData << std::endl;
+    //    std::cout << "Body Request: " << formData << std::endl;
 
         std::string line;
         std::ofstream destFile;
-        destFile.open("upload.txt", std::ios::binary | std::ios::app);
-
-        while (std::getline(stream, line)) {
-            destFile << line << std::endl;
+        std::vector<BYTE> vector = base64_decode(formData);
+        destFile.open("upload.jpg", std::ios::binary | std::ios::app);
+        size_t i = 0;
+        while (i < vector.size()) {
+            destFile << vector[i];
+            i++;
         }
 
         destFile.close();
@@ -216,9 +217,9 @@ void Response::handleRequest(Request &request) {
     } else if (request.getMethod() == "POST") {
         handlePost(request);
     } else if (request.getMethod() == "DELETE") {
-        std::cout << request.getMethod() << std::endl;
+        // std::cout << request.getMethod() << std::endl;
     } else {
-        std::cout << "ERROR" << std::endl;
+        // std::cout << "ERROR" << std::endl;
     }
 }
 
