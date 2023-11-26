@@ -14,7 +14,7 @@ void Request::Parsing(std::string const &input) {
 	this->headers = this->parseHeaders(input);
     this->body = this->parseBody(input);
     this->args = this->parseArgs();
-    this->host = this->parseHost(input);
+    this->script = this->parseScript(url);
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -54,16 +54,12 @@ std::string const Request::parseMethod(std::string const &input) {
 	return method;
 }
 
-std::string const Request::parseHost(std::string const &input)
+std::string const Request::parseScript(std::string const &input)
 {
-    std::istringstream	iss(input);
-    std::string			host;
-
-    std::getline(iss, host, ' ');
-    std::getline(iss, host, ' ');
-    if (host.empty())
-        throw std::invalid_argument("Invalid Host");
-    return host;
+    if (input.find('?') != std::string::npos)
+        return input.substr(0, input.find('?'));
+    else
+        return input;
 }
 
 std::string const Request::parseBody(std::string const &input) {
@@ -155,7 +151,6 @@ const std::map<std::string, std::string> &Request::getArgs() const {
     return args;
 }
 
-std::string const &Request::getHost() const
-{
-    return this->host;
+std::string const &Request::getScript() const {
+    return this->script;
 }

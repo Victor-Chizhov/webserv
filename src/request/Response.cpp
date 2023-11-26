@@ -26,7 +26,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
         //generateErrorPage(config, 400);
         return;
     }
-    const char *pythonInterpreter;
+    const char *pythonInterpreter = NULL;
     std::cout << servers.size() << std::endl;
     for (size_t i = 0; i < servers.size(); i++) {
         if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port) {
@@ -38,7 +38,19 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
             }
         }
     }
-    const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/what_day.py"; //захардкодил путь к скрипту, потом переделаю
+    if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
+        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        return;
+    }
+    std::string str = "/Users/gkhaishb/Desktop/webserv_project/Webserv" + request.getScript(); //захардкодил путь, потом достать из вебсерва то, что через getcwd Витя получил
+    int fdScript = open(str.c_str(), O_RDONLY);
+    if (fdScript == -1) { //если путь к скрипту неверный
+        perror("Error: open script");
+        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        return;
+    }
+    close(fdScript);
+    const char *pythonScriptPath = str.c_str();
     std::string pathInfo;
     std::string pathTranslated;
     std::string tmpBodyFile;
@@ -46,9 +58,12 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
     std::map<std::string, std::string> env = request.getArgs();
     char **pythonEnv = new char *[2];
     std::map<std::string, std::string>::iterator it = env.begin();
-    std::string tmp = it->first + "=" + it->second;
+    std::string tmp = it->first + "=" + it->second; //берем параметры из запроса, пример: Number=3
+    if (it->first != "Number") {
+        response = "HTTP/1.1 400 Bad Request\n\n"; //здесь надо вернуть page, которые создал Витя
+        return;
+    }
     pythonEnv[0] = strdup(tmp.c_str());
-    //pythonEnv[0] = strdup("Number=3"); //цифра захаркодена, потом переделаю (это для второго скрипта какой день недели через n дней)
     pythonEnv[1] = NULL;
     ///generate args for execve
     char **pythonArgs = new char *[3];
