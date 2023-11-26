@@ -49,6 +49,10 @@ void WebServer::fillEachServerWithData() {
     }
 }
 
+std::string &WebServer::getCurrentPath() {
+    return currentPath;
+}
+
 std::vector<Server> &WebServer::getServers() {
     return servers;
 }

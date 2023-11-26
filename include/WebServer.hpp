@@ -33,7 +33,7 @@ public:
     void parseConfig();
     void start();
     std::vector<Server> &getServers();
-
+    std::string &getCurrentPath();
 
 };
 

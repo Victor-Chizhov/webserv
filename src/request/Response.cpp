@@ -191,11 +191,14 @@ void Response::handleRequest(Request &request) {
 
     if(request.getUrl() == "/upload") {
 
+
+//        std::cout << "----------------------------------------------\n" << request.request << "----------------------------------------------\n" << std::endl;
+
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
 
         std::istringstream stream(formData);
 
-        std::cout << formData << std::endl;
+//        std::cout << "Body Request: " << formData << std::endl;
 
         std::string line;
         std::ofstream destFile;
@@ -218,6 +221,7 @@ void Response::handleRequest(Request &request) {
         std::cout << "ERROR" << std::endl;
     }
 }
+
 
 void Response::createResponse(Request &request) {
     (void)request;
