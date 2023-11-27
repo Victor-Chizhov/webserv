@@ -51,6 +51,10 @@ const std::string &Server::getHost() const {
     return ipAddress;
 }
 
+const std::string &Server::getServerName() const {
+    return serverName;
+}
+
 int Server::getPort() const {
     return port;
 }
@@ -73,7 +77,7 @@ void Server::addDataInServer() {
     createVectorOfLocations();
     fillEachLocationWithData();
     updateDataInServer();
-//    printServerData();
+    printServerData();
 }
 
 const std::vector<Location> &Server::getLocations() const {

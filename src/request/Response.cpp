@@ -4,10 +4,24 @@ Response::Response() {
 }
 
 void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
-    //generateAutoindexPage
-    // generateRedirectResponse //это предложил чатгпт, но пока не работает
-    if (request.getMethod() == "GET" && request.getUrl() == "/redirect") {
-        response = "HTTP/1.1 301 Moved Permanently\nLocation: http://localhost:8080/\n\n";
+    Server currentConfig;
+    Location currentLocation;
+    std::string root;
+
+    std::string method = request.getMethod();
+    std::string location = request.getUrl();
+    this->servers = servers;
+
+    currentConfig = servers[0];
+    chooseConfig(request.getHostName(), currentConfig);
+    ///get location by request path
+    std::vector<Location> locations = currentConfig.getLocations();
+    chooseLocation(request.getHostName(), currentConfig, locations);
+    ///go through config and find location
+    root = rootParsing(location, locations, currentLocation);
+    if (currentLocation.isRedirect()) { //переделать этот метод
+        ///generate redirect response with 301 code and Location header where will be currentLocation.getRedirect()
+        generateRedirectResponse(currentLocation.getRedirectPath());
         return;
     }
 
@@ -19,6 +33,10 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 
     //generate HTML response
     handleRequest(request);
+}
+
+void Response::generateRedirectResponse(const std::string &locationToRedir) {
+    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + locationToRedir + "\n\n";
 }
 
 void Response::generateCGIResponse(Request &request, std::vector<Server> const &servers) {
@@ -206,4 +224,36 @@ int Response::getPort() const {
 
 void Response::setPort(int port) {
     this->port = port;
+}
+
+void Response::chooseConfig(std::string hostName, Server &server) {
+    for (size_t i = 0; i < servers.size(); i++) {
+        if (servers[i].getServerName() == hostName) {
+            server = servers[i];
+            return;
+        }
+    }
+}
+
+void Response::chooseLocation(std::string hostName, Server &server, std::vector<Location> locations) {
+    for (size_t i = 0; i < servers.size(); i++) {
+        if (servers[i].getHost() == hostName) {
+            server = servers[i];
+            locations = servers[i].getLocations();
+            return;
+        }
+    }
+}
+
+std::string Response::rootParsing(const std::string &location, const std::vector<Location> &locations,
+                                      Location &currentLocation) const {
+    std::string root;
+    for (size_t j = 0; j < locations.size(); j++) {
+        if (locations[j].getPathLocation() == location) {
+            root = locations[j].getRoot();
+            currentLocation = locations[j];
+            break;
+        }
+    }
+    return root;
 }
