@@ -833,7 +833,7 @@ button {
     padding-top: 6px;
 }
 
-.getquote_bt a {
+.getquote_bt button {
     width: 100%;
     float: left;
     font-size: 16px;
@@ -1041,6 +1041,7 @@ button {
     color: #e27141;
 }
 
+
 .upload {
     width: 100%;
     float: left;
@@ -1054,7 +1055,35 @@ button {
     font-weight: 400;
 }
 
+button:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+
 .upload:hover {
     background-color: #111111;
     color: #ffffff;
+}
+
+.upload_cgi {
+    width: 30%;
+    float: left;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #0a52dd;
+    text-align: center;
+    padding: 10px 0px;
+    border-radius: 30px;
+    margin-top: 50px;
+    font-weight: 400;
+}
+
+.upload_cgi:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.mt-7 {
+    margin-top: 7rem !important;
 }

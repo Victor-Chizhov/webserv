@@ -67,7 +67,22 @@ void Location::updateDataInLocation() {
         cutDataBool(locationConfig[i], "file_upload", fileUpload);
         cutDataArray(locationConfig[i], "methods", methods);
     }
+    parsePathLocation();
 }
+
+void Location::parsePathLocation() {
+    size_t pos = pathLocation.find_first_of(" ");
+    if (pos != std::string::npos) {
+        pathLocation = pathLocation.substr(pos + 1);
+    }
+
+    size_t pos1 = pathLocation.find_last_of(" ");
+    if (pos1 != std::string::npos) {
+        pathLocation = pathLocation.substr(0, pos1);
+    }
+}
+
+
 
 std::string Location::getCgiPass() const {
     return cgiPass;
