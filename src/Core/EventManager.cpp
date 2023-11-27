@@ -5,11 +5,21 @@ EventManager::EventManager() : maxSocket(0) {
 	FD_ZERO(&writeSet);
 	FD_ZERO(&read_master);
 	FD_ZERO(&write_master);
-    //servers = std::vector<Server>();
+    servers = std::vector<Server>();
 }
 
 EventManager::~EventManager() {
 
+}
+
+void EventManager::copyArray(std::vector<Server> &arrServers) {
+    for (size_t i = 0; i < arrServers.size(); i++) {
+        this->servers.push_back(arrServers[i]);
+    }
+}
+
+std::vector<Server> &EventManager::getServers() {
+    return servers;
 }
 
 void EventManager::addServerSocket(ServerSocket &serverSocket) {
@@ -40,12 +50,6 @@ void EventManager::CreateAddClientSocket(ServerSocket &Socket) {
     newClient->setPort(Socket.getPort());
     newClient->setIp(Socket.getIp());
 	clientSockets.push_back(newClient);
-}
-
-void EventManager::copyArray(std::vector<Server> &arrServers) {
-    for (size_t i = 0; i < arrServers.size(); i++) {
-        this->servers.push_back(arrServers[i]);
-    }
 }
 
 void EventManager::waitAndHandleEvents() {

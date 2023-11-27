@@ -1,7 +1,52 @@
 #include "Response.hpp"
+#include "base64.hpp"
+
 Response::Response() {
     sentLength = 0;
 }
+
+void Response::generateErrorsPage(int code) {
+    std::string errorPage;
+    std::string errorPagePath = "www/errorPages/";
+    std::string errorPageName;
+    std::string errorStatus;
+    if (code == 400) {
+        errorPageName = "400.html";
+        errorStatus = "Bad Request";
+    } else if (code == 403) {
+        errorPageName = "403.html";
+        errorStatus = "Forbidden";
+    } else if (code == 404) {
+        errorPageName = "404.html";
+        errorStatus = "Not Found";
+    } else if (code == 405) {
+        errorPageName = "405.html";
+        errorStatus = "Method Not Allowed";
+    } else if (code == 413) {
+        errorPageName = "413.html";
+        errorStatus = "Request Entity Too Large";
+    } else if (code == 500) {
+        errorPageName = "500.html";
+        errorStatus = "Internal Server Error";
+    } else if (code == 502) {
+        errorPageName = "502.html";
+        errorStatus = "Bad Gateway";
+    } else if (code == 503) {
+        errorPageName = "503.html";
+        errorStatus = "Service Unavailable";
+    } else
+        errorPageName = "404.html";
+    response = "HTTP/1.1 " + std::to_string(code) + " " + errorStatus + "\n";
+    response += "Content-Type: text/html\n\n";
+    std::string line;
+    std::ifstream file((errorPagePath + errorPageName).c_str(), std::ios::in | std::ios::binary);
+    if (file.is_open()) {
+        getline(file, line, '\0');
+        file.close();
+    }
+    response += line;
+}
+
 
 void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
     //generateAutoindexPage
@@ -118,7 +163,7 @@ void Response::handleGet(Request &request) {
         url.find(".svg") != std::string::npos ||
         url.find(".ico") != std::string::npos) {
         std::ifstream file(url.c_str(), std::ios::binary);
-        if (!file.is_open() || file.fail()){
+        if (!file.is_open() || file.fail()) {
             return;
         }
         std::streampos len = file.seekg(0, std::ios::end).tellg();
@@ -137,9 +182,23 @@ void Response::handleGet(Request &request) {
         file.close();
         return;
     }
+
+    //жесткий костыль надо хендлить
+    if (url.find("css") != std::string::npos) {
+        std::istringstream ss(url);
+        std::string segment;
+        std::string path;
+        while (std::getline(ss, segment, '/'))
+            path = segment;
+
+        url = "www/css/" + path;
+    }
+
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open() || file.fail()){
-        response = "HTTP/1.1 404 Not Found\n\n";
+//        response = "HTTP/1.1 404 Not Found\n\n";
+        generateErrorsPage(404);
+//        std::cout << response << std::endl;
         return;
     }
     response = "HTTP/1.1 200 OK\n\n";
@@ -156,22 +215,23 @@ void Response::handlePost(Request &request) {
 
 void Response::handleRequest(Request &request) {
 
-    std::cout << request.request << std::endl;
-
     if(request.getUrl() == "/upload") {
-
+    //    std::cout << "----------------------------------------------\n" << request.request << "----------------------------------------------\n" << std::endl;
+        // std::cout << "lol" << std::endl;
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
 
         std::istringstream stream(formData);
 
-        std::cout << formData << std::endl;
+    //    std::cout << "Body Request: " << formData << std::endl;
 
         std::string line;
         std::ofstream destFile;
-        destFile.open("upload.txt", std::ios::binary | std::ios::app);
-
-        while (std::getline(stream, line)) {
-            destFile << line << std::endl;
+        std::vector<BYTE> vector = base64_decode(formData);
+        destFile.open("upload.jpg", std::ios::binary | std::ios::app);
+        size_t i = 0;
+        while (i < vector.size()) {
+            destFile << vector[i];
+            i++;
         }
 
         destFile.close();
@@ -182,11 +242,12 @@ void Response::handleRequest(Request &request) {
     } else if (request.getMethod() == "POST") {
         handlePost(request);
     } else if (request.getMethod() == "DELETE") {
-        std::cout << request.getMethod() << std::endl;
+        // std::cout << request.getMethod() << std::endl;
     } else {
-        std::cout << "ERROR" << std::endl;
+        // std::cout << "ERROR" << std::endl;
     }
 }
+
 
 void Response::createResponse(Request &request) {
     (void)request;
