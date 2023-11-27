@@ -1,7 +1,6 @@
 #include "../../include/ServerSocket.hpp"
 
-ServerSocket::ServerSocket() : listenSocket(-1), backlog(120) {
-
+ServerSocket::ServerSocket() : listenSocket(-1), backlog(120), port(0) {
 }
 
 ServerSocket::~ServerSocket() {
@@ -18,6 +17,8 @@ int ServerSocket::getListenSocket() const {
 }
 
 void ServerSocket::initListenSocket(std::string ipAddress, int port) {
+    this->ipAddress = ipAddress;
+    this->port = port;
     listenSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (listenSocket == -1) {
         perror("Error creating socket");
@@ -47,4 +48,12 @@ void ServerSocket::initListenSocket(std::string ipAddress, int port) {
         close(listenSocket);
         exit(EXIT_FAILURE);
     }
+}
+
+int ServerSocket::getPort() const {
+    return port;
+}
+
+std::string ServerSocket::getIp() const {
+    return ipAddress;
 }

@@ -3,9 +3,8 @@ Response::Response() {
     sentLength = 0;
 }
 
-void Response::generateResponse(Request &request) {
+void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
     //generateAutoindexPage
-
     // generateRedirectResponse //это предложил чатгпт, но пока не работает
     if (request.getMethod() == "GET" && request.getUrl() == "/redirect") {
         response = "HTTP/1.1 301 Moved Permanently\nLocation: http://localhost:8080/\n\n";
@@ -14,7 +13,7 @@ void Response::generateResponse(Request &request) {
 
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
-        generateCGIResponse(request);
+        generateCGIResponse(request, servers);
         return;
     }
 
@@ -22,13 +21,36 @@ void Response::generateResponse(Request &request) {
     handleRequest(request);
 }
 
-void Response::generateCGIResponse(Request &request) {
+void Response::generateCGIResponse(Request &request, std::vector<Server> const &servers) {
     if (request.getMethod() == "POST" && request.getBody().empty()) {
         //generateErrorPage(config, 400);
         return;
     }
-    const char *pythonScriptPath = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/what_day.py"; //захардкодил путь к скрипту, потом переделаю
-    const char *pythonInterpreter = "/usr/bin/python2.7"; //захардкодил путь к интерпретатору, потом переделаю
+    const char *pythonInterpreter = NULL;
+    std::cout << servers.size() << std::endl;
+    for (size_t i = 0; i < servers.size(); i++) {
+        if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port) {
+            for (size_t j = 0; j < servers[i].getLocations().size(); j++) {
+                    if (!servers[i].getLocations()[j].getCgiPass().empty()) {
+                        pythonInterpreter = servers[i].getLocations()[j].getCgiPass().c_str();
+                        break;
+                    }
+            }
+        }
+    }
+    if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
+        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        return;
+    }
+    std::string str = "/Users/gkhaishb/Desktop/webserv_project/Webserv" + request.getScript(); //захардкодил путь, потом достать из вебсерва то, что через getcwd Витя получил
+    int fdScript = open(str.c_str(), O_RDONLY);
+    if (fdScript == -1) { //если путь к скрипту неверный
+        perror("Error: open script");
+        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        return;
+    }
+    close(fdScript);
+    const char *pythonScriptPath = str.c_str();
     std::string pathInfo;
     std::string pathTranslated;
     std::string tmpBodyFile;
@@ -36,9 +58,13 @@ void Response::generateCGIResponse(Request &request) {
     std::map<std::string, std::string> env = request.getArgs();
     char **pythonEnv = new char *[2];
     std::map<std::string, std::string>::iterator it = env.begin();
-    std::string tmp = it->first + "=" + it->second;
+    std::string tmp = it->first + "=" + it->second; //берем параметры из запроса, пример: Number=3
+    if (request.getError() || (str.find("what_day.py") != std::string::npos && it->first != "Number" && !it->first.empty())
+    || (str.find("current_time.py") != std::string::npos && tmp != "=")) {
+        response = "HTTP/1.1 404 Page not found\n\n"; //здесь надо вернуть page, которые создал Витя
+        return;
+    }
     pythonEnv[0] = strdup(tmp.c_str());
-    //pythonEnv[0] = strdup("Number=3"); //цифра захаркодена, потом переделаю (это для второго скрипта какой день недели через n дней)
     pythonEnv[1] = NULL;
     ///generate args for execve
     char **pythonArgs = new char *[3];
@@ -48,14 +74,14 @@ void Response::generateCGIResponse(Request &request) {
     std::string tmpCGIFile = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/tmpCGIFile"; //захардкодил путь к временному файлу, потом переделаю
     int fdCGIFile = open(tmpCGIFile.c_str(), O_RDWR | O_CREAT, 0666);
     if (fdCGIFile == -1) {
-        perror("Ошибка при открытии файла");
+        perror("Error open tmpCGIFile");
         exit(1);
     }
     int pid = fork();
     if (!pid) {
         dup2(fdCGIFile, 1);
         if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
-            perror("Ошибка при выполнении execve");
+            perror("Error execve");
             exit(1);
         }
         close(fdCGIFile);
@@ -164,4 +190,20 @@ void Response::handleRequest(Request &request) {
 
 void Response::createResponse(Request &request) {
     (void)request;
+}
+
+std::string Response::getIpAddress() const {
+    return ipAddress;
+}
+
+void Response::setIpAddress(std::string ipAddress) {
+    this->ipAddress = ipAddress;
+}
+
+int Response::getPort() const {
+    return port;
+}
+
+void Response::setPort(int port) {
+    this->port = port;
 }

@@ -11,10 +11,14 @@ public:
     void initListenSocket(std::string ipAddress, int port);
     void stop();
     int getListenSocket() const;
+    int getPort() const;
+    std::string getIp() const;
 
 private:
     int listenSocket;
     int backlog;
+    std::string ipAddress;
+    int port;
     struct sockaddr_in serverAddr;
 };
 

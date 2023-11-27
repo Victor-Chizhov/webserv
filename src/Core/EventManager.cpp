@@ -5,6 +5,7 @@ EventManager::EventManager() : maxSocket(0) {
 	FD_ZERO(&writeSet);
 	FD_ZERO(&read_master);
 	FD_ZERO(&write_master);
+    //servers = std::vector<Server>();
 }
 
 EventManager::~EventManager() {
@@ -20,9 +21,9 @@ void EventManager::addServerSocket(ServerSocket &serverSocket) {
     }
 }
 
-void EventManager::CreateAddClientSocket(int serverSocket) {
+void EventManager::CreateAddClientSocket(ServerSocket &Socket) {
 	struct sockaddr_in clientAddr;
-
+    int serverSocket = Socket.getListenSocket();
 	socklen_t clientAddrLen = sizeof(clientAddr);
 	int clientSocket = accept(serverSocket, (struct sockaddr*) &clientAddr, &clientAddrLen);
 	if (clientSocket == -1) {
@@ -36,7 +37,15 @@ void EventManager::CreateAddClientSocket(int serverSocket) {
         maxSocket = clientSocket;
     }
 	Client *newClient = new Client(clientSocket, clientAddr);
+    newClient->setPort(Socket.getPort());
+    newClient->setIp(Socket.getIp());
 	clientSockets.push_back(newClient);
+}
+
+void EventManager::copyArray(std::vector<Server> &arrServers) {
+    for (size_t i = 0; i < arrServers.size(); i++) {
+        this->servers.push_back(arrServers[i]);
+    }
 }
 
 void EventManager::waitAndHandleEvents() {
@@ -50,7 +59,7 @@ void EventManager::waitAndHandleEvents() {
         }
         for (size_t i = 0; i < serverSockets.size(); i++) {
             if (FD_ISSET(serverSockets[i].getListenSocket(), &readSet)) {
-                CreateAddClientSocket(serverSockets[i].getListenSocket());
+                CreateAddClientSocket(serverSockets[i]);
             }
         }
 		for (std::list<Client *>::iterator it = clientSockets.begin(); it != clientSockets.end(); ++it) {
@@ -65,7 +74,9 @@ void EventManager::waitAndHandleEvents() {
                     FD_CLR(currentSocket, &read_master);
                     FD_SET(currentSocket, &write_master);
                     current.request.Parsing(current.request.request);
-                    current.response.generateResponse(current.request);
+                    current.response.setIpAddress(current.getIp());
+                    current.response.setPort(current.getPort());
+                    current.response.generateResponse(current.request, servers);
                     current.request.request.clear();
                 } else {
                     current.request.request += std::string(buffer, bytesRead);

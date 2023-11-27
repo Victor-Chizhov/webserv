@@ -62,13 +62,14 @@ void WebServer::createEventManager() {
        ServerSocket listenSocket;
        listenSocket.initListenSocket(it->first, it->second);
        eventManager->addServerSocket(listenSocket);
-    }
+   }
 }
 
 
 void WebServer::start() {
     createUniquePair();
     createEventManager();
+    eventManager->copyArray(servers);
     eventManager->waitAndHandleEvents();
 
 //    stop();

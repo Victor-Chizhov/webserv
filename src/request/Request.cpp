@@ -1,6 +1,8 @@
 #include "Request.hpp"
 
-Request::Request() {}
+Request::Request() {
+    error = false;
+}
 Request::~Request() {}
 void Request::Parsing(std::string const &input) {
 	std::map<std::string, std::string>	headers;
@@ -12,9 +14,9 @@ void Request::Parsing(std::string const &input) {
 	this->url = this->parseUrl(line);
 	this->version = this->parseVersion(line);
 	this->headers = this->parseHeaders(input);
-    this->request = this->parseBody(input);
     this->body = this->parseBody(input);
     this->args = this->parseArgs();
+    this->script = this->parseScript(url);
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -54,6 +56,14 @@ std::string const Request::parseMethod(std::string const &input) {
 	return method;
 }
 
+std::string const Request::parseScript(std::string const &input)
+{
+    if (input.find('?') != std::string::npos)
+        return input.substr(0, input.find('?'));
+    else
+        return input;
+}
+
 std::string const Request::parseBody(std::string const &input) {
     std::string			body;
 
@@ -86,6 +96,8 @@ std::string const Request::parseUrl(std::string const &input) {
 std::map<std::string, std::string> const Request::parseArgs() {
     std::map<std::string, std::string> args;
     std::string url = this->getUrl();
+    if (url.find('=') == std::string::npos && url.find('?') != std::string::npos)
+        error = true;
     std::string argsString;
     size_t argsStart = url.find('?');
     if (argsStart != std::string::npos) {
@@ -106,7 +118,10 @@ std::map<std::string, std::string> const Request::parseArgs() {
 }
 
 std::string const Request::parseVersion(std::string const &input) {
-	return (input.substr(input.find("HTTP/")));
+	if (input.find("HTTP/") != std::string::npos)
+        return (input.substr(input.find("HTTP/")));
+    else
+        exit(1);
 }
 
 std::map<std::string, std::string> const Request::parseHeaders(std::string const &input) {
@@ -138,4 +153,12 @@ std::string const &Request::getBody() const {
 
 const std::map<std::string, std::string> &Request::getArgs() const {
     return args;
+}
+
+std::string const &Request::getScript() const {
+    return this->script;
+}
+
+bool Request::getError() const {
+    return error;
 }

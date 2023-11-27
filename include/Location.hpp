@@ -13,7 +13,7 @@ class Location : public Parser {
         std::string index;
         bool autoIndex;
         std::string cgiPass;
-        unsigned long clientMaxBodySize;
+        int clientMaxBodySize;
         bool fileUpload;
         std::vector<std::string> methods;
 
@@ -26,6 +26,7 @@ class Location : public Parser {
         void setConfig(std::string &configLine);
         void printDataConfig() const;
         void printLocationData();
+        std::string getCgiPass() const;
 
         void updateDataInLocation();
 
