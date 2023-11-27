@@ -21,6 +21,7 @@ class Request {
         std::string const parseBody(std::string const &input);
 		std::string const toLower(std::string const &input);
 		std::map<std::string, std::string> const parseHeaders(std::string const &input);
+        bool error;
 
 	public:
         Request();
@@ -37,7 +38,7 @@ class Request {
         const std::map<std::string, std::string> &getArgs() const;
 		std::map<std::string, std::string> const &getHeaders() const;
         std::string request;
-
+        bool getError() const;
 
 };
 

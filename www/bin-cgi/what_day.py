@@ -13,8 +13,8 @@ except OSError as e:
 number = os.environ.get("Number", "1")
 
 def printError(error_str):
-    print "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html;charset=utf-8\r\n\r\n",
-    print "<H1>" + error_str + " doesn't set" + "</H1>"
+    print "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html;charset=utf-8\r\n\r\n" #may be should return Vitya's HTML error page
+    print "<H1>" + error_str + "</H1>"
 
 try:
         try:

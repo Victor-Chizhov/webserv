@@ -1,6 +1,8 @@
 #include "Request.hpp"
 
-Request::Request() {}
+Request::Request() {
+    error = false;
+}
 Request::~Request() {}
 void Request::Parsing(std::string const &input) {
 	std::map<std::string, std::string>	headers;
@@ -94,6 +96,8 @@ std::string const Request::parseUrl(std::string const &input) {
 std::map<std::string, std::string> const Request::parseArgs() {
     std::map<std::string, std::string> args;
     std::string url = this->getUrl();
+    if (url.find('=') == std::string::npos && url.find('?') != std::string::npos)
+        error = true;
     std::string argsString;
     size_t argsStart = url.find('?');
     if (argsStart != std::string::npos) {
@@ -153,4 +157,8 @@ const std::map<std::string, std::string> &Request::getArgs() const {
 
 std::string const &Request::getScript() const {
     return this->script;
+}
+
+bool Request::getError() const {
+    return error;
 }

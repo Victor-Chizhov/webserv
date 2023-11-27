@@ -59,8 +59,9 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
     char **pythonEnv = new char *[2];
     std::map<std::string, std::string>::iterator it = env.begin();
     std::string tmp = it->first + "=" + it->second; //берем параметры из запроса, пример: Number=3
-    if (it->first != "Number") {
-        response = "HTTP/1.1 400 Bad Request\n\n"; //здесь надо вернуть page, которые создал Витя
+    if (request.getError() || (str.find("what_day.py") != std::string::npos && it->first != "Number" && !it->first.empty())
+    || (str.find("current_time.py") != std::string::npos && tmp != "=")) {
+        response = "HTTP/1.1 404 Page not found\n\n"; //здесь надо вернуть page, которые создал Витя
         return;
     }
     pythonEnv[0] = strdup(tmp.c_str());
@@ -73,14 +74,14 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
     std::string tmpCGIFile = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/tmpCGIFile"; //захардкодил путь к временному файлу, потом переделаю
     int fdCGIFile = open(tmpCGIFile.c_str(), O_RDWR | O_CREAT, 0666);
     if (fdCGIFile == -1) {
-        perror("Ошибка при открытии файла");
+        perror("Error open tmpCGIFile");
         exit(1);
     }
     int pid = fork();
     if (!pid) {
         dup2(fdCGIFile, 1);
         if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
-            perror("Ошибка при выполнении execve");
+            perror("Error execve");
             exit(1);
         }
         close(fdCGIFile);
