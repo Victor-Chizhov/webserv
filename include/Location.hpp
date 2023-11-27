@@ -34,6 +34,7 @@ class Location : public Parser {
         const std::string &getPathLocation() const;
         const std::string &getRedirectPath() const;
         void updateDataInLocation();
+        void parsePathLocation();
 
 
 };

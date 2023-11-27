@@ -33,6 +33,8 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
    </head>
    <body>
+   <script src="js/upload.js"></script>
+   <script src="js/scrollToTop.js"></script>
       <!-- header section start -->
       <div class="header_section">
          <div class="header_main">
@@ -86,18 +88,12 @@
                            HTTP is one of the most used protocols on the internet.
                            Knowing its arcane will be useful, even if you won’t be working on a website.</p>
                         <div class="read_bt">
-<!--                            <form action="/upload" method="post" enctype="multipart/form-data">-->
-<!--                                <label for="fileInput" class="upload">-->
-<!--                                    Upload Files-->
-<!--                                </label>-->
-<!--                                <input type="file" name="file" id="fileInput" style="display: none;" onchange="fileUpload(this)" />-->
-<!--                            </form>-->
-                            <form action="/upload" method="post" enctype="multipart/form-data">
-                                <label for="file">Choose a file:</label>
-                                <input type="file" id="file" name="file" accept=".jpg, .jpeg, .png" onchange="fileUpload(this)">
-                                <br>
-                                <input type="submit" value="Upload">
-                            </form>
+                           <div class="read_bt">
+                               <label for="file" class="upload">
+                                   Upload Files
+                               </label>
+                              <input class="upload" type="file" name="file" id="file" style="display: none" onchange="fileUpload(this)">
+                           </div>
                         </div>
                      </div>
                   </div>
@@ -231,7 +227,9 @@
             <div class="read_bt_1"><a href="cgi.html">Read More</a></div>
             <div class="newsletter_box">
                <h1 class="let_text">Upload Files Now</h1>
-               <div class="getquote_bt"><a href="#">Upload Files</a></div>
+               <div class="getquote_bt">
+                   <button class="getquote_bt" onclick="scrollToTop()">Upload Files</button>
+               </div>
             </div>
          </div>
       </div>
