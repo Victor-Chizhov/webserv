@@ -29,6 +29,7 @@ class Location : public Parser {
         std::string getCgiPass() const;
 
         void updateDataInLocation();
+        void parsePathLocation();
 
 
 };
