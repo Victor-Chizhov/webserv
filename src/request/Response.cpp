@@ -19,7 +19,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     chooseLocation(request.getHostName(), currentConfig, locations);
     ///go through config and find location
     root = rootParsing(location, locations, currentLocation);
-    if (currentLocation.isRedirect()) { //переделать этот метод
+    if (location == "/wrong_home_page") { //переделать этот метод
         ///generate redirect response with 301 code and Location header where will be currentLocation.getRedirect()
         generateRedirectResponse(currentLocation.getRedirectPath());
         return;
