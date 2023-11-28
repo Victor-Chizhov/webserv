@@ -31,6 +31,7 @@ class Location : public Parser {
         std::string getCgiPass() const;
         bool isRedirect() const;
         const std::string &getRoot() const;
+        const std::string &getIndex() const;
         const std::string &getPathLocation() const;
         const std::string &getRedirectPath() const;
         void updateDataInLocation();

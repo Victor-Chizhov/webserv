@@ -47,7 +47,6 @@ void Response::generateErrorsPage(int code) {
     response += line;
 }
 
-
 void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
     Server currentConfig;
     Location currentLocation;
@@ -59,16 +58,17 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
-    ///get location by request path
     std::vector<Location> locations = currentConfig.getLocations();
     chooseLocation(request.getHostName(), currentConfig, locations);
-    ///go through config and find location
     root = rootParsing(url, locations, currentLocation);
-    if (root.find("bin-cgi") != std::string::npos) {
-        root = root.substr(0, root.find("/bin-cgi"));
-        request.setScript(url.insert(url.find('/'), root));
+    if (url.find("bin-cgi") == 1) {
+        std::string tmp = "/www" + request.getScript();
+        request.setScript(tmp);
     }
-    request.setUrl(url.insert(url.find('/'), root));
+    if (request.getUrl() == "/")
+        request.setUrl(root);
+    else
+        request.setUrl(url.insert(url.find('/'), root));
     if (url == "/wrong_home_page") {
         ///generate redirect response with 301 code and Location header where will be currentLocation.getRedirect()
         generateRedirectResponse(currentLocation.getRedirectPath());
@@ -91,10 +91,10 @@ void Response::generateRedirectResponse(const std::string &locationToRedir) {
 }
 
 void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
-    if (request.getMethod() == "POST" && request.getBody().empty()) {
-        //generateErrorPage(config, 400);
-        return;
-    }
+//    if (request.getMethod() == "POST" && request.getBody().empty()) {
+//        generateErrorsPage(404);
+//        return;
+//    } это возможно не надо потому что наш cgi работает только с get запросом
     const char *pythonInterpreter = NULL;
     for (size_t j = 0; j < locations.size(); j++) {
         if (!locations[j].getCgiPass().empty()) {
@@ -103,14 +103,14 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
         }
     }
     if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
-        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        generateErrorsPage(404);
         return;
     }
     std::string str = "/Users/gkhaishb/Desktop/webserv_project/Webserv" + request.getScript(); //захардкодил путь, потом достать из вебсерва то, что через getcwd Витя получил
     int fdScript = open(str.c_str(), O_RDONLY);
     if (fdScript == -1) { //если путь к скрипту неверный
         perror("Error: open script");
-        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        generateErrorsPage(404);
         return;
     }
     close(fdScript);
@@ -125,7 +125,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
     std::string tmp = it->first + "=" + it->second; //берем параметры из запроса, пример: Number=3
     if (request.getError() || (str.find("what_day.py") != std::string::npos && it->first != "Number" && !it->first.empty())
     || (str.find("current_time.py") != std::string::npos && tmp != "=")) {
-        response = "HTTP/1.1 404 Page not found\n\n"; //здесь надо вернуть page, которые создал Витя
+        generateErrorsPage(404);
         return;
     }
     pythonEnv[0] = strdup(tmp.c_str());
@@ -168,7 +168,7 @@ bool Response::isCGI(std::string path) {
     ///check that last 3 symbols is .py
     if (path.size() > 2 && path.substr(path.size() - 3, 3) == ".py")
         return true;
-    if (path.find(".py?") != std::string::npos)
+    if (path.find(".py?") != std::string::npos || path.find(".py/?") != std::string::npos)
         return true;
     return false;
 }
@@ -176,7 +176,7 @@ bool Response::isCGI(std::string path) {
 void Response::handleGet(Request &request) {
     std::string url = request.getUrl();
     url.erase(0, 1);
-
+    std::cout << "lol azaza " << url << std::endl;
     if (url.find(".jpg") != std::string::npos ||
         url.find(".png") != std::string::npos ||
         url.find(".svg") != std::string::npos ||
@@ -310,12 +310,27 @@ void Response::chooseLocation(std::string hostName, Server &server, std::vector<
 std::string Response::rootParsing(const std::string &url, const std::vector<Location> &locations,
                                       Location &currentLocation) const {
     std::string root;
-    for (size_t j = 0; j < locations.size(); j++) {
+    std::string str;
+    if (url.find('?') == std::string::npos)
         std::string str = url.substr(0, url.rfind('/'));
+    else
+    {
+        str = url.substr(0, url.rfind('/'));
+        str = str.substr(0, str.rfind('/'));
+    }
+    for (size_t j = 0; j < locations.size(); j++) {
+        if (url == "/wrong_home_page")
+            str = url;
         if (str.empty())
             str = "/";
-//        if (str.find("css") != std::string::npos)
-//            str = "/css";
+        if (url == "/" && locations[j].getPathLocation() == str)
+        {
+            str = "/www/";
+            root = str + locations[j].getIndex();
+            break;
+        }
+        if ((str.find("js") != std::string::npos || str.find("image") != std::string::npos) && str.find("www") == std::string::npos)
+            root = "/www";
         if (locations[j].getPathLocation() == str) {
             root = locations[j].getRoot().substr(0, locations[j].getRoot().rfind('/'));
             currentLocation = locations[j];

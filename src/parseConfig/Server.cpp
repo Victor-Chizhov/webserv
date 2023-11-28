@@ -77,7 +77,7 @@ void Server::addDataInServer() {
     createVectorOfLocations();
     fillEachLocationWithData();
     updateDataInServer();
-    printServerData();
+//    printServerData();
 }
 
 const std::vector<Location> &Server::getLocations() const {

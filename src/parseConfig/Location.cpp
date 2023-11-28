@@ -111,4 +111,8 @@ const std::string &Location::getRoot() const {
     return root;
 }
 
+const std::string &Location::getIndex() const {
+    return index;
+}
+
 

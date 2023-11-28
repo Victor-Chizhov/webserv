@@ -11,11 +11,6 @@ class Server;
 
 class Response {
 private:
-
-    std::string ipAddress;
-    int port;
-
-
     void getUrl();
     void findImage();
     void createResponse();
