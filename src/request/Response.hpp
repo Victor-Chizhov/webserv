@@ -30,7 +30,7 @@ public:
     void handleRequest(Request &request);
     void generateResponse(Request &request, std::vector<Server> const &servers);
     bool isCGI(std::string path);
-    void generateCGIResponse(Request &request, std::vector<Server> const &servers);
+    void generateCGIResponse(Request &request, std::vector<Location> locations);
     void createResponse(Request &request);
     std::string response;
     int sentLength;
@@ -41,7 +41,7 @@ public:
     void generateRedirectResponse(const std::string &locationToRedir);
     void chooseConfig(std::string hostName, Server &server);
     void chooseLocation(std::string hostName, Server &server, std::vector<Location> location);
-    std::string rootParsing(const std::string &location, const std::vector<Location> &locations,
+    std::string rootParsing(const std::string &url, const std::vector<Location> &locations,
                                       Location &currentLocation) const;
 };
 

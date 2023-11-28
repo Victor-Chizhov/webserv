@@ -35,6 +35,8 @@ class Request {
 		std::string const &getMethod() const;
 		std::string const &getVersion() const;
 		std::string const &getUrl() const;
+        void setUrl(std::string url);
+        void setScript(std::string script);
 		std::string const &getScript() const;
         std::string const &getBody() const;
         std::string const &getHostName() const;

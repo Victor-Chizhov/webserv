@@ -9,7 +9,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     std::string root;
 
     std::string method = request.getMethod();
-    std::string location = request.getUrl();
+    std::string url = request.getUrl();
     this->servers = servers;
 
     currentConfig = servers[0];
@@ -18,8 +18,13 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     std::vector<Location> locations = currentConfig.getLocations();
     chooseLocation(request.getHostName(), currentConfig, locations);
     ///go through config and find location
-    root = rootParsing(location, locations, currentLocation);
-    if (location == "/wrong_home_page") { //переделать этот метод
+    root = rootParsing(url, locations, currentLocation);
+    if (root.find("bin-cgi") != std::string::npos) {
+        root = root.substr(0, root.find("/bin-cgi"));
+        request.setScript(url.insert(url.find('/'), root));
+    }
+    request.setUrl(url.insert(url.find('/'), root));
+    if (url == "/wrong_home_page") {
         ///generate redirect response with 301 code and Location header where will be currentLocation.getRedirect()
         generateRedirectResponse(currentLocation.getRedirectPath());
         return;
@@ -27,7 +32,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
-        generateCGIResponse(request, servers);
+        generateCGIResponse(request, locations);
         return;
     }
 
@@ -36,24 +41,20 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 }
 
 void Response::generateRedirectResponse(const std::string &locationToRedir) {
-    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + locationToRedir + "\n\n";
+    std::string str =  "/www";
+    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + str + locationToRedir + "\n\n";
 }
 
-void Response::generateCGIResponse(Request &request, std::vector<Server> const &servers) {
+void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
     if (request.getMethod() == "POST" && request.getBody().empty()) {
         //generateErrorPage(config, 400);
         return;
     }
     const char *pythonInterpreter = NULL;
-    std::cout << servers.size() << std::endl;
-    for (size_t i = 0; i < servers.size(); i++) {
-        if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port) {
-            for (size_t j = 0; j < servers[i].getLocations().size(); j++) {
-                    if (!servers[i].getLocations()[j].getCgiPass().empty()) {
-                        pythonInterpreter = servers[i].getLocations()[j].getCgiPass().c_str();
-                        break;
-                    }
-            }
+    for (size_t j = 0; j < locations.size(); j++) {
+        if (!locations[j].getCgiPass().empty()) {
+            pythonInterpreter = locations[j].getCgiPass().c_str();
+            break;
         }
     }
     if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
@@ -245,12 +246,17 @@ void Response::chooseLocation(std::string hostName, Server &server, std::vector<
     }
 }
 
-std::string Response::rootParsing(const std::string &location, const std::vector<Location> &locations,
+std::string Response::rootParsing(const std::string &url, const std::vector<Location> &locations,
                                       Location &currentLocation) const {
     std::string root;
     for (size_t j = 0; j < locations.size(); j++) {
-        if (locations[j].getPathLocation() == location) {
-            root = locations[j].getRoot();
+        std::string str = url.substr(0, url.rfind('/'));
+        if (str.empty())
+            str = "/";
+//        if (str.find("css") != std::string::npos)
+//            str = "/css";
+        if (locations[j].getPathLocation() == str) {
+            root = locations[j].getRoot().substr(0, locations[j].getRoot().rfind('/'));
             currentLocation = locations[j];
             break;
         }

@@ -170,6 +170,14 @@ std::string const &Request::getScript() const {
     return this->script;
 }
 
+void Request::setUrl(std::string url) {
+    this->url = url;
+}
+
+void Request::setScript(std::string script) {
+    this->script = script;
+}
+
 bool Request::getError() const {
     return error;
 }
