@@ -35,6 +35,8 @@
    <body>
    <script src="js/upload.js"></script>
    <script src="js/scrollToTop.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
       <!-- header section start -->
       <div class="header_section">
          <div class="header_main">
@@ -46,19 +48,19 @@
                   <div class="collapse navbar-collapse" id="navbarNav">
                      <ul class="navbar-nav">
                         <li class="nav-item">
-                           <a class="nav-link" href="index.html">Home</a>
+                           <a class="nav-link" href="index.html" style="color: #1f1f1f;">Home</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="about.html">About</a>
+                           <a class="nav-link" href="about.html" style="color: #1f1f1f;">About</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link" href="42yerevan.html">42 Yerevan</a>
+                           <a class="nav-link" href="42yerevan.html" style="color: #1f1f1f;">42 Yerevan</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link " href="info.html">Info</a>
+                           <a class="nav-link " href="info.html" style="color: #1f1f1f;">Info</a>
                         </li>
                         <li class="nav-item">
-                           <a class="nav-link " href="cgi.html">CGI</a>
+                           <a class="nav-link " href="cgi.html" style="color: #1f1f1f;">CGI</a>
                         </li>
                      </ul>
                   </div>
@@ -196,16 +198,25 @@
             <div class="services_section_3">
                <div class="row">
                   <div class="col-sm-4 p-5">
-                     <div><img src="images/gkhaishb.jpg" class="services_img2"></div>
-                     <div class="btn_main">Gevorg Khaishbashev</div>
+                     <div>
+                         <img src="images/gkhaishb.jpg" class="services_img2">
+                         <p style="text-align: center;">Gevorg Khaishbashev</p>
+                     </div>
+<!--                     <div class="btn_main">Gevorg Khaishbashev</div>-->
                   </div>
                   <div class="col-sm-4 p-5">
-                     <div><img src="images/agladkov.jpg" class="services_img2"></div>
-                     <div class="btn_main">Aleksei Gladkov</div>
+                     <div>
+                         <img src="images/agladkov.jpg" class="services_img2">
+                         <p style="text-align: center;">Aleksei Gladkov</p>
+                     </div>
+<!--                     <div class="btn_main">Aleksei Gladkov</div>-->
                   </div>
                   <div class="col-sm-4 p-5">
-                     <div><img src="images/vchizhov.jpg" class="services_img2"></div>
-                     <div class="btn_main">Viktor Chizhov</div>
+                     <div>
+                         <img src="images/vchizhov.jpg" class="services_img2">
+                         <p style="text-align: center;">Victor Chizhov</p>
+                     </div>
+<!--                     <div class="btn_main">Viktor Chizhov</div>-->
                   </div>
                </div>
             </div>
@@ -228,7 +239,7 @@
             <div class="newsletter_box">
                <h1 class="let_text">Upload Files Now</h1>
                <div class="getquote_bt">
-                   <button class="getquote_bt" onclick="scrollToTop()">Upload Files</button>
+                   <button class="getquote_bt bg-black" onclick="scrollToTop()">Upload Files</button>
                </div>
             </div>
          </div>

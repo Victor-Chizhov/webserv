@@ -88,8 +88,8 @@ try:
     </div>
     <!-- header section end -->
     <!-- contact section start -->
-    <div class="contact_section layout_padding">
-        <h1 class="contact_taital">{current_time}</h1>
+    <div class="contact_section layout_padding" style="height: 51vh;">
+        <h1 class="contact_taital" style="margin-top: 50px;">{current_time}</h1>
     </div>
     <!-- contact section end -->
     <!-- footer section start -->

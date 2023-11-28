@@ -32,6 +32,7 @@ private:
 	std::list<Client *> clientSockets;
     int maxSocket;
     std::vector<Server> servers;
+    void pushCurrentPathInResponse(std::string path);
 };
 
 

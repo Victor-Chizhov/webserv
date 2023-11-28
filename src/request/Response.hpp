@@ -11,6 +11,13 @@ class Server;
 
 class Response {
 private:
+
+    std::string ipAddress;
+    int port;
+    std::vector<Server> servers;
+    std::string path;
+
+
     void getUrl();
     void findImage();
     void createResponse();
@@ -18,11 +25,9 @@ private:
     void handleGet(Request &request);
     void handlePost(Request &request);
     void canMakeResponse(Request &request);
-    std::vector<Server> servers;
-    std::string ipAddress;
-    int port;
-    void generateErrorsPage(int code);
 
+
+    void generateErrorsPage(int code);
 
 public:
     Response();
@@ -37,6 +42,7 @@ public:
     void setIpAddress(std::string ipAddress);
     int getPort() const;
     void setPort(int port);
+    void currentPath();
     void generateRedirectResponse(const std::string &locationToRedir);
     void chooseConfig(std::string hostName, Server &server);
     void chooseLocation(std::string hostName, Server &server, std::vector<Location> location);

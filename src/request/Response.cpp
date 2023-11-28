@@ -5,6 +5,15 @@ Response::Response() {
     sentLength = 0;
 }
 
+void Response::currentPath() {
+    char currentPath[PATH_MAX];
+    if (getcwd(currentPath, sizeof(currentPath)) != NULL) {
+        path = currentPath;
+    } else {
+        perror("getcwd() error");
+    }
+}
+
 void Response::generateErrorsPage(int code) {
     std::string errorPage;
     std::string errorPagePath = "www/errorPages/";
@@ -105,7 +114,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
         generateErrorsPage(404);
         return;
     }
-    std::string str = "/Users/gkhaishb/Desktop/webserv_project/Webserv" + request.getScript(); //захардкодил путь, потом достать из вебсерва то, что через getcwd Витя получил
+    std::string str = path + request.getScript();
     int fdScript = open(str.c_str(), O_RDONLY);
     if (fdScript == -1) { //если путь к скрипту неверный
         perror("Error: open script");
@@ -134,7 +143,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
     pythonArgs[0] = strdup(pythonInterpreter);
     pythonArgs[1] = strdup(pythonScriptPath);
     pythonArgs[2] = NULL;
-    std::string tmpCGIFile = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/tmpCGIFile"; //захардкодил путь к временному файлу, потом переделаю
+    std::string tmpCGIFile = path + "/www/bin-cgi/tmpCGIFile";
     int fdCGIFile = open(tmpCGIFile.c_str(), O_RDWR | O_CREAT, 0666);
     if (fdCGIFile == -1) {
         perror("Error open tmpCGIFile");
@@ -175,7 +184,7 @@ bool Response::isCGI(std::string path) {
 void Response::handleGet(Request &request) {
     std::string url = request.getUrl();
     url.erase(0, 1);
-    std::cout << "lol azaza " << url << std::endl;
+
     if (url.find(".jpg") != std::string::npos ||
         url.find(".png") != std::string::npos ||
         url.find(".svg") != std::string::npos ||
@@ -234,14 +243,8 @@ void Response::handlePost(Request &request) {
 void Response::handleRequest(Request &request) {
 
     if(request.getUrl() == "/upload") {
-    //    std::cout << "----------------------------------------------\n" << request.request << "----------------------------------------------\n" << std::endl;
-        // std::cout << "lol" << std::endl;
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
-
         std::istringstream stream(formData);
-
-    //    std::cout << "Body Request: " << formData << std::endl;
-
         std::string line;
         std::ofstream destFile;
         std::vector<BYTE> vector = base64_decode(formData);

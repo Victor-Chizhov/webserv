@@ -18,6 +18,7 @@ void EventManager::copyArray(std::vector<Server> &arrServers) {
     }
 }
 
+
 void EventManager::addServerSocket(ServerSocket &serverSocket) {
     serverSockets.push_back(serverSocket);
 
