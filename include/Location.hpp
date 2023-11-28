@@ -16,6 +16,8 @@ class Location : public Parser {
         int clientMaxBodySize;
         bool fileUpload;
         std::vector<std::string> methods;
+        bool _redirect;
+        std::string _redirect_path;
 
     public:
 
@@ -27,7 +29,11 @@ class Location : public Parser {
         void printDataConfig() const;
         void printLocationData();
         std::string getCgiPass() const;
-
+        bool isRedirect() const;
+        const std::string &getRoot() const;
+        const std::string &getIndex() const;
+        const std::string &getPathLocation() const;
+        const std::string &getRedirectPath() const;
         void updateDataInLocation();
         void parsePathLocation();
 

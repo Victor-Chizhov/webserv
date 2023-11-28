@@ -51,6 +51,10 @@ const std::string &Server::getHost() const {
     return ipAddress;
 }
 
+const std::string &Server::getServerName() const {
+    return serverName;
+}
+
 int Server::getPort() const {
     return port;
 }

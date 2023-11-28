@@ -93,10 +93,6 @@ void EventManager::waitAndHandleEvents() {
                 int wasSent = 0;
                 if (sentLength < length)
                     wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
-                if (wasSent == -1) {
-                    std::cout << "error in send" << std::endl;
-                    exit (1);
-                }
                 if(wasSent == -1 || sentLength + wasSent >= length)
                 {
                     delete (*it);

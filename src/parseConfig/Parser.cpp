@@ -30,6 +30,8 @@ void Parser::removeSpaces(std::string &line) {
 void Parser::ParseAndCheckLine(std::string &line, std::string finder) {
     line = trim(line);
     if (line.find(finder) != 0) {
+        std::cout << finder << std::endl;
+        std::cout << line << std::endl;
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
     line = line.substr(finder.length());

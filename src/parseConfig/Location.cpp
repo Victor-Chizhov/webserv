@@ -10,6 +10,8 @@ Location::Location() {
     this->locationConfig = std::vector<std::string>();
     this->methods = std::vector<std::string>();
     this->pathLocation = "";
+    this->_redirect = false;
+    this->_redirect_path = "";
 }
 
 Location::Location(const Location &copy) {
@@ -27,6 +29,8 @@ Location &Location::operator=(const Location &copy) {
         this->methods = copy.methods;
         this->locationConfig = copy.locationConfig;
         this->pathLocation = copy.pathLocation;
+        this->_redirect_path = copy._redirect_path;
+        this->_redirect = copy._redirect;
     }
     return *this;
 }
@@ -42,6 +46,14 @@ void Location::printDataConfig() const {
     }
 }
 
+bool Location::isRedirect() const {
+    return _redirect;
+}
+
+const std::string &Location::getRedirectPath() const {
+    return _redirect_path;
+}
+
 void Location::printLocationData() {
     std::cout << "-----------------" << std::endl << "Location WebServer:" << std::endl << "-----------------" << std::endl;
     std::cout << "pathLocation: " << pathLocation << std::endl;
@@ -51,6 +63,7 @@ void Location::printLocationData() {
     std::cout << "cgiPass: " << cgiPass << std::endl;
     std::cout << "clientMaxBodySize: " << clientMaxBodySize << std::endl;
     std::cout << "fileUpload: " << fileUpload << std::endl;
+    std::cout << "redirect: " << _redirect_path << std::endl;
     for (std::vector<std::string>::iterator it = methods.begin(); it != methods.end(); ++it) {
         std::cout <<  "Methods: " << *it << std::endl;
     }
@@ -61,11 +74,13 @@ void Location::updateDataInLocation() {
         cutDataStr(locationConfig[i], "location", pathLocation);
         cutDataStr(locationConfig[i], "root", root);
         cutDataBool(locationConfig[i], "autoindex", autoIndex);
+        cutDataStr(locationConfig[i], "redirect", _redirect_path);
         cutDataStr(locationConfig[i], "index", index);
         cutDataStr(locationConfig[i], "cgi_pass", cgiPass);
         cutDataNum(locationConfig[i], "client_max_body_size", clientMaxBodySize);
         cutDataBool(locationConfig[i], "file_upload", fileUpload);
         cutDataArray(locationConfig[i], "methods", methods);
+
     }
     parsePathLocation();
 }
@@ -88,5 +103,16 @@ std::string Location::getCgiPass() const {
     return cgiPass;
 }
 
+const std::string &Location::getPathLocation() const {
+    return pathLocation;
+}
+
+const std::string &Location::getRoot() const {
+    return root;
+}
+
+const std::string &Location::getIndex() const {
+    return index;
+}
 
 

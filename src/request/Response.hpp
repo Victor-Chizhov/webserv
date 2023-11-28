@@ -11,11 +11,6 @@ class Server;
 
 class Response {
 private:
-
-    std::string ipAddress;
-    int port;
-
-
     void getUrl();
     void findImage();
     void createResponse();
@@ -23,14 +18,18 @@ private:
     void handleGet(Request &request);
     void handlePost(Request &request);
     void canMakeResponse(Request &request);
+    std::vector<Server> servers;
+    std::string ipAddress;
+    int port;
     void generateErrorsPage(int code);
+
 
 public:
     Response();
     void handleRequest(Request &request);
     void generateResponse(Request &request, std::vector<Server> const &servers);
     bool isCGI(std::string path);
-    void generateCGIResponse(Request &request, std::vector<Server> const &servers);
+    void generateCGIResponse(Request &request, std::vector<Location> locations);
     void createResponse(Request &request);
     std::string response;
     int sentLength;
@@ -38,6 +37,11 @@ public:
     void setIpAddress(std::string ipAddress);
     int getPort() const;
     void setPort(int port);
+    void generateRedirectResponse(const std::string &locationToRedir);
+    void chooseConfig(std::string hostName, Server &server);
+    void chooseLocation(std::string hostName, Server &server, std::vector<Location> location);
+    std::string rootParsing(const std::string &url, const std::vector<Location> &locations,
+                                      Location &currentLocation) const;
 };
 
 
