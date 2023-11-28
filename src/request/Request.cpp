@@ -69,7 +69,9 @@ std::string const Request::parseHostName(std::string const &input) {
 
 std::string const Request::parseScript(std::string const &input)
 {
-    if (input.find('?') != std::string::npos)
+    if (input.find("/?") != std::string::npos)
+        return input.substr(0, input.find("/?"));
+    else if (input.find('?') != std::string::npos)
         return input.substr(0, input.find('?'));
     else
         return input;

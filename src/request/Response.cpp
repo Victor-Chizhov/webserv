@@ -67,10 +67,9 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     }
     if (request.getUrl() == "/")
         request.setUrl(root);
-    else
-        request.setUrl(url.insert(url.find('/'), root));
+    else if (request.getUrl().find("www") == std::string::npos)
+        request.setUrl("/www" + request.getUrl());
     if (url == "/wrong_home_page") {
-        ///generate redirect response with 301 code and Location header where will be currentLocation.getRedirect()
         generateRedirectResponse(currentLocation.getRedirectPath());
         return;
     }
@@ -329,10 +328,9 @@ std::string Response::rootParsing(const std::string &url, const std::vector<Loca
             root = str + locations[j].getIndex();
             break;
         }
-        if ((str.find("js") != std::string::npos || str.find("image") != std::string::npos) && str.find("www") == std::string::npos)
+        if ((str.find("js") != std::string::npos || str.find("image") != std::string::npos || str.find("bin-cgi") != std::string::npos) && str.find("www") == std::string::npos)
             root = "/www";
         if (locations[j].getPathLocation() == str) {
-            root = locations[j].getRoot().substr(0, locations[j].getRoot().rfind('/'));
             currentLocation = locations[j];
             break;
         }
