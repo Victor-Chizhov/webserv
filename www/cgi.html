@@ -33,6 +33,9 @@
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
    </head>
    <body>
+   <script src="js/callPyton.js"></script>
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
       <!-- header section start -->
       <div class="header_section">
           <div class="header_main">
@@ -44,19 +47,19 @@
                       <div class="collapse navbar-collapse" id="navbarNav">
                           <ul class="navbar-nav">
                               <li class="nav-item">
-                                  <a class="nav-link" href="index.html">Home</a>
+                                  <a class="nav-link" href="index.html" style="color: #1f1f1f;">Home</a>
                               </li>
                               <li class="nav-item">
-                                  <a class="nav-link" href="about.html">About</a>
+                                  <a class="nav-link" href="about.html" style="color: #1f1f1f;">About</a>
                               </li>
                               <li class="nav-item">
-                                  <a class="nav-link" href="42yerevan.html">42 Yerevan</a>
+                                  <a class="nav-link" href="42yerevan.html" style="color: #1f1f1f;">42 Yerevan</a>
                               </li>
                               <li class="nav-item">
-                                  <a class="nav-link " href="info.html">Info</a>
+                                  <a class="nav-link " href="info.html" style="color: #1f1f1f;">Info</a>
                               </li>
                               <li class="nav-item">
-                                  <a class="nav-link " href="cgi.html">CGI</a>
+                                  <a class="nav-link " href="cgi.html" style="color: #1f1f1f;">CGI</a>
                               </li>
                           </ul>
                       </div>
@@ -77,7 +80,7 @@
       </div>
       <!-- header section end -->
       <!-- about section start -->
-      <div class="about_section layout_padding">
+      <div class="about_section_2 layout_padding">
           <div class="container-fluid">
               <div class="row">
                   <div class="col-xl-6">
@@ -98,18 +101,12 @@
                               CGI standard is generally the most compatible with today’s browsers</p>
                       </div>
                   </div>
-                  <div class="col-xl-6 padding_right_0 mt-7">
+                  <div class="col-xl-6 mt-7">
                       <div class="row">
-                          <label for="file_2" class="upload_cgi" style="margin: 50px auto">
-                              Current Time
-                          </label>
-                          <input class="upload" type="file" name="file" id="file_2" style="display: none" onchange="fileUpload(this)">
+                          <a href="bin-cgi/current_time.py" class="upload_cgi" style="margin: 50px auto">Current Time</a>
                       </div>
                       <div class="row">
-                          <label for="file_3" class="upload_cgi" style="margin: 50px auto">
-                              Calculator of Date
-                          </label>
-                          <input class="upload" type="file" name="file" id="file_3" style="display: none" onchange="fileUpload(this)">
+                          <a href="bin-cgi/what_day.py" class="upload_cgi" style="margin: 50px auto">What Day</a>
                       </div>
                   </div>
               </div>

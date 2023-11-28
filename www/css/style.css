@@ -337,7 +337,6 @@ button {
 
 .header_main {
     width: 100%;
-    background-image: url(../images/header-bg.png);
     background-size: 100%;
     padding: 10px 0px 0px 0px;
 }
@@ -409,6 +408,12 @@ button {
     width: 100%;
     float: left;
     padding-bottom: 90px;
+}
+
+.services_section_4 {
+    width: 100%;
+    float: left;
+    padding-bottom: 130px;
 }
 
 .services_taital {
@@ -494,6 +499,12 @@ button {
     padding-bottom: 90px;
 }
 
+.about_section_2 {
+    width: 100%;
+    float: left;
+    padding-bottom: 130px;
+}
+
 .about_taital_main {
     width: 100%;
     padding-left: 100px;
@@ -501,7 +512,9 @@ button {
 }
 
 .padding_right_0 {
-    padding-right: 0px;
+    /*padding-right: 0px;*/
+    display: flex;
+    align-items: center;
 }
 
 .about_taital {
@@ -1056,6 +1069,11 @@ button {
 }
 
 button:hover {
+    /*background-color: #111111;*/
+    color: #ffffff;
+}
+
+.bg-black:hover {
     background-color: #111111;
     color: #ffffff;
 }
@@ -1087,3 +1105,4 @@ button:hover {
 .mt-7 {
     margin-top: 7rem !important;
 }
+

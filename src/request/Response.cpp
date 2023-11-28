@@ -5,6 +5,15 @@ Response::Response() {
     sentLength = 0;
 }
 
+void Response::currentPath() {
+    char currentPath[PATH_MAX];
+    if (getcwd(currentPath, sizeof(currentPath)) != NULL) {
+        path = currentPath;
+    } else {
+        perror("getcwd() error");
+    }
+}
+
 void Response::generateErrorsPage(int code) {
     std::string errorPage;
     std::string errorPagePath = "www/errorPages/";
@@ -49,6 +58,7 @@ void Response::generateErrorsPage(int code) {
 
 
 void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
+    currentPath();
     //generateAutoindexPage
     // generateRedirectResponse //это предложил чатгпт, но пока не работает
     if (request.getMethod() == "GET" && request.getUrl() == "/redirect") {
@@ -67,12 +77,13 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 }
 
 void Response::generateCGIResponse(Request &request, std::vector<Server> const &servers) {
+
     if (request.getMethod() == "POST" && request.getBody().empty()) {
         //generateErrorPage(config, 400);
         return;
     }
     const char *pythonInterpreter = NULL;
-    std::cout << servers.size() << std::endl;
+//    std::cout << servers.size() << std::endl;
     for (size_t i = 0; i < servers.size(); i++) {
         if (servers[i].getHost() == this->ipAddress && servers[i].getPort() == this->port) {
             for (size_t j = 0; j < servers[i].getLocations().size(); j++) {
@@ -83,15 +94,15 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
             }
         }
     }
-    if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
-        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+    if (!pythonInterpreter) {
+        response = "HTTP/1.1 404 Not Found\n\n";
         return;
     }
-    std::string str = "/Users/gkhaishb/Desktop/webserv_project/Webserv" + request.getScript(); //захардкодил путь, потом достать из вебсерва то, что через getcwd Витя получил
+    std::string str = path + request.getScript();
     int fdScript = open(str.c_str(), O_RDONLY);
     if (fdScript == -1) { //если путь к скрипту неверный
         perror("Error: open script");
-        response = "HTTP/1.1 404 Not Found\n\n"; //здесь надо вернуть page, которые создал Витя
+        response = "HTTP/1.1 404 Not Found\n\n";
         return;
     }
     close(fdScript);
@@ -103,10 +114,10 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
     std::map<std::string, std::string> env = request.getArgs();
     char **pythonEnv = new char *[2];
     std::map<std::string, std::string>::iterator it = env.begin();
-    std::string tmp = it->first + "=" + it->second; //берем параметры из запроса, пример: Number=3
+    std::string tmp = it->first + "=" + it->second;
     if (request.getError() || (str.find("what_day.py") != std::string::npos && it->first != "Number" && !it->first.empty())
     || (str.find("current_time.py") != std::string::npos && tmp != "=")) {
-        response = "HTTP/1.1 404 Page not found\n\n"; //здесь надо вернуть page, которые создал Витя
+        response = "HTTP/1.1 404 Page not found\n\n";
         return;
     }
     pythonEnv[0] = strdup(tmp.c_str());
@@ -116,7 +127,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
     pythonArgs[0] = strdup(pythonInterpreter);
     pythonArgs[1] = strdup(pythonScriptPath);
     pythonArgs[2] = NULL;
-    std::string tmpCGIFile = "/Users/gkhaishb/Desktop/webserv_project/Webserv/www/bin-cgi/tmpCGIFile"; //захардкодил путь к временному файлу, потом переделаю
+    std::string tmpCGIFile = path + "/www/bin-cgi/tmpCGIFile";
     int fdCGIFile = open(tmpCGIFile.c_str(), O_RDWR | O_CREAT, 0666);
     if (fdCGIFile == -1) {
         perror("Error open tmpCGIFile");
@@ -125,7 +136,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Server> const &
     int pid = fork();
     if (!pid) {
         dup2(fdCGIFile, 1);
-        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
+        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) {
             perror("Error execve");
             exit(1);
         }
@@ -157,7 +168,7 @@ bool Response::isCGI(std::string path) {
 void Response::handleGet(Request &request) {
     std::string url = request.getUrl();
     url.erase(0, 1);
-
+    std::cout << "url: " << url << std::endl;
     if (url.find(".jpg") != std::string::npos ||
         url.find(".png") != std::string::npos ||
         url.find(".svg") != std::string::npos ||
@@ -216,14 +227,8 @@ void Response::handlePost(Request &request) {
 void Response::handleRequest(Request &request) {
 
     if(request.getUrl() == "/upload") {
-    //    std::cout << "----------------------------------------------\n" << request.request << "----------------------------------------------\n" << std::endl;
-        // std::cout << "lol" << std::endl;
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
-
         std::istringstream stream(formData);
-
-    //    std::cout << "Body Request: " << formData << std::endl;
-
         std::string line;
         std::ofstream destFile;
         std::vector<BYTE> vector = base64_decode(formData);

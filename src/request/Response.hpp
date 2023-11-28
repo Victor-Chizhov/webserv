@@ -14,6 +14,7 @@ private:
 
     std::string ipAddress;
     int port;
+    std::string path;
 
 
     void getUrl();
@@ -38,6 +39,8 @@ public:
     void setIpAddress(std::string ipAddress);
     int getPort() const;
     void setPort(int port);
+
+    void currentPath();
 };
 
 
