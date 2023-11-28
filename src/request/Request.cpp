@@ -78,16 +78,29 @@ std::string const Request::parseScript(std::string const &input)
 std::string const Request::parseBody(std::string const &input) {
     std::string			body;
 
-    // Находим пустую строку, разделяющую заголовки и тело
+    // std::cout << "input: " << input << std::endl;
+
     size_t doubleLineBreakPos = input.find("\r\n\r\n");
     if (doubleLineBreakPos != std::string::npos) {
-        // Если нашли разделение, извлекаем тело
-        body = input.substr(doubleLineBreakPos + 4);
-        return body;
+
+        if (input.find("Content-Length") != std::string::npos) {
+            body = input.substr(doubleLineBreakPos + 4);
+            return body;
+        } else if (input.find("Transfer-Encoding") != std::string::npos) {
+            std::string line = input.substr(doubleLineBreakPos + 4);
+            std::istringstream iss(line);
+            std::string chunk;
+            while (std::getline(iss, chunk, '\r')) {
+                if (chunk.empty() || chunk == "\n" || chunk == "\r" || chunk == "\r\n")
+                    continue;
+                body += chunk;
+            }
+            return body;
+        }
     } else {
-        // Если разделения нет, вернем пустую строку или что-то еще, что покажет отсутствие тела
         return "";
     }
+    return "";
 }
 
 std::string const Request::parseUrl(std::string const &input) {

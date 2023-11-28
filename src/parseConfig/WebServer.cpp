@@ -30,6 +30,15 @@ void WebServer::saveConfigInConfigLine() {
     inputFile.close();
 }
 
+void WebServer::addDataInCurrentPath() {
+    char currentPath[PATH_MAX];
+    if (getcwd(currentPath, sizeof(currentPath)) != NULL) {
+        this->currentPath = currentPath;
+    } else {
+        perror("getcwd() error");
+    }
+}
+
 void WebServer::createVectorOfServers() {
     addConfigInArray<Server>(servers, configLines, "server");
 }
@@ -40,12 +49,21 @@ void WebServer::fillEachServerWithData() {
     }
 }
 
+std::string &WebServer::getCurrentPath() {
+    return currentPath;
+}
+
+std::vector<Server> &WebServer::getServers() {
+    return servers;
+}
+
 void WebServer::addConfigData() {
     createVectorOfServers();
     fillEachServerWithData();
 }
 
 void WebServer::parseConfig() {
+    addDataInCurrentPath();
     saveConfigInConfigLine();
     addConfigData();
 }

@@ -12,6 +12,9 @@ class Server;
 class Response {
 private:
 
+    std::string ipAddress;
+    int port;
+
 
     void getUrl();
     void findImage();
@@ -23,6 +26,7 @@ private:
     std::vector<Server> servers;
     std::string ipAddress;
     int port;
+    void generateErrorsPage(int code);
 
 
 public:

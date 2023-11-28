@@ -16,6 +16,7 @@ private:
     std::vector<std::string> configLines;
     EventManager *eventManager;
     std::set<std::pair<std::string, int > > unique;
+    std::string currentPath;
 
     bool removeComments(std::string &line);
     void saveConfigInConfigLine();
@@ -24,13 +25,15 @@ private:
     void fillEachServerWithData();
     void createEventManager();
     void createUniquePair();
+    void addDataInCurrentPath();
 
 
 public:
     WebServer(std::string pathConfig);
     void parseConfig();
     void start();
-
+    std::vector<Server> &getServers();
+    std::string &getCurrentPath();
 
 };
 

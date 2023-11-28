@@ -1,12 +1,11 @@
 function fileUpload(input) {
     const file = input.files[0];
-    if (file) {
-        const formData = new FormData();
-        formData.append('file', file);
-
+    var reader = new FileReader();
+	reader.onload = function(e) {
+		
         fetch('/upload', {
             method: 'POST',
-            body: formData
+            body: btoa(e.target.result)
         })
             .then(response => response.json())
             .then(data => {
@@ -14,8 +13,11 @@ function fileUpload(input) {
             })
             .catch(error => {
                 console.error('Error uploading file:', error);
-            });
-    } else {
-        console.error('No file selected.');
-    }
+            })
+	};
+	reader.onerror = function(e) {
+		// error occurred
+		console.log('Error : ' + e.type);
+	};
+	reader.readAsBinaryString(file);
 }
