@@ -12,6 +12,7 @@ class Request {
         std::map<std::string, std::string> args;
         std::string body;
         std::string hostName;
+        int port;
 		std::map<std::string, std::string> headers;
 
 		std::string const parseMethod(std::string const &input);

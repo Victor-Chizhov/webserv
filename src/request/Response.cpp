@@ -69,7 +69,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
     std::vector<Location> locations = currentConfig.getLocations();
-    chooseLocation(request.getHostName(), currentConfig, locations);
+    chooseLocation(request, currentLocation, locations);
     root = rootParsing(url, locations, currentLocation);
     if (url.find("bin-cgi") == 1) {
         std::string tmp = "/www" + request.getScript();
@@ -81,6 +81,12 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
         request.setUrl("/www" + request.getUrl());
     if (url == "/wrong_home_page") {
         generateRedirectResponse(currentLocation.getRedirectPath());
+        return;
+    }
+
+    //create response for Autoindex
+    if (currentLocation.isAutoIndex()) {
+        generateAutoindexResponse(currentConfig);
         return;
     }
 
@@ -207,7 +213,6 @@ void Response::handleGet(Request &request) {
         return;
     }
 
-    //жесткий костыль надо хендлить
     if (url.find("css") != std::string::npos) {
         std::istringstream ss(url);
         std::string segment;
@@ -289,18 +294,23 @@ void Response::setPort(int port) {
 
 void Response::chooseConfig(std::string hostName, Server &server) {
     for (size_t i = 0; i < servers.size(); i++) {
-        if (servers[i].getServerName() == hostName) {
+        if (!servers[i].getServerName().empty() && servers[i].getServerName() == hostName && servers[i].getPort() == port) {
+            server = servers[i];
+            return;
+        }
+    }
+    for (size_t i = 0; i < servers.size(); i++) {
+        if (servers[i].getHost() == hostName && servers[i].getPort() == port) {
             server = servers[i];
             return;
         }
     }
 }
 
-void Response::chooseLocation(std::string hostName, Server &server, std::vector<Location> locations) {
-    for (size_t i = 0; i < servers.size(); i++) {
-        if (servers[i].getHost() == hostName) {
-            server = servers[i];
-            locations = servers[i].getLocations();
+void Response::chooseLocation(Request request, Location &location, std::vector<Location> locations) {
+    for (size_t i = 0; i < locations.size(); i++) {
+        if (locations[i].getPathLocation() == request.getUrl()) {
+            location = locations[i];
             return;
         }
     }
@@ -336,4 +346,8 @@ std::string Response::rootParsing(const std::string &url, const std::vector<Loca
         }
     }
     return root;
+}
+
+void Response::generateAutoindexResponse(Server currentConfig) {
+    (void )currentConfig;
 }
