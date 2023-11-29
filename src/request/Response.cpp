@@ -63,11 +63,16 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 
     std::string method = request.getMethod();
     std::string url = request.getUrl();
+
     this->servers = servers;
     currentPath();
 
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
+    if (request.request.size() > (size_t)currentConfig.getClientMaxBodySize()) {
+        generateErrorsPage(413);
+        return;
+    }
     std::vector<Location> locations = currentConfig.getLocations();
     chooseLocation(request, currentLocation, locations);
     root = rootParsing(url, locations, currentLocation);
@@ -114,7 +119,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
         }
     }
     if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
-        generateErrorsPage(404);
+        generateErrorsPage(500);
         return;
     }
     std::string str = path + request.getScript();

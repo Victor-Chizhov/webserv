@@ -84,6 +84,10 @@ const std::vector<Location> &Server::getLocations() const {
     return locations;
 }
 
+int Server::getClientMaxBodySize() const {
+    return clientMaxBodySize;
+}
+
 
 
 
