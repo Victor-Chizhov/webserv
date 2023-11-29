@@ -7,7 +7,7 @@ function fileUpload(input) {
             method: 'POST',
             body: btoa(e.target.result)
         })
-            .then(response => response.json())
+            .then(response => response.text())
             .then(data => {
                 console.log('File uploaded successfully:', data);
             })
