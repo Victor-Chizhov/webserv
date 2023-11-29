@@ -28,6 +28,9 @@ void Response::generateErrorsPage(int code) {
     } else if (code == 404) {
         errorPageName = "404.html";
         errorStatus = "Not Found";
+    }else if (code == 4041) {
+        errorPageName = "uniq404.html";
+        errorStatus = "Not Found";
     } else if (code == 405) {
         errorPageName = "405.html";
         errorStatus = "Method Not Allowed";
@@ -36,6 +39,9 @@ void Response::generateErrorsPage(int code) {
         errorStatus = "Request Entity Too Large";
     } else if (code == 500) {
         errorPageName = "500.html";
+        errorStatus = "Internal Server Error";
+    } else if (code == 5001) {
+        errorPageName = "uniq500.html";
         errorStatus = "Internal Server Error";
     } else if (code == 502) {
         errorPageName = "502.html";
@@ -60,13 +66,12 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     Server currentConfig;
     Location currentLocation;
     std::string root;
-
+//    std::cout << request.getUrl() << std::endl;
     std::string method = request.getMethod();
     std::string url = request.getUrl();
 
     this->servers = servers;
     currentPath();
-
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
     if (request.request.size() > (size_t)currentConfig.getClientMaxBodySize()) {

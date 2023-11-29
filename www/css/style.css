@@ -516,6 +516,11 @@ button {
     display: flex;
     align-items: center;
 }
+.padding_right_01 {
+    /*padding-right: 0px;*/
+    display: flex;
+    align-items: center;
+}
 
 .about_taital {
     width: 100%;
@@ -1105,4 +1110,46 @@ button:hover {
 .mt-7 {
     margin-top: 7rem !important;
 }
+
+.upload_cgi_modal {
+    width: 30%;
+    float: left;
+    font-size: 13px;
+    color: #ffffff;
+    background-color: #0a52dd;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 0.25rem;
+}
+
+.upload_cgi_modal:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.upload_cgi_modal_close {
+    width: 30%;
+    float: left;
+    font-size: 13px;
+    color: #111111;
+    background-color: #ffffff;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 0.25rem;
+    border: solid 1px #111111;
+}
+
+.upload_cgi_modal_close:hover {
+    background-color: #111111;
+    color: #ffffff;
+    border: solid 1px #111111;
+}
+
+input::placeholder {
+    font-size: 11px;
+    opacity: 0.3;
+    font-weight: 300;
+
+}
+
 
