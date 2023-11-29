@@ -64,6 +64,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     std::string method = request.getMethod();
     std::string url = request.getUrl();
     this->servers = servers;
+    currentPath();
 
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
@@ -99,10 +100,6 @@ void Response::generateRedirectResponse(const std::string &locationToRedir) {
 }
 
 void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
-//    if (request.getMethod() == "POST" && request.getBody().empty()) {
-//        generateErrorsPage(404);
-//        return;
-//    } это возможно не надо потому что наш cgi работает только с get запросом
     const char *pythonInterpreter = NULL;
     for (size_t j = 0; j < locations.size(); j++) {
         if (!locations[j].getCgiPass().empty()) {
