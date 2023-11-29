@@ -516,6 +516,11 @@ button {
     display: flex;
     align-items: center;
 }
+.padding_right_01 {
+    /*padding-right: 0px;*/
+    display: flex;
+    align-items: center;
+}
 
 .about_taital {
     width: 100%;

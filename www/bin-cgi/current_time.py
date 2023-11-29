@@ -104,34 +104,32 @@ try:
                                 </p>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-4 mb-4">
-                            <h6 class="text-uppercase fw-bold mb-4 text-white">
-                                <b>42 Yerevan</b>
-                            </h6>
-                            <p class="opacity-75">
-                                <a href="/#about" class="text-decoration-none text-white">
-                                    About Project
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                                <a href="/#features" class="text-decoration-none text-white">
-                                    What is Webserver
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                                <a href="/#questions" class="text-decoration-none text-white">
-                                    Our Team
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                                <a href="/#trial" class="text-decoration-none text-white">
-                                    Common Gateway Interface
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                            </p>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4 mb-4">
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
+                     <h6 class="text-uppercase fw-bold mb-4 text-white">
+                       <b>42 Yerevan</b>
+                     </h6>
+                     <p class="opacity-75">
+                       <a href="../about.html" class="text-decoration-none text-white">
+                         About Project
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="../info.html" class="text-decoration-none text-white">
+                         What is Webserver
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="../cgi.html" class="text-decoration-none text-white">
+                        Common Gateway Interface
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                         <a href="../42yerevan.html" class="text-decoration-none text-white">
+                             42 Yerevan
+                         </a>
+                     </p>
+                   </div>
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
                             <p class="opacity-75">
                                 <font-awesome-icon icon="fa-solid fa-home" class="me-3" />
                                 2a Halabyan St, Yerevan 0038
