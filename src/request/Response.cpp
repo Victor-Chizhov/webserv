@@ -69,12 +69,17 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 //    std::cout << request.getUrl() << std::endl;
     std::string method = request.getMethod();
     std::string url = request.getUrl();
+
     this->servers = servers;
     currentPath();
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
+    if (request.request.size() > (size_t)currentConfig.getClientMaxBodySize()) {
+        generateErrorsPage(413);
+        return;
+    }
     std::vector<Location> locations = currentConfig.getLocations();
-    chooseLocation(request.getHostName(), currentConfig, locations);
+    chooseLocation(request, currentLocation, locations);
     root = rootParsing(url, locations, currentLocation);
     if (url.find("bin-cgi") == 1) {
         std::string tmp = "/www" + request.getScript();
@@ -86,6 +91,12 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
         request.setUrl("/www" + request.getUrl());
     if (url == "/wrong_home_page") {
         generateRedirectResponse(currentLocation.getRedirectPath());
+        return;
+    }
+
+    //create response for Autoindex
+    if (currentLocation.isAutoIndex() && !request.isFile()) {
+        generateAutoindexResponse(request);
         return;
     }
 
@@ -113,7 +124,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
         }
     }
     if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
-        generateErrorsPage(404);
+        generateErrorsPage(500);
         return;
     }
     std::string str = path + request.getScript();
@@ -212,7 +223,6 @@ void Response::handleGet(Request &request) {
         return;
     }
 
-    //жесткий костыль надо хендлить
     if (url.find("css") != std::string::npos) {
         std::istringstream ss(url);
         std::string segment;
@@ -294,18 +304,23 @@ void Response::setPort(int port) {
 
 void Response::chooseConfig(std::string hostName, Server &server) {
     for (size_t i = 0; i < servers.size(); i++) {
-        if (servers[i].getServerName() == hostName) {
+        if (!servers[i].getServerName().empty() && servers[i].getServerName() == hostName && servers[i].getPort() == port) {
+            server = servers[i];
+            return;
+        }
+    }
+    for (size_t i = 0; i < servers.size(); i++) {
+        if (servers[i].getHost() == hostName && servers[i].getPort() == port) {
             server = servers[i];
             return;
         }
     }
 }
 
-void Response::chooseLocation(std::string hostName, Server &server, std::vector<Location> locations) {
-    for (size_t i = 0; i < servers.size(); i++) {
-        if (servers[i].getHost() == hostName) {
-            server = servers[i];
-            locations = servers[i].getLocations();
+void Response::chooseLocation(Request request, Location &location, std::vector<Location> locations) {
+    for (size_t i = 0; i < locations.size(); i++) {
+        if (locations[i].getPathLocation() == request.getUrl()) {
+            location = locations[i];
             return;
         }
     }
@@ -341,4 +356,40 @@ std::string Response::rootParsing(const std::string &url, const std::vector<Loca
         }
     }
     return root;
+}
+
+void Response::generateAutoindexResponse(Request request) {
+    DIR *dir;
+    struct dirent *ent;
+    struct stat filestat;
+    std::stringstream html;
+    std::string path = request.getUrl();
+    if (path.find("www") == std::string::npos)
+        path = "/www/" + path;
+    html << "<html><body><ul>";
+    path = this->path + path;
+    dir = opendir(path.c_str());
+    if (dir == NULL) {
+        generateErrorsPage(404);
+        return;
+    }
+    while ((ent = readdir(dir)) != NULL) {
+        std::string filepath = path + ent->d_name;
+        stat(filepath.c_str(), &filestat);
+
+        std::string mod_time = ctime(&filestat.st_mtime);
+        mod_time = mod_time.substr(0, mod_time.size() - 1);
+        if (request.getUrl()[request.getUrl().size() - 1] == '/') {
+            html << "<li><a href=\"" << request.getUrl() + ent->d_name << "\">" << ent->d_name << "</a> "
+                 << " (size: " << filestat.st_size << ", "
+                 << "modified: " << mod_time << ")</li>";
+        } else {
+            html << "<li><a href=\"" << request.getUrl() + "/" + ent->d_name << "\">" << ent->d_name << "</a> "
+                 << " (size: " << filestat.st_size << ", "
+                 << "modified: " << mod_time << ")</li>";
+        }
+    }
+    html << "</ul></body></html>";
+    closedir(dir);
+    response = "HTTP/1.1 200 OK\r\n\r\n" + html.str();
 }

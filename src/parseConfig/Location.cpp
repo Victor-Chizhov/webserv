@@ -115,4 +115,8 @@ const std::string &Location::getIndex() const {
     return index;
 }
 
+bool Location::isAutoIndex() const {
+    return autoIndex;
+}
+
 

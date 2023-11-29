@@ -31,6 +31,7 @@ class Server : public Parser {
         const std::string &getHost() const;
         const std::string &getServerName() const;
         const std::vector<Location> &getLocations() const;
+        int getClientMaxBodySize() const;
 
 };
 
