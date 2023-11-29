@@ -55,19 +55,19 @@ try:
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html">Home</a>
+                                <a class="nav-link" href="../index.html">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="about.html">About</a>
+                                <a class="nav-link" href="../about.html">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="42yerevan.html">42 Yerevan</a>
+                                <a class="nav-link" href="../42yerevan.html">42 Yerevan</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link " href="info.html">Info</a>
+                                <a class="nav-link " href="../info.html">Info</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link " href="cgi.html">CGI</a>
+                                <a class="nav-link " href="../cgi.html">CGI</a>
                             </li>
                         </ul>
                     </div>
@@ -76,11 +76,11 @@ try:
             <div class="container-fluid">
                 <div class="menu_main">
                     <ul>
-                        <li class="active"><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="42yerevan.html">42 Yerevan</a></li>
-                        <li><a href="info.html">Info</a></li>
-                        <li><a href="cgi.html">CGI</a></li>
+                        <li class="active"><a href="../index.html">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../42yerevan.html">42 Yerevan</a></li>
+                        <li><a href="../info.html">Info</a></li>
+                        <li><a href="../cgi.html">CGI</a></li>
                     </ul>
                 </div>
             </div>
@@ -100,7 +100,7 @@ try:
                     <div class="row py-5">
                         <div class="col-12 col-md-6 col-lg-4 mb-4">
                             <div class="pe-lg-5 pe-0 pe-md-3">
-                                <img src="./images/logo42white.svg" alt="" width="200" class="mb-3">
+                                <img src="../images/logo42white.svg" alt="" width="200" class="mb-3">
                                 <p class="opacity-75">
                                     <b>Webserv Project</b>
                                 </p>
