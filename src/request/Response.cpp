@@ -85,8 +85,8 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     }
 
     //create response for Autoindex
-    if (currentLocation.isAutoIndex()) {
-        generateAutoindexResponse(currentConfig);
+    if (currentLocation.isAutoIndex() && !request.isFile()) {
+        generateAutoindexResponse(request);
         return;
     }
 
@@ -348,6 +348,38 @@ std::string Response::rootParsing(const std::string &url, const std::vector<Loca
     return root;
 }
 
-void Response::generateAutoindexResponse(Server currentConfig) {
-    (void )currentConfig;
+void Response::generateAutoindexResponse(Request request) {
+    DIR *dir;
+    struct dirent *ent;
+    struct stat filestat;
+    std::stringstream html;
+    std::string path = request.getUrl();
+    if (path.find("www") == std::string::npos)
+        path = "/www/" + path;
+    html << "<html><body><ul>";
+    path = this->path + path;
+    dir = opendir(path.c_str());
+    if (dir == NULL) {
+        generateErrorsPage(404);
+        return;
+    }
+    while ((ent = readdir(dir)) != NULL) {
+        std::string filepath = path + ent->d_name;
+        stat(filepath.c_str(), &filestat);
+
+        std::string mod_time = ctime(&filestat.st_mtime);
+        mod_time = mod_time.substr(0, mod_time.size() - 1);
+        if (request.getUrl()[request.getUrl().size() - 1] == '/') {
+            html << "<li><a href=\"" << request.getUrl() + ent->d_name << "\">" << ent->d_name << "</a> "
+                 << " (size: " << filestat.st_size << ", "
+                 << "modified: " << mod_time << ")</li>";
+        } else {
+            html << "<li><a href=\"" << request.getUrl() + "/" + ent->d_name << "\">" << ent->d_name << "</a> "
+                 << " (size: " << filestat.st_size << ", "
+                 << "modified: " << mod_time << ")</li>";
+        }
+    }
+    html << "</ul></body></html>";
+    closedir(dir);
+    response = "HTTP/1.1 200 OK\r\n\r\n" + html.str();
 }

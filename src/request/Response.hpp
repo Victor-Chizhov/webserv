@@ -35,7 +35,7 @@ public:
     void generateResponse(Request &request, std::vector<Server> const &servers);
     bool isCGI(std::string path);
     void generateCGIResponse(Request &request, std::vector<Location> locations);
-    void generateAutoindexResponse(Server currentConfig);
+    void generateAutoindexResponse(Request request);
     void createResponse(Request &request);
     std::string response;
     int sentLength;

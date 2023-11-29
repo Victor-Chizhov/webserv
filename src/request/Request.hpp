@@ -45,6 +45,7 @@ class Request {
 		std::map<std::string, std::string> const &getHeaders() const;
         std::string request;
         bool getError() const;
+        bool isFile() const;
 
 };
 

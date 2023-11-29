@@ -201,3 +201,9 @@ bool Request::getError() const {
 std::string const &Request::getHostName() const {
     return hostName;
 }
+
+bool Request::isFile() const {
+    if (url.find('.') != std::string::npos)
+        return true;
+    return false;
+}
