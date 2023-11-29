@@ -1106,3 +1106,25 @@ button:hover {
     margin-top: 7rem !important;
 }
 
+.upload_cgi_modal {
+    width: 30%;
+    float: left;
+    font-size: 13px;
+    color: #ffffff;
+    background-color: #0a52dd;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 30px;
+}
+
+.upload_cgi_modal_close {
+    width: 30%;
+    float: left;
+    font-size: 13px;
+    color: #ffffff;
+    background-color: #111111;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 30px;
+}
+

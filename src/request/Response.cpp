@@ -60,7 +60,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     Server currentConfig;
     Location currentLocation;
     std::string root;
-
+    std::cout << request.getUrl() << std::endl;
     std::string method = request.getMethod();
     std::string url = request.getUrl();
     this->servers = servers;
