@@ -64,7 +64,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     std::string method = request.getMethod();
     std::string url = request.getUrl();
     this->servers = servers;
-
+    currentPath();
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
     std::vector<Location> locations = currentConfig.getLocations();
