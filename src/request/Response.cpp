@@ -103,6 +103,15 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
         return;
     }
 
+    ///create response for DELETE request
+    if (request.getMethod() == "DELETE") {
+        std::map<std::string, std::string> map = request.getArgs();
+        std::map<std::string, std::string>::iterator it = map.begin();
+        std::string fileToOpen = it->second;
+        deleteFile(fileToOpen);
+        return;
+    }
+
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
         generateCGIResponse(request, locations);
@@ -404,4 +413,21 @@ bool Response::is_method_allowed(Location location, std::string method) {
             return true;
     }
     return false;
+}
+
+void Response::deleteFile(const std::string &fileToOpen) {
+    if (remove((path + "/www/toDelete/" + fileToOpen).c_str()) == -1) {
+        response = "HTTP/1.1 404 Not Found\r\n"
+                                "Content-Type: application/json\r\n"
+                                "\r\n"
+                                "{\n"
+                                "    \"status\": \"error\",\n"
+                                "    \"message\": \"File not found.\"\n"
+                                "}";
+        return;
+    }
+    response = "HTTP/1.1 200 OK\r\n"
+                            "Content-Type: text/plain\r\n"
+                            "\r\n"
+                            "File successfully deleted.";
 }

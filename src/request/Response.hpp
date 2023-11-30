@@ -46,6 +46,7 @@ public:
     void currentPath();
     void generateRedirectResponse(const std::string &locationToRedir);
     void chooseConfig(std::string hostName, Server &server);
+    void deleteFile(const std::string &fileToOpen);
     void chooseLocation(Request request, Location &location, std::vector<Location> locations);
     std::string rootParsing(const std::string &url, const std::vector<Location> &locations,
                                       Location &currentLocation) const;
