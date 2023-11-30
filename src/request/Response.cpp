@@ -254,20 +254,24 @@ void Response::handlePost(Request &request) {
 
 void Response::handleRequest(Request &request) {
 
-    if(request.getUrl() == "/upload") {
+    if(request.getUrl() == "/www/upload") {
+
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
         std::istringstream stream(formData);
         std::string line;
         std::ofstream destFile;
         std::vector<BYTE> vector = base64_decode(formData);
-        destFile.open("upload.jpg", std::ios::binary | std::ios::app);
+        destFile.open("upload.svg", std::ios::binary | std::ios::app);
         size_t i = 0;
         while (i < vector.size()) {
             destFile << vector[i];
             i++;
         }
-
+        response = "HTTP/1.1 200 OK\n\n";
+        response += "Content-Type: text/plain\n\n";
+        response += "OK";
         destFile.close();
+        return;
     }
 
     if (request.getMethod() == "GET") {

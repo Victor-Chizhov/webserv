@@ -7,13 +7,18 @@ function fileUpload(input) {
             method: 'POST',
             body: btoa(e.target.result)
         })
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) {
+                    window.location.href = 'errorPages/413.html';
+                }
+                return response.text();
+            })
             .then(data => {
-                console.log('File uploaded successfully:', data);
+                console.log('File uploaded successfully. Response from server:', data);
             })
             .catch(error => {
-                console.error('Error uploading file:', error);
-            })
+                console.error('Error uploading file:', error.message);
+            });
 	};
 	reader.onerror = function(e) {
 		// error occurred

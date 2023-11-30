@@ -26,6 +26,7 @@ private:
     void createEventManager();
     void createUniquePair();
     void addDataInCurrentPath();
+    void checkValidConfig();
 
 
 public:
