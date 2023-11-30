@@ -129,12 +129,16 @@ void Response::generateRedirectResponse(const std::string &locationToRedir) {
 
 void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
     const char *pythonInterpreter = NULL;
+    const char *BashInterpreter = NULL;
     for (size_t j = 0; j < locations.size(); j++) {
-        if (!locations[j].getCgiPass().empty()) {
-            pythonInterpreter = locations[j].getCgiPass().c_str();
+        if (!locations[j].getCgiPassPython().empty()) {
+            pythonInterpreter = locations[j].getCgiPassPython().c_str();
+            BashInterpreter = locations[j].getCgiPassBash().c_str();
             break;
         }
     }
+    if (request.getUrl().find(".sh") != std::string::npos)
+        pythonInterpreter = BashInterpreter;
     if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
         generateErrorsPage(500);
         return;
@@ -177,7 +181,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
     int pid = fork();
     if (!pid) {
         dup2(fdCGIFile, 1);
-        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
+        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) {
             perror("Error execve");
             exit(1);
         }
@@ -202,6 +206,8 @@ bool Response::isCGI(std::string path) {
     if (path.size() > 2 && path.substr(path.size() - 3, 3) == ".py")
         return true;
     if (path.find(".py?") != std::string::npos || path.find(".py/?") != std::string::npos)
+        return true;
+    if (path.find(".sh") != std::string::npos)
         return true;
     return false;
 }

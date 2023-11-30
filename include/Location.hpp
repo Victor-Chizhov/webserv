@@ -12,7 +12,8 @@ class Location : public Parser {
         std::string root;
         std::string index;
         bool autoIndex;
-        std::string cgiPass;
+        std::string cgiPassPython;
+        std::string cgiPassBash;
         int clientMaxBodySize;
         bool fileUpload;
         std::vector<std::string> methods;
@@ -28,7 +29,8 @@ class Location : public Parser {
         void setConfig(std::string &configLine);
         void printDataConfig() const;
         void printLocationData();
-        std::string getCgiPass() const;
+        std::string getCgiPassPython() const;
+        std::string getCgiPassBash() const;
         std::vector<std::string> getMethods() const;
         bool isRedirect() const;
         bool isAutoIndex() const;
