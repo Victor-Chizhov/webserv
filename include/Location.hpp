@@ -29,6 +29,7 @@ class Location : public Parser {
         void printDataConfig() const;
         void printLocationData();
         std::string getCgiPass() const;
+        std::vector<std::string> getMethods() const;
         bool isRedirect() const;
         bool isAutoIndex() const;
         const std::string &getRoot() const;

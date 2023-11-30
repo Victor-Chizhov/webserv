@@ -119,4 +119,8 @@ bool Location::isAutoIndex() const {
     return autoIndex;
 }
 
+std::vector<std::string> Location::getMethods() const {
+    return methods;
+}
+
 

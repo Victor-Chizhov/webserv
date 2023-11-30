@@ -66,7 +66,6 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     Server currentConfig;
     Location currentLocation;
     std::string root;
-//    std::cout << request.getUrl() << std::endl;
     std::string method = request.getMethod();
     std::string url = request.getUrl();
 
@@ -80,6 +79,10 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     }
     std::vector<Location> locations = currentConfig.getLocations();
     chooseLocation(request, currentLocation, locations);
+    if (!is_method_allowed(currentLocation, method)) {
+        generateErrorsPage(405);
+        return;
+    }
     root = rootParsing(url, locations, currentLocation);
     if (url.find("bin-cgi") == 1) {
         std::string tmp = "/www" + request.getScript();
@@ -324,6 +327,7 @@ void Response::chooseLocation(Request request, Location &location, std::vector<L
             return;
         }
     }
+    location = locations[0];
 }
 
 std::string Response::rootParsing(const std::string &url, const std::vector<Location> &locations,
@@ -392,4 +396,12 @@ void Response::generateAutoindexResponse(Request request) {
     html << "</ul></body></html>";
     closedir(dir);
     response = "HTTP/1.1 200 OK\r\n\r\n" + html.str();
+}
+
+bool Response::is_method_allowed(Location location, std::string method) {
+    for (size_t i = 0; i < location.getMethods().size(); i++) {
+        if (location.getMethods()[i] == method)
+            return true;
+    }
+    return false;
 }
