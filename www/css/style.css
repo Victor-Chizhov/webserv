@@ -886,6 +886,16 @@ button {
     text-align: center;
     font-weight: bold;
 }
+
+.contact_taital_2 {
+    width: 100%;
+    float: left;
+    font-size: 14px;
+    color: #363636;
+    text-align: center;
+    font-weight: bold;
+}
+
 .email_text {
     width: 70%;
     margin: 0 auto;

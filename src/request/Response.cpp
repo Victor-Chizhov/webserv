@@ -66,7 +66,6 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     Server currentConfig;
     Location currentLocation;
     std::string root;
-//    std::cout << request.getUrl() << std::endl;
     std::string method = request.getMethod();
     std::string url = request.getUrl();
 
@@ -80,6 +79,10 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     }
     std::vector<Location> locations = currentConfig.getLocations();
     chooseLocation(request, currentLocation, locations);
+    if (!is_method_allowed(currentLocation, method)) {
+        generateErrorsPage(405);
+        return;
+    }
     root = rootParsing(url, locations, currentLocation);
     if (url.find("bin-cgi") == 1) {
         std::string tmp = "/www" + request.getScript();
@@ -100,6 +103,15 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
         return;
     }
 
+    ///create response for DELETE request
+    if (request.getMethod() == "DELETE") {
+        std::map<std::string, std::string> map = request.getArgs();
+        std::map<std::string, std::string>::iterator it = map.begin();
+        std::string fileToOpen = it->second;
+        deleteFile(fileToOpen);
+        return;
+    }
+
     //generate generateCGIResponse
     if (isCGI(request.getUrl())) {
         generateCGIResponse(request, locations);
@@ -117,12 +129,16 @@ void Response::generateRedirectResponse(const std::string &locationToRedir) {
 
 void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
     const char *pythonInterpreter = NULL;
+    const char *BashInterpreter = NULL;
     for (size_t j = 0; j < locations.size(); j++) {
-        if (!locations[j].getCgiPass().empty()) {
-            pythonInterpreter = locations[j].getCgiPass().c_str();
+        if (!locations[j].getCgiPassPython().empty()) {
+            pythonInterpreter = locations[j].getCgiPassPython().c_str();
+            BashInterpreter = locations[j].getCgiPassBash().c_str();
             break;
         }
     }
+    if (request.getUrl().find(".sh") != std::string::npos)
+        pythonInterpreter = BashInterpreter;
     if (!pythonInterpreter) { //это случай когда не нашли интерпретатор, например порт по которому заходит клиент не соответствует конфиг файлу
         generateErrorsPage(500);
         return;
@@ -165,7 +181,7 @@ void Response::generateCGIResponse(Request &request, std::vector<Location> locat
     int pid = fork();
     if (!pid) {
         dup2(fdCGIFile, 1);
-        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) { //переменная окружения пока не нужна
+        if (execve(pythonInterpreter, pythonArgs, pythonEnv) == -1) {
             perror("Error execve");
             exit(1);
         }
@@ -190,6 +206,8 @@ bool Response::isCGI(std::string path) {
     if (path.size() > 2 && path.substr(path.size() - 3, 3) == ".py")
         return true;
     if (path.find(".py?") != std::string::npos || path.find(".py/?") != std::string::npos)
+        return true;
+    if (path.find(".sh") != std::string::npos)
         return true;
     return false;
 }
@@ -324,6 +342,7 @@ void Response::chooseLocation(Request request, Location &location, std::vector<L
             return;
         }
     }
+    location = locations[0];
 }
 
 std::string Response::rootParsing(const std::string &url, const std::vector<Location> &locations,
@@ -392,4 +411,29 @@ void Response::generateAutoindexResponse(Request request) {
     html << "</ul></body></html>";
     closedir(dir);
     response = "HTTP/1.1 200 OK\r\n\r\n" + html.str();
+}
+
+bool Response::is_method_allowed(Location location, std::string method) {
+    for (size_t i = 0; i < location.getMethods().size(); i++) {
+        if (location.getMethods()[i] == method)
+            return true;
+    }
+    return false;
+}
+
+void Response::deleteFile(const std::string &fileToOpen) {
+    if (remove((path + "/www/toDelete/" + fileToOpen).c_str()) == -1) {
+        response = "HTTP/1.1 404 Not Found\r\n"
+                                "Content-Type: application/json\r\n"
+                                "\r\n"
+                                "{\n"
+                                "    \"status\": \"error\",\n"
+                                "    \"message\": \"File not found.\"\n"
+                                "}";
+        return;
+    }
+    response = "HTTP/1.1 200 OK\r\n"
+                            "Content-Type: text/plain\r\n"
+                            "\r\n"
+                            "File successfully deleted.";
 }
