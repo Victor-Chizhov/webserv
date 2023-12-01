@@ -189,6 +189,9 @@
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
+    .deleter_width {
+        width: 50%;
+    }
     .banner_text {
         width: 100%;
     }
@@ -253,6 +256,9 @@
 }
 
 @media (min-width: 576px) and (max-width: 767px) {
+    .deleter_width {
+        width: 50%;
+    }
     .navbar-light .navbar-toggler {
         color: rgba(0, 0, 0, .5);
         border-color: transparent;
@@ -311,14 +317,14 @@
     .navbar-light .navbar-nav .nav-link:focus,
     .navbar-light .navbar-nav .nav-link:hover {
         color: #ffffff;
-        background: blue;
+        background: #ffffff;
     }
     .navbar-light .navbar-nav .active>.nav-link,
     .navbar-light .navbar-nav .nav-link.active,
     .navbar-light .navbar-nav .nav-link.show,
     .navbar-light .navbar-nav .show>.nav-link {
         color: #ffffff;
-        background: red;
+        background: #ffffff;
     }
     .banner_text {
         width: 100%;
@@ -439,6 +445,9 @@
 }
 
 @media (max-width: 575px) {
+    .deleter_width {
+        width: 50%;
+    }
     .navbar-light .navbar-toggler {
         color: rgba(0, 0, 0, .5);
         border-color: transparent;
@@ -495,14 +504,14 @@
     .navbar-light .navbar-nav .nav-link:focus,
     .navbar-light .navbar-nav .nav-link:hover {
         color: #ffffff;
-        background: red;
+        background: #ffffff;
     }
     .navbar-light .navbar-nav .active>.nav-link,
     .navbar-light .navbar-nav .nav-link.active,
     .navbar-light .navbar-nav .nav-link.show,
     .navbar-light .navbar-nav .show>.nav-link {
         color: #ffffff;
-        background: red;
+        background: #ffffff;
     }
     .banner_text {
         width: 100%;

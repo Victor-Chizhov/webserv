@@ -33,6 +33,7 @@
 <body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="js/sendDelete.js"></script>
 <!-- header section start -->
 <div class="header_section">
   <div class="header_main">
@@ -81,20 +82,52 @@
 </div>
 <!-- header section end -->
 <!-- about section start -->
-<div class="about_section_2 layout_padding">
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="about_taital_main">
-          <h1 class="about_taital">Deleter</h1>
-          <p class="about_text">Here you can delete any file on server</p>
 
-        </div>
-      </div>
 
+<div class="about_section_2 layout_padding" style="height: 51vh;">
+
+    <div class="container-fluid" >
+          <div class="about_taital_main"  style="padding: 0;">
+            <h1
+                    class="about_taital"
+                    style="display: flex; justify-content: center; margin-bottom: 2rem"
+            >
+              Deleter
+            </h1>
+              <div
+                      class="deleter"
+              >
+                <form id="numberForm" class="deleter_width">
+                  <div class="form-group">
+                    <input
+                            type="text"
+                            class="form-control"
+                            id="stringInput"
+                            placeholder="Enter file name" required
+                            style="font-size: 13px; border: 1px solid #E0E0E0; line-height: 2; height: 3rem";
+                    >
+                  </div>
+                </form>
+              </div>
+              <div
+                      class="deleter"
+              >
+                <button
+                        type="button"
+                        class="upload_cgi_modal deleter_width"
+                        data-dismiss="modal"
+                        onclick="sendDelete()"
+                        style="height: 2.5rem; margin-top: 0.5rem;"
+                >
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
     </div>
-  </div>
 </div>
+
+
 <!-- about section end -->
 <!-- footer section start -->
 <div class="footer_section">
