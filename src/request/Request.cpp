@@ -17,6 +17,7 @@ void Request::Parsing(std::string const &input) {
     this->body = this->parseBody(input);
     this->args = this->parseArgs();
     this->script = this->parseScript(url);
+    this->hostName = this->parseHostName(input);
 }
 Request::Request(Request const &src) {
 	*this = src;
@@ -56,9 +57,22 @@ std::string const Request::parseMethod(std::string const &input) {
 	return method;
 }
 
+std::string const Request::parseHostName(std::string const &input) {
+    std::string			hostName;
+
+    hostName = input.substr(input.find("Host: ") + 6, input.substr(input.find("Host: ") + 6).find("\r\n"));
+    port = std::atoi(hostName.substr(hostName.find(':') + 1).c_str());
+    hostName = hostName.substr(0, hostName.find(':'));
+    if (hostName.empty())
+        throw std::invalid_argument("Invalid HostName");
+    return hostName;
+}
+
 std::string const Request::parseScript(std::string const &input)
 {
-    if (input.find('?') != std::string::npos)
+    if (input.find("/?") != std::string::npos)
+        return input.substr(0, input.find("/?"));
+    else if (input.find('?') != std::string::npos)
         return input.substr(0, input.find('?'));
     else
         return input;
@@ -67,16 +81,29 @@ std::string const Request::parseScript(std::string const &input)
 std::string const Request::parseBody(std::string const &input) {
     std::string			body;
 
-    // Находим пустую строку, разделяющую заголовки и тело
+    // std::cout << "input: " << input << std::endl;
+
     size_t doubleLineBreakPos = input.find("\r\n\r\n");
     if (doubleLineBreakPos != std::string::npos) {
-        // Если нашли разделение, извлекаем тело
-        body = input.substr(doubleLineBreakPos + 4);
-        return body;
+
+        if (input.find("Content-Length") != std::string::npos) {
+            body = input.substr(doubleLineBreakPos + 4);
+            return body;
+        } else if (input.find("Transfer-Encoding") != std::string::npos) {
+            std::string line = input.substr(doubleLineBreakPos + 4);
+            std::istringstream iss(line);
+            std::string chunk;
+            while (std::getline(iss, chunk, '\r')) {
+                if (chunk.empty() || chunk == "\n" || chunk == "\r" || chunk == "\r\n")
+                    continue;
+                body += chunk;
+            }
+            return body;
+        }
     } else {
-        // Если разделения нет, вернем пустую строку или что-то еще, что покажет отсутствие тела
         return "";
     }
+    return "";
 }
 
 std::string const Request::parseUrl(std::string const &input) {
@@ -159,6 +186,24 @@ std::string const &Request::getScript() const {
     return this->script;
 }
 
+void Request::setUrl(std::string url) {
+    this->url = url;
+}
+
+void Request::setScript(std::string script) {
+    this->script = script;
+}
+
 bool Request::getError() const {
     return error;
+}
+
+std::string const &Request::getHostName() const {
+    return hostName;
+}
+
+bool Request::isFile() const {
+    if (url.find('.') != std::string::npos)
+        return true;
+    return false;
 }

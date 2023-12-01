@@ -5,12 +5,19 @@ EventManager::EventManager() : maxSocket(0) {
 	FD_ZERO(&writeSet);
 	FD_ZERO(&read_master);
 	FD_ZERO(&write_master);
-    //servers = std::vector<Server>();
+    servers = std::vector<Server>();
 }
 
 EventManager::~EventManager() {
 
 }
+
+void EventManager::copyArray(std::vector<Server> &arrServers) {
+    for (size_t i = 0; i < arrServers.size(); i++) {
+        this->servers.push_back(arrServers[i]);
+    }
+}
+
 
 void EventManager::addServerSocket(ServerSocket &serverSocket) {
     serverSockets.push_back(serverSocket);
@@ -42,12 +49,6 @@ void EventManager::CreateAddClientSocket(ServerSocket &Socket) {
 	clientSockets.push_back(newClient);
 }
 
-void EventManager::copyArray(std::vector<Server> &arrServers) {
-    for (size_t i = 0; i < arrServers.size(); i++) {
-        this->servers.push_back(arrServers[i]);
-    }
-}
-
 void EventManager::waitAndHandleEvents() {
     while (maxSocket) {
 		readSet = read_master;
@@ -69,7 +70,14 @@ void EventManager::waitAndHandleEvents() {
 			memset(buffer, 0, 1024);
             if (FD_ISSET(currentSocket, &readSet)) {
                 int bytesRead = recv(currentSocket, buffer, 1024,0);
-                if (bytesRead < 1024) {
+                if (bytesRead == -1) {
+                    delete (*it);
+                    it = clientSockets.erase(it);
+                    --it;
+                    close(currentSocket);
+                    FD_CLR(currentSocket, &read_master);
+                }
+                else if (bytesRead < 1024) {
                     current.request.request += std::string(buffer, bytesRead);
                     FD_CLR(currentSocket, &read_master);
                     FD_SET(currentSocket, &write_master);
@@ -93,10 +101,6 @@ void EventManager::waitAndHandleEvents() {
                 int wasSent = 0;
                 if (sentLength < length)
                     wasSent = send(currentSocket, response.substr(sentLength).c_str(), byteToWrite, 0);
-                if (wasSent == -1) {
-                    std::cout << "error in send" << std::endl;
-                    exit (1);
-                }
                 if(wasSent == -1 || sentLength + wasSent >= length)
                 {
                     delete (*it);
@@ -106,7 +110,6 @@ void EventManager::waitAndHandleEvents() {
                     FD_CLR(currentSocket, &write_master);
                 }
                 sentLength += wasSent;
-                //system("leaks webserv");
             }
 		}
 	}

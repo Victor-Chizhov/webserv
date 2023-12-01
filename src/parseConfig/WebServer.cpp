@@ -30,6 +30,60 @@ void WebServer::saveConfigInConfigLine() {
     inputFile.close();
 }
 
+void WebServer::checkValidConfig() {
+    for (size_t i = 0; i < configLines.size(); i++) {
+        std::string str = configLines[i].c_str();
+        if (str.find("server") != std::string::npos) {
+            continue;
+        } else if (str.find("port") != std::string::npos) {
+            continue;
+        } else if (str.find("error_page") != std::string::npos) {
+            continue;
+        } else if (str.find("client_max_body_size") != std::string::npos) {
+            continue;
+        } else if (str.find("location") != std::string::npos) {
+            continue;
+        } else if (str.find("root") != std::string::npos) {
+            continue;
+        } else if (str.find("methods") != std::string::npos) {
+            continue;
+        } else if (str.find("index") != std::string::npos) {
+            continue;
+        } else if (str.find("file_upload") != std::string::npos) {
+            continue;
+        } else if (str.find("cgi_pass") != std::string::npos) {
+            continue;
+        } else if (str.find("redirect") != std::string::npos) {
+            continue;
+        } else if (str.find("autoindex") != std::string::npos) {
+            continue;
+        } else if (str.find("server_name") != std::string::npos) {
+            continue;
+        } else if (str.find("listen") != std::string::npos) {
+            continue;
+        } else if (str.find("}") != std::string::npos) {
+            continue;
+        } else {
+            str = removeSpaces(str);
+            if (str.compare("\n") == 0 || str.compare("\0") == 0) {
+                continue;
+            } else {
+                throw std::out_of_range("Error: undefined block " + str + " in config file");
+            }
+        }
+    }
+}
+
+void WebServer::addDataInCurrentPath() {
+    char currentPath[PATH_MAX];
+    if (getcwd(currentPath, sizeof(currentPath)) != NULL) {
+        this->currentPath = currentPath;
+    } else {
+        perror("getcwd() error");
+    }
+}
+
+
 void WebServer::createVectorOfServers() {
     addConfigInArray<Server>(servers, configLines, "server");
 }
@@ -40,13 +94,23 @@ void WebServer::fillEachServerWithData() {
     }
 }
 
+std::string &WebServer::getCurrentPath() {
+    return currentPath;
+}
+
+std::vector<Server> &WebServer::getServers() {
+    return servers;
+}
+
 void WebServer::addConfigData() {
     createVectorOfServers();
     fillEachServerWithData();
 }
 
 void WebServer::parseConfig() {
+    addDataInCurrentPath();
     saveConfigInConfigLine();
+    checkValidConfig();
     addConfigData();
 }
 

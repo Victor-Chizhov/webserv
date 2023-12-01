@@ -17,14 +17,15 @@ std::string Parser::trim(const std::string &line) {
     return line.substr(posLeft);
 }
 
-void Parser::removeSpaces(std::string &line) {
+std::string Parser::removeSpaces(std::string &line) {
     std::string result = "";
     for (size_t i = 0; i < line.length(); i++) {
-        if (line[i] != ' ') {
+        if (line[i] != ' ' && line[i] != '\t' && line[i] != '\r') {
             result += line[i];
         }
     }
     line = result;
+    return line;
 }
 
 void Parser::ParseAndCheckLine(std::string &line, std::string finder) {
@@ -44,6 +45,12 @@ void Parser::ParseAndCheckLine(std::string &line, std::string finder) {
     if (line.find_last_not_of(" \t") != line.length() - 1) {
         throw std::out_of_range("Error: invalid " + finder + " value in config file");
     }
+}
+
+void Parser::checkServerLine(std::string line) {
+    line = removeSpaces(line);
+    if (line != "server{")
+        throw std::out_of_range("Error: invalid server line in config file");
 }
 
 void Parser::cutDataStr(std::string &line, std::string finder, std::string &data) {

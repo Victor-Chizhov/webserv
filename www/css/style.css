@@ -337,7 +337,6 @@ button {
 
 .header_main {
     width: 100%;
-    background-image: url(../images/header-bg.png);
     background-size: 100%;
     padding: 10px 0px 0px 0px;
 }
@@ -409,6 +408,12 @@ button {
     width: 100%;
     float: left;
     padding-bottom: 90px;
+}
+
+.services_section_4 {
+    width: 100%;
+    float: left;
+    padding-bottom: 130px;
 }
 
 .services_taital {
@@ -494,6 +499,12 @@ button {
     padding-bottom: 90px;
 }
 
+.about_section_2 {
+    width: 100%;
+    float: left;
+    padding-bottom: 130px;
+}
+
 .about_taital_main {
     width: 100%;
     padding-left: 100px;
@@ -501,7 +512,14 @@ button {
 }
 
 .padding_right_0 {
-    padding-right: 0px;
+    /*padding-right: 0px;*/
+    display: flex;
+    align-items: center;
+}
+.padding_right_01 {
+    /*padding-right: 0px;*/
+    display: flex;
+    align-items: center;
 }
 
 .about_taital {
@@ -833,7 +851,7 @@ button {
     padding-top: 6px;
 }
 
-.getquote_bt a {
+.getquote_bt button {
     width: 100%;
     float: left;
     font-size: 16px;
@@ -868,6 +886,16 @@ button {
     text-align: center;
     font-weight: bold;
 }
+
+.contact_taital_2 {
+    width: 100%;
+    float: left;
+    font-size: 14px;
+    color: #363636;
+    text-align: center;
+    font-weight: bold;
+}
+
 .email_text {
     width: 70%;
     margin: 0 auto;
@@ -1041,6 +1069,7 @@ button {
     color: #e27141;
 }
 
+
 .upload {
     width: 100%;
     float: left;
@@ -1054,7 +1083,83 @@ button {
     font-weight: 400;
 }
 
+button:hover {
+    /*background-color: #111111;*/
+    color: #ffffff;
+}
+
+.bg-black:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+
 .upload:hover {
     background-color: #111111;
     color: #ffffff;
 }
+
+.upload_cgi {
+    width: 30%;
+    float: left;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #0a52dd;
+    text-align: center;
+    padding: 10px 0px;
+    border-radius: 30px;
+    margin-top: 50px;
+    font-weight: 400;
+}
+
+.upload_cgi:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.mt-7 {
+    margin-top: 7rem !important;
+}
+
+.upload_cgi_modal {
+    width: 30%;
+    float: left;
+    font-size: 13px;
+    color: #ffffff;
+    background-color: #0a52dd;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 0.25rem;
+}
+
+.upload_cgi_modal:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+.upload_cgi_modal_close {
+    width: 30%;
+    float: left;
+    font-size: 13px;
+    color: #111111;
+    background-color: #ffffff;
+    text-align: center;
+    padding: 5px 0px;
+    border-radius: 0.25rem;
+    border: solid 1px #111111;
+}
+
+.upload_cgi_modal_close:hover {
+    background-color: #111111;
+    color: #ffffff;
+    border: solid 1px #111111;
+}
+
+input::placeholder {
+    font-size: 11px;
+    opacity: 0.3;
+    font-weight: 300;
+
+}
+
+

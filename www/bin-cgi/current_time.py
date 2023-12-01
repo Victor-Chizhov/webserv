@@ -20,7 +20,7 @@ try:
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>CGI</title>
+    <title>CGI Python</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -31,7 +31,6 @@ try:
     <!-- Responsive-->
     <link rel="stylesheet" href="../css/responsive.css">
     <!-- fevicon -->
-    <link rel="icon" href="../images/fevicon.png" type="image/gif" />
     <!-- Scrollbar Custom CSS -->
     <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css">
     <!-- Tweaks for older IEs-->
@@ -40,7 +39,6 @@ try:
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Righteous&display=swap" rel="stylesheet">
     <!-- owl stylesheets -->
     <link rel="stylesheet" href="../css/owl.carousel.min.css">
-    <link rel="stylesheet" href="../css/owl.theme.default.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
 </head>
 <body>
@@ -55,19 +53,19 @@ try:
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="index.html">Home</a>
+                                <a class="nav-link" href="../index.html">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="about.html">About</a>
+                                <a class="nav-link" href="../about.html">About</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="42yerevan.html">42 Yerevan</a>
+                                <a class="nav-link" href="../42yerevan.html">42 Yerevan</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link " href="info.html">Info</a>
+                                <a class="nav-link " href="../info.html">Info</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link " href="cgi.html">CGI</a>
+                                <a class="nav-link " href="../cgi.html">CGI</a>
                             </li>
                         </ul>
                     </div>
@@ -76,11 +74,11 @@ try:
             <div class="container-fluid">
                 <div class="menu_main">
                     <ul>
-                        <li class="active"><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="42yerevan.html">42 Yerevan</a></li>
-                        <li><a href="info.html">Info</a></li>
-                        <li><a href="cgi.html">CGI</a></li>
+                        <li class="active"><a href="../index.html">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../42yerevan.html">42 Yerevan</a></li>
+                        <li><a href="../info.html">Info</a></li>
+                        <li><a href="../cgi.html">CGI</a></li>
                     </ul>
                 </div>
             </div>
@@ -88,8 +86,8 @@ try:
     </div>
     <!-- header section end -->
     <!-- contact section start -->
-    <div class="contact_section layout_padding">
-        <h1 class="contact_taital">{current_time}</h1>
+    <div class="contact_section layout_padding" style="height: 51vh;">
+        <h1 class="contact_taital" style="margin-top: 50px;">{current_time}</h1>
     </div>
     <!-- contact section end -->
     <!-- footer section start -->
@@ -100,40 +98,38 @@ try:
                     <div class="row py-5">
                         <div class="col-12 col-md-6 col-lg-4 mb-4">
                             <div class="pe-lg-5 pe-0 pe-md-3">
-                                <img src="./images/logo42white.svg" alt="" width="200" class="mb-3">
+                                <img src="../images/logo42white.svg" alt="" width="200" class="mb-3">
                                 <p class="opacity-75">
                                     <b>Webserv Project</b>
                                 </p>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6 col-lg-4 mb-4">
-                            <h6 class="text-uppercase fw-bold mb-4 text-white">
-                                <b>42 Yerevan</b>
-                            </h6>
-                            <p class="opacity-75">
-                                <a href="/#about" class="text-decoration-none text-white">
-                                    About Project
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                                <a href="/#features" class="text-decoration-none text-white">
-                                    What is Webserver
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                                <a href="/#questions" class="text-decoration-none text-white">
-                                    Our Team
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                                <a href="/#trial" class="text-decoration-none text-white">
-                                    Common Gateway Interface
-                                </a>
-                            </p>
-                            <p class="opacity-75">
-                            </p>
-                        </div>
-                        <div class="col-12 col-md-6 col-lg-4 mb-4">
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
+                     <h6 class="text-uppercase fw-bold mb-4 text-white">
+                       <b>42 Yerevan</b>
+                     </h6>
+                     <p class="opacity-75">
+                       <a href="../about.html" class="text-decoration-none text-white">
+                         About Project
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="../info.html" class="text-decoration-none text-white">
+                         What is Webserver
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                       <a href="../cgi.html" class="text-decoration-none text-white">
+                        Common Gateway Interface
+                       </a>
+                     </p>
+                     <p class="opacity-75">
+                         <a href="../42yerevan.html" class="text-decoration-none text-white">
+                             42 Yerevan
+                         </a>
+                     </p>
+                   </div>
+                   <div class="col-12 col-md-6 col-lg-4 mb-4">
                             <p class="opacity-75">
                                 <font-awesome-icon icon="fa-solid fa-home" class="me-3" />
                                 2a Halabyan St, Yerevan 0038
