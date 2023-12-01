@@ -258,11 +258,17 @@ void Response::handleGet(Request &request) {
 //        std::cout << response << std::endl;
         return;
     }
-    response = "HTTP/1.1 200 OK\n\n";
-    std::string line;
-    std::getline(file, line, '\0');
-    response += line;
-    file.close();
+    if (url.find(".") != std::string::npos) {
+        response = "HTTP/1.1 200 OK\n\n";
+        std::string line;
+        std::getline(file, line, '\0');
+        response += line;
+        file.close();
+    }
+    else {
+        generateErrorsPage(404);
+        return;
+    }
 }
 
 void Response::handlePost(Request &request) {

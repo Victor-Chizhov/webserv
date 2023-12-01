@@ -70,7 +70,14 @@ void EventManager::waitAndHandleEvents() {
 			memset(buffer, 0, 1024);
             if (FD_ISSET(currentSocket, &readSet)) {
                 int bytesRead = recv(currentSocket, buffer, 1024,0);
-                if (bytesRead < 1024) {
+                if (bytesRead == -1) {
+                    delete (*it);
+                    it = clientSockets.erase(it);
+                    --it;
+                    close(currentSocket);
+                    FD_CLR(currentSocket, &read_master);
+                }
+                else if (bytesRead < 1024) {
                     current.request.request += std::string(buffer, bytesRead);
                     FD_CLR(currentSocket, &read_master);
                     FD_SET(currentSocket, &write_master);
@@ -103,7 +110,6 @@ void EventManager::waitAndHandleEvents() {
                     FD_CLR(currentSocket, &write_master);
                 }
                 sentLength += wasSent;
-                //system("leaks webserv");
             }
 		}
 	}
