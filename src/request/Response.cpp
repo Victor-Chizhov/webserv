@@ -136,8 +136,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 }
 
 void Response::generateRedirectResponse(const std::string &locationToRedir) {
-    std::string str =  "/www";
-    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + str + locationToRedir + "\n\n";
+    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + locationToRedir + "\n\n";
 }
 
 void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
@@ -389,7 +388,8 @@ std::string Response::rootParsing(const std::string &url,
         else
             root += url.substr(currentLocation.getPathLocation().size());
     }
-
+    if (root == "/www/www/bin-cgi")
+        root = "/www/bin-cgi";
     return root;
 }
 
@@ -399,8 +399,6 @@ void Response::generateAutoindexResponse(Request request) {
     struct stat filestat;
     std::stringstream html;
     std::string path = request.getUrl();
-    if (path.find("www") == std::string::npos)
-        path = "/www/" + path;
     html << "<html><body><ul>";
     path = this->path + path;
     dir = opendir(path.c_str());
