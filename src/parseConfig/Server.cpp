@@ -88,6 +88,23 @@ int Server::getClientMaxBodySize() const {
     return clientMaxBodySize;
 }
 
+std::map<int, std::string> Server::getErrorPages() const {
+    return errorPages;
+}
+
+Server &Server::operator=(const Server &src) {
+    if (this != &src) {
+        this->serverConfig = src.serverConfig;
+        this->ipAddress = src.ipAddress;
+        this->port = src.port;
+        this->clientMaxBodySize = src.clientMaxBodySize;
+        this->serverName = src.serverName;
+        this->errorPages = src.errorPages;
+        this->locations = src.locations;
+    }
+    return *this;
+}
+
 
 
 

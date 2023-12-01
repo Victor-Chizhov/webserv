@@ -30,8 +30,10 @@ class Server : public Parser {
         int getPort() const;
         const std::string &getHost() const;
         const std::string &getServerName() const;
+        std::map<int, std::string> getErrorPages() const;
         const std::vector<Location> &getLocations() const;
         int getClientMaxBodySize() const;
+        Server &operator=(Server const &src);
 
 };
 

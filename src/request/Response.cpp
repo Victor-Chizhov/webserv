@@ -51,6 +51,17 @@ void Response::generateErrorsPage(int code) {
         errorStatus = "Service Unavailable";
     } else
         errorPageName = "404.html";
+
+    std::map<int, std::string> errorPages = currentServer.getErrorPages();
+
+    for (std::map<int, std::string>::iterator it = errorPages.begin(); it != errorPages.end(); ++it) {
+        if (it->first == code) {
+            errorPageName = it->second;
+            errorStatus = "Not Found";
+            break;
+        }
+    }
+
     response = "HTTP/1.1 " + std::to_string(code) + " " + errorStatus + "\n";
     response += "Content-Type: text/html\n\n";
     std::string line;
@@ -73,10 +84,12 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     currentPath();
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
+    currentServer = currentConfig;
     if (request.request.size() > (size_t)currentConfig.getClientMaxBodySize()) {
         generateErrorsPage(413);
         return;
     }
+
     std::vector<Location> locations = currentConfig.getLocations();
     if (!chooseLocation(request, currentLocation, locations))
         return;
@@ -439,4 +452,8 @@ void Response::deleteFile(const std::string &fileToOpen) {
                             "Content-Type: text/plain\r\n"
                             "\r\n"
                             "File successfully deleted.";
+}
+
+Server Response::getCurrentServer() const {
+    return Server();
 }

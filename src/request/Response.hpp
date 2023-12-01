@@ -15,6 +15,7 @@ private:
     std::string ipAddress;
     int port;
     std::vector<Server> servers;
+    Server currentServer;
     std::string path;
 
 
@@ -43,12 +44,14 @@ public:
     void setIpAddress(std::string ipAddress);
     int getPort() const;
     void setPort(int port);
+    Server getCurrentServer() const;
     void currentPath();
     void generateRedirectResponse(const std::string &locationToRedir);
     void chooseConfig(std::string hostName, Server &server);
     void deleteFile(const std::string &fileToOpen);
     bool chooseLocation(Request request, Location &location, std::vector<Location> locations);
     std::string rootParsing(const std::string &url, Location &currentLocation) const;
+
 
     bool is_method_allowed(Location location, std::string method);
 };
