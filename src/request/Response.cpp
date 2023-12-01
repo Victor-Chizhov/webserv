@@ -371,7 +371,7 @@ std::string Response::rootParsing(const std::string &url,
         root = currentLocation.getRoot();
         if (!currentLocation.getIndex().empty() && url == "/")
             root += currentLocation.getIndex();
-        else if (currentLocation.getPathLocation().size() != 1)
+        else if (currentLocation.getPathLocation().size() != 1 && url.size() < currentLocation.getPathLocation().size())
             root += url.substr(currentLocation.getPathLocation().size() + 1);
         else
             root += url.substr(currentLocation.getPathLocation().size());
