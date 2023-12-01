@@ -1,22 +1,11 @@
-function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
 
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-
-    return window.btoa(binary);
-}
 
 function fileUpload(input) {
     const file = input.files[0];
     console.log('Uploading file:', file);
     var reader = new FileReader();
-
 	reader.onload = function(e) {
-		
+
         fetch('/upload', {
             method: 'POST',
             body: btoa(e.target.result),
