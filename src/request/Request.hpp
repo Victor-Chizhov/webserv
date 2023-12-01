@@ -8,6 +8,7 @@ class Request {
 		std::string method;
 		std::string version;
 		std::string url;
+		std::string urlAutoindex;
         std::string script;
         std::map<std::string, std::string> args;
         std::string body;
@@ -36,7 +37,9 @@ class Request {
 		std::string const &getMethod() const;
 		std::string const &getVersion() const;
 		std::string const &getUrl() const;
+		std::string const &getUrlAutoindex() const;
         void setUrl(std::string url);
+		void setUrlAutoindex(std::string url);
         void setScript(std::string script);
 		std::string const &getScript() const;
         std::string const &getBody() const;
