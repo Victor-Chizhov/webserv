@@ -361,6 +361,10 @@ void Response::chooseConfig(std::string hostName, Server &server) {
 
 bool Response::chooseLocation(Request request, Location &location, std::vector<Location> locations) {
     for (size_t i = 0; i < locations.size(); i++) {
+        if (locations[i].getPathLocation() == "/deleter.html" &&  request.getUrl().find("/deleter.html") != std::string::npos) {
+            location = locations[i];
+            return true;
+        }
         if (locations[i].getPathLocation() == request.getUrl().substr(0, request.getUrl().find('/', 1))) {
             location = locations[i];
             return true;
