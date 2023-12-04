@@ -3,8 +3,8 @@
 function fileUpload(input) {
     const file = input.files[0];
     console.log('Uploading file:', file);
-    var reader = new FileReader();
-	reader.onload = function(e) {
+    let reader = new FileReader();
+	reader.onload = async function(e) {
 
         fetch('/upload', {
             method: 'POST',
@@ -15,8 +15,10 @@ function fileUpload(input) {
             }
         })
             .then(response => {
-                if (!response.ok) {
+                if (response.status == 413) {
                     window.location.href = 'errorPages/413.html';
+                } else if (!response.ok) {
+                    alert('Error uploading file');
                 } else {
                     alert('File uploaded successfully')
                     window.location.href = 'index.html';

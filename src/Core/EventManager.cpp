@@ -81,6 +81,7 @@ void EventManager::waitAndHandleEvents() {
                     current.request.request += std::string(buffer, bytesRead);
                     FD_CLR(currentSocket, &read_master);
                     FD_SET(currentSocket, &write_master);
+
                     current.request.Parsing(current.request.request);
                     current.response.setIpAddress(current.getIp());
                     current.response.setPort(current.getPort());

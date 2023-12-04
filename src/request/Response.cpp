@@ -283,7 +283,13 @@ std::map<std::string, std::string> Response::getFileHeaders(std::map<std::string
 
 void Response::handleRequest(Request &request) {
 
+
     if (request.getUrl() == "/www/upload") {
+
+//        if (request.getBody().empty()) {
+//            generateErrorsPage(400);
+//            return;
+//        }
 
         //get file name from headers
         std::map<std::string, std::string> fileHeaders = getFileHeaders(request.getHeaders());
