@@ -105,6 +105,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
         request.setUrl(root);
     if (url.find("bin-cgi") == 1) {
         request.setScript(request.getUrl());
+        request.setScript(request.parseScript(request.getScript()));
     }
     if (currentLocation.getPathLocation() == "/wrong_home_page") {
         generateRedirectResponse(currentLocation.getRedirectPath());
@@ -391,6 +392,8 @@ std::string Response::rootParsing(const std::string &url,
     }
     if (root == "/www/www/bin-cgi")
         root = "/www/bin-cgi";
+    if (root.find("//") != std::string::npos)
+        root.erase(root.find("//"), 1);
     return root;
 }
 

@@ -19,7 +19,6 @@ class Request {
 		std::string const parseMethod(std::string const &input);
 		std::string const parseUrl(std::string const &input);
 		std::string const parseVersion(std::string const &input);
-		std::string const parseScript(std::string const &input);
         std::string const parseHostName(std::string const &input);
         std::map<std::string, std::string> const parseArgs();
         std::string const parseBody(std::string const &input);
@@ -34,6 +33,7 @@ class Request {
 		Request(Request const &src);
 		Request &operator=(Request const &src);
 
+		std::string const parseScript(std::string const &input);
 		std::string const &getMethod() const;
 		std::string const &getVersion() const;
 		std::string const &getUrl() const;
