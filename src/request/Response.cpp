@@ -296,14 +296,13 @@ std::map<std::string, std::string> Response::getFileHeaders(std::map<std::string
 
 void Response::handleRequest(Request &request) {
 
-
     if (request.getUrl() == "/www/upload") {
 
 //        if (request.getBody().empty()) {
 //            generateErrorsPage(400);
 //            return;
 //        }
-
+        std::cout << "lol" << std::endl;
         //get file name from headers
         std::map<std::string, std::string> fileHeaders = getFileHeaders(request.getHeaders());
         std::string fileName = fileHeaders["content-disposition"].substr(fileHeaders["content-disposition"].find("filename=") + 10);
@@ -415,6 +414,8 @@ std::string Response::rootParsing(const std::string &url,
             root += currentLocation.getIndex();
         else if (currentLocation.getPathLocation().size() != 1 && url.size() < currentLocation.getPathLocation().size())
             root += url.substr(currentLocation.getPathLocation().size() + 1);
+        else if (currentLocation.getPathLocation() == "/upload")
+            root += currentLocation.getPathLocation();
         else
             root += url.substr(currentLocation.getPathLocation().size());
     }
