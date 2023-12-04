@@ -45,6 +45,10 @@ std::string const &Request::getUrl() const {
 	return this->url;
 }
 
+std::string const &Request::getUrlAutoindex() const {
+	return this->urlAutoindex;
+}
+
 std::map<std::string, std::string> const &Request::getHeaders() const {
 	return this->headers;
 }
@@ -188,6 +192,10 @@ std::string const &Request::getScript() const {
 
 void Request::setUrl(std::string url) {
     this->url = url;
+}
+
+void Request::setUrlAutoindex(std::string url) {
+	this->urlAutoindex = url;
 }
 
 void Request::setScript(std::string script) {

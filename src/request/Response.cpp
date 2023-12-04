@@ -51,6 +51,17 @@ void Response::generateErrorsPage(int code) {
         errorStatus = "Service Unavailable";
     } else
         errorPageName = "404.html";
+
+    std::map<int, std::string> errorPages = currentServer.getErrorPages();
+
+    for (std::map<int, std::string>::iterator it = errorPages.begin(); it != errorPages.end(); ++it) {
+        if (it->first == code) {
+            errorPageName = it->second;
+            errorStatus = "Not Found";
+            break;
+        }
+    }
+
     response = "HTTP/1.1 " + std::to_string(code) + " " + errorStatus + "\n";
     response += "Content-Type: text/html\n\n";
     std::string line;
@@ -73,26 +84,29 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
     currentPath();
     currentConfig = servers[0];
     chooseConfig(request.getHostName(), currentConfig);
+    currentServer = currentConfig;
     if (request.request.size() > (size_t)currentConfig.getClientMaxBodySize()) {
         generateErrorsPage(413);
         return;
     }
+
     std::vector<Location> locations = currentConfig.getLocations();
-    chooseLocation(request, currentLocation, locations);
+    if (!chooseLocation(request, currentLocation, locations))
+        return;
     if (!is_method_allowed(currentLocation, method)) {
         generateErrorsPage(405);
         return;
     }
-    root = rootParsing(url, locations, currentLocation);
-    if (url.find("bin-cgi") == 1) {
-        std::string tmp = "/www" + request.getScript();
-        request.setScript(tmp);
-    }
+    root = rootParsing(url, currentLocation);
+	request.setUrlAutoindex(request.getUrl());
     if (request.getUrl() == "/")
         request.setUrl(root);
-    else if (request.getUrl().find("www") == std::string::npos)
-        request.setUrl("/www" + request.getUrl());
-    if (url == "/wrong_home_page") {
+    else
+        request.setUrl(root);
+    if (url.find("bin-cgi") == 1) {
+        request.setScript(request.getUrl());
+    }
+    if (currentLocation.getPathLocation() == "/wrong_home_page") {
         generateRedirectResponse(currentLocation.getRedirectPath());
         return;
     }
@@ -123,8 +137,7 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
 }
 
 void Response::generateRedirectResponse(const std::string &locationToRedir) {
-    std::string str =  "/www";
-    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + str + locationToRedir + "\n\n";
+    response = "HTTP/1.1 301 Moved Permanently\nLocation: " + locationToRedir + "\n\n";
 }
 
 void Response::generateCGIResponse(Request &request, std::vector<Location> locations) {
@@ -241,15 +254,15 @@ void Response::handleGet(Request &request) {
         return;
     }
 
-    if (url.find("css") != std::string::npos) {
-        std::istringstream ss(url);
-        std::string segment;
-        std::string path;
-        while (std::getline(ss, segment, '/'))
-            path = segment;
-
-        url = "www/css/" + path;
-    }
+//    if (url.find("css") != std::string::npos) {
+//        std::istringstream ss(url);
+//        std::string segment;
+//        std::string path;
+//        while (std::getline(ss, segment, '/'))
+//            path = segment;
+//
+//        url = "www/css/" + path;
+//    }
 
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open() || file.fail()){
@@ -345,56 +358,48 @@ void Response::chooseConfig(std::string hostName, Server &server) {
     }
 }
 
-void Response::chooseLocation(Request request, Location &location, std::vector<Location> locations) {
+bool Response::chooseLocation(Request request, Location &location, std::vector<Location> locations) {
     for (size_t i = 0; i < locations.size(); i++) {
-        if (locations[i].getPathLocation() == request.getUrl()) {
+        if (locations[i].getPathLocation() == request.getUrl().substr(0, request.getUrl().find('/', 1))) {
             location = locations[i];
-            return;
+            return true;
         }
     }
-    location = locations[0];
+    for (size_t i = 0; i < locations.size(); i++) {
+        if (locations[i].getPathLocation() == "/") {
+            location = locations[i];
+            return true;
+        }
+    }
+    generateErrorsPage(404);
+    return false;
 }
 
-std::string Response::rootParsing(const std::string &url, const std::vector<Location> &locations,
+std::string Response::rootParsing(const std::string &url,
                                       Location &currentLocation) const {
     std::string root;
-    std::string str;
-    if (url.find('?') == std::string::npos)
-        std::string str = url.substr(0, url.rfind('/'));
-    else
-    {
-        str = url.substr(0, url.rfind('/'));
-        str = str.substr(0, str.rfind('/'));
+    if (currentLocation.getRoot().empty()) {
+        root = currentLocation.getPathLocation();
+    } else {
+        root = currentLocation.getRoot();
+        if (!currentLocation.getIndex().empty() && url == "/")
+            root += currentLocation.getIndex();
+        else if (currentLocation.getPathLocation().size() != 1 && url.size() < currentLocation.getPathLocation().size())
+            root += url.substr(currentLocation.getPathLocation().size() + 1);
+        else
+            root += url.substr(currentLocation.getPathLocation().size());
     }
-    for (size_t j = 0; j < locations.size(); j++) {
-        if (url == "/wrong_home_page")
-            str = url;
-        if (str.empty())
-            str = "/";
-        if (url == "/" && locations[j].getPathLocation() == str)
-        {
-            str = "/www/";
-            root = str + locations[j].getIndex();
-            break;
-        }
-        if ((str.find("js") != std::string::npos || str.find("image") != std::string::npos || str.find("bin-cgi") != std::string::npos) && str.find("www") == std::string::npos)
-            root = "/www";
-        if (locations[j].getPathLocation() == str) {
-            currentLocation = locations[j];
-            break;
-        }
-    }
+    if (root == "/www/www/bin-cgi")
+        root = "/www/bin-cgi";
     return root;
 }
 
-void Response::generateAutoindexResponse(Request request) {
+void Response::generateAutoindexResponse(Request &request) {
     DIR *dir;
     struct dirent *ent;
     struct stat filestat;
     std::stringstream html;
     std::string path = request.getUrl();
-    if (path.find("www") == std::string::npos)
-        path = "/www/" + path;
     html << "<html><body><ul>";
     path = this->path + path;
     dir = opendir(path.c_str());
@@ -408,12 +413,12 @@ void Response::generateAutoindexResponse(Request request) {
 
         std::string mod_time = ctime(&filestat.st_mtime);
         mod_time = mod_time.substr(0, mod_time.size() - 1);
-        if (request.getUrl()[request.getUrl().size() - 1] == '/') {
-            html << "<li><a href=\"" << request.getUrl() + ent->d_name << "\">" << ent->d_name << "</a> "
+        if (request.getUrlAutoindex()[request.getUrlAutoindex().size() - 1] == '/') {
+            html << "<li><a href=\"" << request.getUrlAutoindex() + ent->d_name << "\">" << ent->d_name << "</a> "
                  << " (size: " << filestat.st_size << ", "
                  << "modified: " << mod_time << ")</li>";
         } else {
-            html << "<li><a href=\"" << request.getUrl() + "/" + ent->d_name << "\">" << ent->d_name << "</a> "
+            html << "<li><a href=\"" << request.getUrlAutoindex() + "/" + ent->d_name << "\">" << ent->d_name << "</a> "
                  << " (size: " << filestat.st_size << ", "
                  << "modified: " << mod_time << ")</li>";
         }
@@ -446,4 +451,8 @@ void Response::deleteFile(const std::string &fileToOpen) {
                             "Content-Type: text/plain\r\n"
                             "\r\n"
                             "File successfully deleted.";
+}
+
+Server Response::getCurrentServer() const {
+    return Server();
 }
