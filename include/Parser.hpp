@@ -31,10 +31,6 @@ class Parser {
 
 };
 
-//сделать проверку на fghfgh server dfkghdfkg {
-//сделать проверку на flgdlfg location dfkgjdkjg {
-
-
 template<typename T>
 void Parser::addConfigInArray(std::vector<T> &array, std::vector<std::string> &configLines, std::string finder) {
     for (size_t i = 0; i < configLines.size(); i++) {

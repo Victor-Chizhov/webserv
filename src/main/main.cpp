@@ -6,7 +6,7 @@
 int main(int argc, char **argv) {
 
     (void)argv;
-    signal(SIGPIPE, SIG_IGN); //что-бы сервер не падал, когда клиент закрывает сокет, а мы пытаемся в него записать что-то
+    signal(SIGPIPE, SIG_IGN);
     if (argc != 1) {
         std::cout << "Usage: ./webserv <config>" << std::endl;
         return (1);

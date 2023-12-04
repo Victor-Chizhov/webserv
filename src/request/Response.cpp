@@ -256,16 +256,6 @@ void Response::handleGet(Request &request) {
         return;
     }
 
-//    if (url.find("css") != std::string::npos) {
-//        std::istringstream ss(url);
-//        std::string segment;
-//        std::string path;
-//        while (std::getline(ss, segment, '/'))
-//            path = segment;
-//
-//        url = "www/css/" + path;
-//    }
-
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open() || file.fail()){
         generateErrorsPage(404);
@@ -298,11 +288,6 @@ void Response::handleRequest(Request &request) {
 
     if (request.getUrl() == "/www/upload") {
 
-//        if (request.getBody().empty()) {
-//            generateErrorsPage(400);
-//            return;
-//        }
-        std::cout << "lol" << std::endl;
         //get file name from headers
         std::map<std::string, std::string> fileHeaders = getFileHeaders(request.getHeaders());
         std::string fileName = fileHeaders["content-disposition"].substr(fileHeaders["content-disposition"].find("filename=") + 10);
