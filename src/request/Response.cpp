@@ -74,6 +74,7 @@ void Response::generateErrorsPage(int code) {
 }
 
 void Response::generateResponse(Request &request, std::vector<Server> const &servers) {
+
     Server currentConfig;
     Location currentLocation;
     std::string root;
@@ -117,12 +118,12 @@ void Response::generateResponse(Request &request, std::vector<Server> const &ser
         generateAutoindexResponse(request);
         return;
     }
-
     ///create response for DELETE request
     if (request.getMethod() == "DELETE") {
         std::map<std::string, std::string> map = request.getArgs();
         std::map<std::string, std::string>::iterator it = map.begin();
         std::string fileToOpen = it->second;
+
         deleteFile(fileToOpen);
         return;
     }
@@ -267,9 +268,7 @@ void Response::handleGet(Request &request) {
 
     std::ifstream file(url.c_str(), std::ios::in | std::ios::binary);
     if (!file.is_open() || file.fail()){
-//        response = "HTTP/1.1 404 Not Found\n\n";
         generateErrorsPage(404);
-//        std::cout << response << std::endl;
         return;
     }
     if (url.find(".") != std::string::npos) {
@@ -289,17 +288,42 @@ void Response::handlePost(Request &request) {
     (void)request;
 }
 
+std::map<std::string, std::string> Response::getFileHeaders(std::map<std::string, std::string> const &headers) {
+    std::map<std::string, std::string> fileHeaders = headers;
+    return fileHeaders;
+}
+
 
 void Response::handleRequest(Request &request) {
 
-    if(request.getUrl() == "/www/upload") {
 
+    if (request.getUrl() == "/www/upload") {
+
+//        if (request.getBody().empty()) {
+//            generateErrorsPage(400);
+//            return;
+//        }
+
+        //get file name from headers
+        std::map<std::string, std::string> fileHeaders = getFileHeaders(request.getHeaders());
+        std::string fileName = fileHeaders["content-disposition"].substr(fileHeaders["content-disposition"].find("filename=") + 10);
+        fileName.erase(fileName.find("\""));
+
+        //get file data from body
         std::string formData = request.request.substr(request.request.find("\r\n\r\n") + 4);
         std::istringstream stream(formData);
         std::string line;
         std::ofstream destFile;
+
+        //decode base64
         std::vector<BYTE> vector = base64_decode(formData);
-        destFile.open("upload.svg", std::ios::binary | std::ios::app);
+
+        //write data to file
+        destFile.open("www/upload/" + fileName, std::ios::binary | std::ios::app);
+        if (!destFile.is_open()) {
+            std::cout << "Error open file" << std::endl;
+            return;
+        }
         size_t i = 0;
         while (i < vector.size()) {
             destFile << vector[i];
@@ -317,9 +341,9 @@ void Response::handleRequest(Request &request) {
     } else if (request.getMethod() == "POST") {
         handlePost(request);
     } else if (request.getMethod() == "DELETE") {
-        // std::cout << request.getMethod() << std::endl;
+
     } else {
-        // std::cout << "ERROR" << std::endl;
+
     }
 }
 
@@ -444,6 +468,7 @@ bool Response::is_method_allowed(Location location, std::string method) {
 }
 
 void Response::deleteFile(const std::string &fileToOpen) {
+
     if (remove((path + "/www/toDelete/" + fileToOpen).c_str()) == -1) {
         response = "HTTP/1.1 404 Not Found\r\n"
                                 "Content-Type: application/json\r\n"

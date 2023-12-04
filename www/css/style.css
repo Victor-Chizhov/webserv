@@ -1162,4 +1162,16 @@ input::placeholder {
 
 }
 
+.deleter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 10px
+}
+
+.deleter_width {
+    width: 20%;
+}
+
 

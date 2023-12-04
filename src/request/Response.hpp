@@ -54,6 +54,7 @@ public:
 
 
     bool is_method_allowed(Location location, std::string method);
+    std::map<std::string, std::string> getFileHeaders(std::map<std::string, std::string> const &headers);
 };
 
 
