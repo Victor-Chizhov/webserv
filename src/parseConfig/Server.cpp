@@ -65,6 +65,9 @@ void Server::updateDataInServer() {
         cutDataStr(serverConfig[i], "listen", ipAddress);
         cutDataStr(serverConfig[i], "server_name", serverName);
         cutDataNum(serverConfig[i], "port", port);
+        if (port == 0) {
+            port = 80;
+        }
         cutDataNum(serverConfig[i], "client_max_body_size", clientMaxBodySize);
         cutDataMap(serverConfig[i], "error_page", errorPages);
         if (serverConfig[i].find("location") != std::string::npos) {
