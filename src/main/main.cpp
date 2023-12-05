@@ -5,14 +5,13 @@
 
 int main(int argc, char **argv) {
 
-    (void)argv;
     signal(SIGPIPE, SIG_IGN);
-    if (argc != 1) {
+    if (argc != 2) {
         std::cout << "Usage: ./webserv <config>" << std::endl;
         return (1);
     }
 
-    WebServer webserv("config/webserv.conf");
+    WebServer webserv(argv[1]);
 
     try {
         webserv.parseConfig();
